@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Pact-Assembler-Class: eu.unitn.disi.db.spleetter.TweetCleanse
-X-COMMENT: Main-Class will be added automatically by build
-
