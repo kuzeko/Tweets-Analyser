@@ -1,2 +1,1 @@
-2 file:///Users/davidemottin/NetBeansProjects/FreytagProject/InputData/100K_tweets_order_by_ID_USER_ASC.csv file:///Users/davidemottin/NetBeansProjects/FreytagProject/InputData/words file:///tmp/pippo
-2 file:///Users/davidemottin/Desktop/hamlet.txt file:///tmp/output
+2 file:///tmp/EXPORT/100K_tweets_order_by_ID_USER_ASC.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/tweets
