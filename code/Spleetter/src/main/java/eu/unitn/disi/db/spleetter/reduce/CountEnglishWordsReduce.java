@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.unitn.disi.db.spleetter.reduce;
 
 import eu.stratosphere.pact.common.stubs.Collector;
@@ -11,6 +7,15 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import java.util.Iterator;
 
+/**
+ * For each tweets it counts the number of english words
+ * present in it
+ *
+ * 0 - tweet id
+ * 1 - number of words
+ *
+ *
+ */
 @StubAnnotation.ConstantFields(fields = {0})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class CountEnglishWordsReduce extends ReduceStub {
@@ -30,4 +35,4 @@ public class CountEnglishWordsReduce extends ReduceStub {
         pr.setField(1, numWords);
         records.collect(pr);
     }
-}    
+}

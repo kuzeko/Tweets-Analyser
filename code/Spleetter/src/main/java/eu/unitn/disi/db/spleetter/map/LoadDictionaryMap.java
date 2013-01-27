@@ -5,8 +5,13 @@ import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
-import eu.unitn.disi.db.spleetter.StringUtils;
+import eu.unitn.disi.db.spleetter.utils.StringUtils;
 
+/**
+ * Converts a PactRecord containing one string in to a string tuple
+ * a tuple is a English word from the dictionary
+ * 0 - word
+ */
 @StubAnnotation.ConstantFields(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class LoadDictionaryMap extends MapStub {

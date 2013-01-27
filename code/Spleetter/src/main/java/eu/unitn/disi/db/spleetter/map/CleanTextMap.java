@@ -5,15 +5,20 @@ import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
-import eu.unitn.disi.db.spleetter.StringUtils;
+import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Sums up the counts for a certain given key. The counts are assumed to be at position <code>1</code>
- * in the record. The other fields are not modified.
+ * Takes as input a tweet record and return is with a clean text
+ * Strips out URLs, Hashtags and @Mentions
+ * 0 - tweet id
+ * 1 - user id
+ * 2 - text
+ * 3 - number of words in original tweet
+ * 4 - timestamp [h]
  */
-@StubAnnotation.ConstantFields(fields = {0})
+@StubAnnotation.ConstantFields(fields = {0,1,3,4})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
 public class CleanTextMap extends MapStub {
     private PactString tweet = new PactString();

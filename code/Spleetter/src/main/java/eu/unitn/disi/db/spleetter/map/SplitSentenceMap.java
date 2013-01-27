@@ -6,13 +6,19 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
-import eu.unitn.disi.db.spleetter.StringUtils;
+import eu.unitn.disi.db.spleetter.utils.StringUtils;
 
+/**
+ * Reads the text from a cleaned tweet record and splits it into single words
+ * 0 - word
+ * 1 - tweet id
+ *
+ */
 @StubAnnotation.ConstantFields(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class SplitSentenceMap extends MapStub {
     private PactString line;
-    private PactLong tid; 
+    private PactLong tid;
     private PactString word = new PactString();
     private StringUtils.WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
     private PactRecord output = new PactRecord();
