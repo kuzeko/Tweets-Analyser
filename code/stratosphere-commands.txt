@@ -1,1 +1,1 @@
-2 file:///tmp/EXPORT/100K_tweets_order_by_ID_USER_ASC.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/tweets
+2 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/words 0.2 file:///tmp/EXPORT/100k_Hashtags.csv file:///tmp/EXPORT/tweets
