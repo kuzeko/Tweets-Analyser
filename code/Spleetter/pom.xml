@@ -29,7 +29,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        
+
 
         <dependency>
             <groupId>eu.stratosphere</groupId>
@@ -37,13 +37,64 @@
             <version>0.2</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency>               
+        </dependency>
+        <dependency>
+            <groupId>SentiStength</groupId>
+            <artifactId>senti-strength</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
-    
+
 
     <build>
-        <plugins>      
+        <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                              <filter>
+                                <artifact>SentiStength:senti-strength:</artifact>
+                                <excludes>
+                                  <exclude>weka/**</exclude>
+                                </excludes>
+                              </filter>
+                            </filters>
+
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>junit:junit</exclude>
+                                    <exclude>log4j:log4j:jar:</exclude>
+                                    <exclude>commons-logging:commons-logging:</exclude>
+                                    <exclude>eu.stratosphere:pact-common:</exclude>
+                                    <exclude>eu.stratosphere:nephele-common:</exclude>
+                                    <exclude>commons-codec:commons-codec</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <finalName>Spleeter-PACT-1.0</finalName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>eu.unitn.disi.db.spleetter.eu.utils.TweetCleanseMain</Main-Class>
+                                        <Build-Number>123</Build-Number>
+                                        <Pact-Assembler-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Pact-Assembler-Class>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
@@ -68,10 +119,11 @@
                                 <include>**/*</include>
                             </includes>
                         </configuration>
-                    </execution>    
+                    </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
         </plugins>
-    </build>     
-    
+    </build>
+
 </project>
+
