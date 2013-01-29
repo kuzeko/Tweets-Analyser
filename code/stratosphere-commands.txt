@@ -1,1 +1,1 @@
-2 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/words 0.2 file:///tmp/EXPORT/100k_Hashtags.csv file:///tmp/EXPORT/tweets
+2 file:///tmp/EXPORT/1G_tweets.csv file:///tmp/EXPORT/1G_dates.csv file:///tmp/EXPORT/words 0.2 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats
