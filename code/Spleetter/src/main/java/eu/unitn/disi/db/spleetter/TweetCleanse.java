@@ -20,6 +20,7 @@ import eu.unitn.disi.db.spleetter.cogroup.HashtagPolarityCoGroup;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
 import eu.unitn.disi.db.spleetter.map.LoadHashtagMap;
+import eu.unitn.disi.db.spleetter.map.LoadTweetDatesMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
 import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
@@ -30,7 +31,9 @@ import eu.unitn.disi.db.spleetter.match.DictionaryFilterMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagLifespanMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagPolarityMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagUserMatch;
+import eu.unitn.disi.db.spleetter.match.TweetDateMatch;
 import eu.unitn.disi.db.spleetter.match.TweetPolarityMatch;
+import eu.unitn.disi.db.spleetter.reduce.CountAllHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
@@ -55,31 +58,42 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     public Plan getPlan(String... args) {
         final int noSubTasks          = (args.length > 0 ? Integer.parseInt(args[0]) : 1);
         final String dataInput        = (args.length > 1 ? args[1] : "");
-        final String dictionaryInput  = (args.length > 2 ? args[2] : "");
-        final String wordTreshold     = (args.length > 3 ? args[3] : "0.2");
-        final String hashtagInput     = (args.length > 4 ? args[4] : "");
+        final String datesInput       = (args.length > 2 ? args[2] : "");
+        final String dictionaryInput  = (args.length > 3 ? args[3] : "");
+        final String wordTreshold     = (args.length > 4 ? args[4] : "0.2");
+        final String hashtagInput     = (args.length > 5 ? args[5] : "");
 
-        final String outputCleanTweets        = (args.length > 5 ? args[5]+"/clean_tweets.txt" : "");
-        final String outputUsersTweetsCount   = (args.length > 5 ? args[5]+"/users_tweets.txt" : "");
-        final String outputHashtagUsersCount  = (args.length > 5 ? args[5]+"/hashtag_users.txt" : "");
-        final String outputHashtagSentiment   = (args.length > 5 ? args[5]+"/hashtag_sentiment.txt" : "");
-        final String outputHashtagTweetsCount = (args.length > 5 ? args[5]+"/hashtag_tweets.txt" : "");
-        final String outputHashtagLows        = (args.length > 5 ? args[5]+"/hashtag_lows.txt" : "");
-        final String outputHashtagPeeks       = (args.length > 5 ? args[5]+"/hashtag_peeks.txt" : "");
-        final String outputHashtagLifespan    = (args.length > 5 ? args[5]+"/hashtag_lifespan.txt" : "");
-
+        final String outputCleanTweets        = (args.length > 6 ? args[6]+"/clean_tweets" : "");
+        final String outputUsersTweetsCount   = (args.length > 6 ? args[6]+"/users_tweets" : "");
+        final String outputHashtagUsersCount  = (args.length > 6 ? args[6]+"/hashtag_users" : "");
+        final String outputHashtagSentiment   = (args.length > 6 ? args[6]+"/hashtag_sentiment" : "");
+        final String outputHashtagTweetsCount = (args.length > 6 ? args[6]+"/hashtag_tweets" : "");
+        final String outputHashtagCount       = (args.length > 6 ? args[6]+"/hashtag_count" : "");
+        final String outputHashtagLows        = (args.length > 6 ? args[6]+"/hashtag_lows" : "");
+        final String outputHashtagPeeks       = (args.length > 6 ? args[6]+"/hashtag_peeks" : "");
+        final String outputHashtagLifespan    = (args.length > 6 ? args[6]+"/hashtag_lifespan" : "");
+        int outputFilesCount = 9;
 
         /*
          * Load Data
          */
 
-        FileDataSource source = new FileDataSource(TextInputFormat.class, dataInput, "Input Lines");
-        source.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
+        FileDataSource tweets = new FileDataSource(TextInputFormat.class, dataInput, "Input Lines");
+        tweets.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);	// comment out this line for UTF-8 inputs
 
         MapContract tokenizeMapper = MapContract.builder(LoadTweetMap.class)
-                .input(source)
+                .input(tweets)
                 .name("Tokenize Lines")
                 .build();
+
+        FileDataSource dates = new FileDataSource(TextInputFormat.class, datesInput, "Tweet dates");
+        dates.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
+
+        MapContract datesMapper = MapContract.builder(LoadTweetDatesMap.class)
+                .input(dates)
+                .name("Tokenize Dates")
+                .build();
+
 
         FileDataSource dict = new FileDataSource(TextInputFormat.class, dictionaryInput, "English words");
         dict.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
@@ -105,13 +119,20 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
          */
 
 
+        MatchContract datedTweets = MatchContract.builder(TweetDateMatch.class, PactLong.class, 0,0)
+                .input1(tokenizeMapper)
+                .input2(datesMapper)
+                .name("Filter English Tweets")
+                .build();
+
+
         MapContract cleanText = MapContract.builder(CleanTextMap.class)
-                .input(tokenizeMapper)
+                .input(datedTweets)
                 .name("Clean Tweets")
                 .build();
 
         MapContract sentimentAnalysis = MapContract.builder(SentimentAnalysisMap.class)
-                .input(tokenizeMapper)
+                .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
 
@@ -172,7 +193,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
         ReduceContract countHashtagUsers = new ReduceContract.Builder(CountHashtagUsersReduce.class, PactString.class, 0)
                 .input(hashtagUserMatch)
-                .name("Count user tweets")
+                .name("Count hastag users")
                 .build();
 
         MatchContract hashtagPolarityMatch = MatchContract.builder(HashtagPolarityMatch.class, PactLong.class, 0, 0)
@@ -192,6 +213,14 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(hashtagPolarityMatch)
                 .name("Count Hashtag Tweets")
                 .build();
+
+        //NB reduce on key 1
+        ReduceContract countAllHashtagTweets = ReduceContract.builder(CountAllHashtagTweetsReduce.class)
+                .keyField(PactInteger.class, 1)
+                .input(countHashtagTweets)
+                .name("Count Hashtag Tweets")
+                .build();
+
 
         CoGroupContract timestampPolarityGroup = CoGroupContract.builder(HashtagPolarityCoGroup.class, PactString.class, 0, 0)
                 .input1(countHashtagTweets)
@@ -242,7 +271,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
          */
 
 
-        FileDataSink[] outputs = new FileDataSink[8];
+        FileDataSink[] outputs = new FileDataSink[outputFilesCount];
         int i = 0;
 
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");
@@ -331,6 +360,17 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactString.class, 1)
                 .field(PactString.class, 2);
 
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactInteger.class, 0)
+                .field(PactInteger.class, 1);
+
+
+
 
         HashSet outputsSet = new HashSet<FileDataSink>();
         outputsSet.addAll(Arrays.asList(outputs));
@@ -343,6 +383,6 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     @Override
     public String getDescription() {
-        return "Parameters: [noSubStasks] [dataInput] [dictionaryFile] [wordsTreshold] [hashtagInput] [outputDir]";
+        return "Parameters: [noSubStasks] [dataInput] [dates] [dictionaryFile] [wordsTreshold] [hashtagInput] [outputDir]";
     }
 }
