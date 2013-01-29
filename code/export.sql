@@ -1,10 +1,29 @@
 SELECT
 t.tweet_id,
 t.user_id,
-REPLACE(t.text, '\n', ' '),
-i.created_at
-INTO OUTFILE '/tmp/EXPORT/1G_tweets_order_by_ID_USER_ASC_Newline.csv'
+REPLACE(t.text, '\n', ' ')
+INTO OUTFILE '/tmp/EXPORT/1G_tweets.csv'
 FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
-FROM tweet_text_01 AS t JOIN tweet_01 AS i  ON t.user_id = i.user_id AND t.tweet_id = i.id ORDER BY t.tweet_id ASC, t.user_id ASC LIMIT 1000000;
+FROM tweet_text_01 AS t ORDER BY t.tweet_id DESC, t.user_id DESC LIMIT 1000000;
+
+
+SELECT
+i.id,
+i.user_id,
+i.created_at
+INTO OUTFILE '/tmp/EXPORT/1G_dates.csv'
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM tweet_01 AS i ORDER BY i.id DESC, i.user_id DESC LIMIT 1000000;
+
+
+SELECT
+*
+INTO OUTFILE '/tmp/EXPORT/ALL_hashtags.csv'
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM tweet_hashtag ORDER BY tweet_id DESC, user_id DESC;
