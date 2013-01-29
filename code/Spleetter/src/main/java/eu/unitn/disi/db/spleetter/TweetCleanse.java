@@ -139,6 +139,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Join tweets and dates")
                 .build();
         datedTweets.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        datedTweets.getCompilerHints().setAvgBytesPerRecord(130);
 
         MapContract cleanText = MapContract.builder(CleanTextMap.class)
                 .input(datedTweets)
