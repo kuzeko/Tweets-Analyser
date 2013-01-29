@@ -31,7 +31,6 @@ public class CountEnglishWordsReduce extends ReduceStub {
             sum += pr.getField(1, PactInteger.class).getValue();
         }
         numWords.setValue(sum);
-        //System.out.printf("Tweet: %d, english words: %d\n", pr.getField(0, PactLong.class).getValue(), sum);
         pr.setField(1, numWords);
         records.collect(pr);
     }

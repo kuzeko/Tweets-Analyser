@@ -35,7 +35,7 @@ public class CountHashtagUsersReduce extends ReduceStub {
         PactInteger hashtagID;
         PactInteger userID;
         HashSet<PactInteger> usersSet;
-                
+
         hashtagUsers.clear();
 
         while (matches.hasNext()) {
@@ -54,7 +54,6 @@ public class CountHashtagUsersReduce extends ReduceStub {
 
         for (PactInteger hID : hashtagUsers.keySet()) {
             numDistinctUsers.setValue(hashtagUsers.get(hID).size());
-            //System.out.printf("Tweet: %d, english words: %d\n", pr.getField(0, PactLong.class).getValue(), sum);
             pr2.setField(0, pr.getField(0, PactString.class));
             pr2.setField(1, hID);
             pr2.setField(2, numDistinctUsers);

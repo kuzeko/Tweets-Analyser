@@ -54,8 +54,6 @@ public class HashtagPolarityCoGroup extends CoGroupStub {
                 hashtagID = pr.getField(1, PactInteger.class).getValue();
                 count = hashtagTweetsCount.get(hashtagID);
 
-                // System.out.println("aaaa" + hashtagID);
-                // System.out.println(hashtagID + " /// " + count + " /// " + pr.getField(2, PactDouble.class));
                 negPolarity = pr.getField(2, PactDouble.class);
                 tmpD = negPolarity.getValue() / count;
                 negPolarity.setValue(tmpD);

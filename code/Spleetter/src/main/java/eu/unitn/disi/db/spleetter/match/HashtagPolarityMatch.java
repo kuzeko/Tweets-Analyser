@@ -24,7 +24,6 @@ public class HashtagPolarityMatch extends MatchStub {
 
     @Override
     public void match(PactRecord tweetRecord, PactRecord hashtagRecord, Collector<PactRecord> records) throws Exception {
-        //System.out.println("sss"+hashtagRecord.getField(1, PactInteger.class).getValue());
 
         pr2.setField(0, tweetRecord.getField(2, PactString.class));
         pr2.setField(1, hashtagRecord.getField(1, PactInteger.class));

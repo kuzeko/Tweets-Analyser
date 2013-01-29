@@ -40,8 +40,6 @@ public class CountHashtagTweetsReduce extends ReduceStub {
             pr = matches.next();
             hashtagID = pr.getField(1, PactInteger.class).getValue();
 
-            // System.out.println("cccc" + hashtagID + "/");
-
             if (hashtagTweets.containsKey(hashtagID)) {
                 numTweets = hashtagTweets.get(hashtagID);
                 sum = numTweets.getValue() + 1;
@@ -56,7 +54,6 @@ public class CountHashtagTweetsReduce extends ReduceStub {
 
 
         for (Integer hID : hashtagTweets.keySet()) {
-            // System.out.println("hhh"+hID);
             numTweets = hashtagTweets.get(hID);
             pactHashtagID.setValue(hID);
 

@@ -34,7 +34,6 @@ public class HashtagPeeksReduce extends ReduceStub {
 
         while (matches.hasNext()) {
             pr = matches.next();
-            System.out.append(pr.getField(1, PactInteger.class).getValue() +"//"+count);
             count = pr.getField(2, PactInteger.class).getValue();
             if(count>maxValue){
                 maxValue = count;

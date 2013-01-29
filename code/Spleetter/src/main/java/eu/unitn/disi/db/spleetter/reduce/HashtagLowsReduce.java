@@ -35,7 +35,6 @@ public class HashtagLowsReduce extends ReduceStub {
         while (matches.hasNext()) {
             pr = matches.next();
             count = pr.getField(2, PactInteger.class).getValue();
-            System.out.println(pr.getField(1, PactInteger.class).getValue() +"//"+count);
             if(count < minValue || minValue == -1){
                 minValue = count;
                 hashtagID =pr.getField(1, PactInteger.class);

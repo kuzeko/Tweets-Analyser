@@ -50,8 +50,6 @@ public class SumHashtagPolarityReduce extends ReduceStub {
             pr = matches.next();
             hashtagID = pr.getField(1, PactInteger.class).getValue();
 
-            //System.out.println("ttt" + hashtagID + "/");
-
             negPolarity = pr.getField(2, PactDouble.class);
             posPolarity = pr.getField(3, PactDouble.class);
             divergence = new PactDouble();
@@ -79,10 +77,6 @@ public class SumHashtagPolarityReduce extends ReduceStub {
 
 
         for (Integer hID : hashtagPolarities.keySet()) {
-
-            // System.out.println("pppp"+hID);
-
-
             hashtagValues = hashtagPolarities.get(hID);
             pactHashtagID.setValue(hID);
             pr2.setField(0, pr.getField(0, PactString.class));
