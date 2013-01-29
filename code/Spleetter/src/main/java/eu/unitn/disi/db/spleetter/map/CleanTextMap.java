@@ -47,5 +47,6 @@ public class CleanTextMap extends MapStub {
             pr.setField(2, tweet);
             records.collect(pr);
         }
+        System.out.println("M");
     }
 }

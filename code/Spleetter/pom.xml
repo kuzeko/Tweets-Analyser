@@ -43,9 +43,15 @@
             <artifactId>senti-strength</artifactId>
             <version>1.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>eu.stratosphere</groupId>
+            <artifactId>nephele-common</artifactId>
+            <version>0.2</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
-
     <build>
         <plugins>
             <plugin>

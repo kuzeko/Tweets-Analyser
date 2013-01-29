@@ -122,9 +122,8 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         MatchContract datedTweets = MatchContract.builder(TweetDateMatch.class, PactLong.class, 0,0)
                 .input1(tokenizeMapper)
                 .input2(datesMapper)
-                .name("Filter English Tweets")
+                .name("Join tweets and dates")
                 .build();
-
 
         MapContract cleanText = MapContract.builder(CleanTextMap.class)
                 .input(datedTweets)
@@ -383,6 +382,6 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     @Override
     public String getDescription() {
-        return "Parameters: [noSubStasks] [dataInput] [dates] [dictionaryFile] [wordsTreshold] [hashtagInput] [outputDir]";
+        return "Parameters: [noSubStasks] [dataInput] [datesInput] [dictionaryFileIn] [wordsTreshold] [hashtagInput] [outputDir]";
     }
 }

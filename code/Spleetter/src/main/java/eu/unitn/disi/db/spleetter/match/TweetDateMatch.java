@@ -7,7 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
 
 /**
- * Joins the tweet recird with its correspondet date
+ * Joins the tweet record with its corresponding date
  * appending it to the end of the record
  *
  * 0 - tweet id
@@ -20,7 +20,7 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.ConstantFieldsSecond(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class TweetDateMatch extends MatchStub {
-
+    
     @Override
     public void match(PactRecord tweet, PactRecord tweetDate, Collector<PactRecord> records) throws Exception {
         tweet.setField(4, tweetDate.getField(2, PactString.class));
