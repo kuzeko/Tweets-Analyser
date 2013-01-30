@@ -27,3 +27,27 @@ FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 FROM tweet_hashtag ORDER BY tweet_id DESC, user_id DESC;
+
+
+
+
+SELECT
+h.tweet_id,
+h.user_id,
+h.hashtag_id
+INTO OUTFILE '/tmp/EXPORT/1G_hashtags.csv'
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+
+FROM tweet_hashtag  AS h LEFT JOIN 
+(SELECT i.id, i.user_id FROM tweet_01 AS i ORDER BY i.id DESC, i.user_id DESC LIMIT 1000000) as t
+ON h.tweet_id = t.id AND h.user_id = t.user_id
+ORDER BY tweet_id DESC, user_id DESC;
+
+
+
+
+
+
+
