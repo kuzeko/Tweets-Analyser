@@ -15,6 +15,7 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.pact.common.util.FieldSet;
 import eu.unitn.disi.db.spleetter.cogroup.EnglishDictionaryCoGroup;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
@@ -75,6 +76,11 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(tweets)
                 .name("Tokenize Lines")
                 .build();
+        tokenizeMapper.getCompilerHints().setAvgBytesPerRecord(105);
+        tokenizeMapper.getCompilerHints().setUniqueField(new FieldSet(0));
+        tokenizeMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+
+
 
         FileDataSource dates = new FileDataSource(TextInputFormat.class, datesInput, "Tweet dates");
         dates.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
@@ -83,6 +89,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(dates)
                 .name("Tokenize Dates")
                 .build();
+        datesMapper.getCompilerHints().setAvgBytesPerRecord(50);
+        datesMapper.getCompilerHints().setUniqueField(new FieldSet(0));
+        datesMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
 
 
         FileDataSource dict = new FileDataSource(TextInputFormat.class, dictionaryInput, "English words");
@@ -92,6 +101,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(dict)
                 .name("Load dictionary")
                 .build();
+        dictionaryMap.getCompilerHints().setAvgBytesPerRecord(10);
+        dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
+        dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
 
 
         FileDataSource hashtags = new FileDataSource(TextInputFormat.class, hashtagInput, "Hashtags");
@@ -101,6 +113,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(hashtags)
                 .name("Load Hashtags")
                 .build();
+<<<<<<< .merge_file_bdvSUJ
 
 //        FileDataSource hashtags = new FileDataSource(RecordInputFormat.class, hashtagInput, "Hashtags");
 //        hashtags.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
@@ -111,6 +124,11 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 //                .fieldDelimiter(',')
 //                .field(DecimalTextLongParser.class, 0)
 //                .field(DecimalTextIntParser.class, 1);
+=======
+        loadHashtags.getCompilerHints().setAvgBytesPerRecord(35);
+        loadHashtags.getCompilerHints().setUniqueField(new FieldSet(0));
+        loadHashtags.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+>>>>>>> .merge_file_glVZXi
 
 
         /*
@@ -123,36 +141,44 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input2(datesMapper)
                 .name("Join tweets and dates")
                 .build();
+        datedTweets.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        datedTweets.getCompilerHints().setAvgBytesPerRecord(130);
 
         MapContract cleanText = MapContract.builder(CleanTextMap.class)
                 .input(datedTweets)
                 .name("Clean Tweets")
                 .build();
+        cleanText.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
 
         MapContract sentimentAnalysis = MapContract.builder(SentimentAnalysisMap.class)
                 .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
+        sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
 
         MapContract splitSentence = MapContract.builder(SplitSentenceMap.class)
                 .input(cleanText)
                 .name("Split to words")
                 .build();
+
         CoGroupContract englishGroup = CoGroupContract.builder(EnglishDictionaryCoGroup.class, PactString.class, 0, 0)
                 .input1(splitSentence)
                 .input2(dictionaryMap)
                 .name("Group en-words")
                 .build();
+
         ReduceContract countEnglishWords = new ReduceContract.Builder(CountEnglishWordsReduce.class, PactLong.class, 0)
                 .input(englishGroup)
                 .name("Count en-words")
                 .build();
+
         MatchContract dictionaryFilter = MatchContract.builder(DictionaryFilterMatch.class, PactLong.class, 0, 0)
                 .input1(countEnglishWords)
                 .input2(cleanText)
                 .name("Filter English Tweets")
                 .build();
         dictionaryFilter.setParameter(WORDS_TRESHOLD, wordTreshold);
+        dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerStubCall(0.2f);
 
         MatchContract tweetPolarityMatch = MatchContract.builder(TweetPolarityMatch.class, PactLong.class, 0, 0)
                 .input1(dictionaryFilter)
