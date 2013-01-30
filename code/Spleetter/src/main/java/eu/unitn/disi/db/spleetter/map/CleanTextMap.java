@@ -27,7 +27,7 @@ public class CleanTextMap extends MapStub {
     private Pattern pHash = Pattern.compile("#");
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
+    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {        
         tweet = pr.getField(2, PactString.class);
         String text = tweet.getValue();
 
@@ -47,6 +47,5 @@ public class CleanTextMap extends MapStub {
             pr.setField(2, tweet);
             records.collect(pr);
         }
-        System.out.println("M");
     }
 }

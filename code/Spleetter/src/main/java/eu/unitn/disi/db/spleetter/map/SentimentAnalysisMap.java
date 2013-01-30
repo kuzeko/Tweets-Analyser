@@ -37,7 +37,9 @@ public class SentimentAnalysisMap extends MapStub {
         double[] polairties = analyzer.analyze(text);
         negPolarity.setValue(polairties[0]);
         posPolarity.setValue(polairties[1]);
-
+//        negPolarity.setValue(Math.random());
+//        posPolarity.setValue(Math.random());
+        
         if (text != null) {
             pr2.setField(0, pr.getField(0, PactLong.class));
             pr2.setField(1, pr.getField(1, PactInteger.class));
@@ -45,5 +47,11 @@ public class SentimentAnalysisMap extends MapStub {
             pr2.setField(3, posPolarity);
             records.collect(pr2);
         }
+//        System.out.printf("%d,%d,%f,%f\n", 
+//                pr2.getField(0, PactLong.class).getValue(),
+//                pr2.getField(1, PactInteger.class).getValue(),
+//                pr2.getField(2, PactDouble.class).getValue(),
+//                pr2.getField(3, PactDouble.class).getValue()
+//                );
     }
 }
