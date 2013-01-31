@@ -48,22 +48,22 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     @Override
     public Plan getPlan(String... args) {
-        final int noSubTasks          = (args.length > 0 ? Integer.parseInt(args[0]) : 1);
-        final String dataInput        = (args.length > 1 ? args[1] : "");
-        final String datesInput       = (args.length > 2 ? args[2] : "");
-        final String dictionaryInput  = (args.length > 3 ? args[3] : "");
-        final String wordTreshold     = (args.length > 4 ? args[4] : "0.2");
-        final String hashtagInput     = (args.length > 5 ? args[5] : "");
+        int noSubTasks          = (args.length > 0 ? Integer.parseInt(args[0]) : 1);
+        String dataInput        = (args.length > 1 ? args[1] : "");
+        String datesInput       = (args.length > 2 ? args[2] : "");
+        String dictionaryInput  = (args.length > 3 ? args[3] : "");
+        String wordTreshold     = (args.length > 4 ? args[4] : "0.2");
+        String hashtagInput     = (args.length > 5 ? args[5] : "");
 
-        final String outputCleanTweets        = (args.length > 6 ? args[6]+"/clean_tweets" : "");
-        final String outputUsersTweetsCount   = (args.length > 6 ? args[6]+"/users_tweets" : "");
-        final String outputHashtagUsersCount  = (args.length > 6 ? args[6]+"/hashtag_users" : "");
-        final String outputHashtagSentiment   = (args.length > 6 ? args[6]+"/hashtag_sentiment" : "");
-        final String outputHashtagTweetsCount = (args.length > 6 ? args[6]+"/hashtag_tweets" : "");
-//        final String outputHashtagCount       = (args.length > 6 ? args[6]+"/hashtag_count" : "");
-//        final String outputHashtagLows        = (args.length > 6 ? args[6]+"/hashtag_lows" : "");
-//        final String outputHashtagPeeks       = (args.length > 6 ? args[6]+"/hashtag_peeks" : "");
-//        final String outputHashtagLifespan    = (args.length > 6 ? args[6]+"/hashtag_lifespan" : "");
+        String outputCleanTweets        = (args.length > 6 ? args[6] : "file:///tmp/") +"/clean_tweets";
+        String outputUsersTweetsCount   = (args.length > 6 ? args[6] : "file:///tmp/") +"/users_tweets";
+        String outputHashtagUsersCount  = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_users";
+        String outputHashtagSentiment   = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_sentiment";
+        String outputHashtagTweetsCount = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_tweets";
+//      String outputHashtagCount       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_count";
+//      String outputHashtagLows        = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lows";
+//      String outputHashtagPeeks       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_peeks";
+//      String outputHashtagLifespan    = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lifespan";
 //        int outputFilesCount = 9;
 
         /*
