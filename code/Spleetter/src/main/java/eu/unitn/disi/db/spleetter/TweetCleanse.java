@@ -24,7 +24,6 @@ import eu.unitn.disi.db.spleetter.map.LoadTweetDatesMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
 import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
-import eu.unitn.disi.db.spleetter.map.TimePolarityMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
 import eu.unitn.disi.db.spleetter.match.DictionaryFilterMatch;
@@ -198,7 +197,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
 
-        MapContract timePolarity = MapContract.builder(TimePolarityMap.class)
+        MapContract timePolarity = MapContract.builder(PolarityHashtagExtractMap.class)
                 .input(tweetPolarityMatch)
                 .name("Tweet Time & Polarity")
                 .build();
