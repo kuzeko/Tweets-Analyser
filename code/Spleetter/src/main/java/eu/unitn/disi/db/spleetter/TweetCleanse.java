@@ -15,22 +15,24 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
-import eu.stratosphere.pact.common.util.FieldSet;
 import eu.unitn.disi.db.spleetter.cogroup.EnglishDictionaryCoGroup;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
 import eu.unitn.disi.db.spleetter.map.LoadHashtagMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetDatesMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
+import eu.unitn.disi.db.spleetter.map.PolarityHashtagExtractMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
 import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
 import eu.unitn.disi.db.spleetter.match.DictionaryFilterMatch;
+import eu.unitn.disi.db.spleetter.match.HashtagPolarityMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagUserMatch;
 import eu.unitn.disi.db.spleetter.match.TweetDateMatch;
 import eu.unitn.disi.db.spleetter.match.TweetPolarityMatch;
 import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
 import java.util.Arrays;
@@ -58,11 +60,11 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         final String outputHashtagUsersCount  = (args.length > 6 ? args[6]+"/hashtag_users" : "");
         final String outputHashtagSentiment   = (args.length > 6 ? args[6]+"/hashtag_sentiment" : "");
         final String outputHashtagTweetsCount = (args.length > 6 ? args[6]+"/hashtag_tweets" : "");
-        final String outputHashtagCount       = (args.length > 6 ? args[6]+"/hashtag_count" : "");
-        final String outputHashtagLows        = (args.length > 6 ? args[6]+"/hashtag_lows" : "");
-        final String outputHashtagPeeks       = (args.length > 6 ? args[6]+"/hashtag_peeks" : "");
-        final String outputHashtagLifespan    = (args.length > 6 ? args[6]+"/hashtag_lifespan" : "");
-        int outputFilesCount = 9;
+//        final String outputHashtagCount       = (args.length > 6 ? args[6]+"/hashtag_count" : "");
+//        final String outputHashtagLows        = (args.length > 6 ? args[6]+"/hashtag_lows" : "");
+//        final String outputHashtagPeeks       = (args.length > 6 ? args[6]+"/hashtag_peeks" : "");
+//        final String outputHashtagLifespan    = (args.length > 6 ? args[6]+"/hashtag_lifespan" : "");
+//        int outputFilesCount = 9;
 
         /*
          * Load Data
@@ -75,9 +77,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(tweets)
                 .name("Tokenize Lines")
                 .build();
-        tokenizeMapper.getCompilerHints().setAvgBytesPerRecord(105);
-        tokenizeMapper.getCompilerHints().setUniqueField(new FieldSet(0));
-        tokenizeMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+        //tokenizeMapper.getCompilerHints().setAvgBytesPerRecord(105);
+        //tokenizeMapper.getCompilerHints().setUniqueField(new FieldSet(0));
+        //tokenizeMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
 
 
 
@@ -88,9 +90,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(dates)
                 .name("Tokenize Dates")
                 .build();
-        datesMapper.getCompilerHints().setAvgBytesPerRecord(50);
-        datesMapper.getCompilerHints().setUniqueField(new FieldSet(0));
-        datesMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+        //datesMapper.getCompilerHints().setAvgBytesPerRecord(50);
+        //datesMapper.getCompilerHints().setUniqueField(new FieldSet(0));
+        //datesMapper.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
 
 
         FileDataSource dict = new FileDataSource(TextInputFormat.class, dictionaryInput, "English words");
@@ -100,9 +102,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(dict)
                 .name("Load dictionary")
                 .build();
-        dictionaryMap.getCompilerHints().setAvgBytesPerRecord(10);
-        dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
-        dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
+        //dictionaryMap.getCompilerHints().setAvgBytesPerRecord(10);
+        //dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
+        //dictionaryMap.getCompilerHints().setUniqueField(new FieldSet(0));
 
 
         FileDataSource hashtags = new FileDataSource(TextInputFormat.class, hashtagInput, "Hashtags");
@@ -112,22 +114,11 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(hashtags)
                 .name("Load Hashtags")
                 .build();
-<<<<<<< .merge_file_bdvSUJ
 
-//        FileDataSource hashtags = new FileDataSource(RecordInputFormat.class, hashtagInput, "Hashtags");
-//        hashtags.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
-//        hashtags.setDegreeOfParallelism(noSubTasks);
-//        hashtags.getCompilerHints().setUniqueField(new FieldSet(0));
-//        RecordInputFormat.configureRecordFormat(hashtags)
-//                .recordDelimiter('\n')
-//                .fieldDelimiter(',')
-//                .field(DecimalTextLongParser.class, 0)
-//                .field(DecimalTextIntParser.class, 1);
-=======
-        loadHashtags.getCompilerHints().setAvgBytesPerRecord(35);
-        loadHashtags.getCompilerHints().setUniqueField(new FieldSet(0));
-        loadHashtags.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
->>>>>>> .merge_file_glVZXi
+//        loadHashtags.getCompilerHints().setAvgBytesPerRecord(35);
+//        loadHashtags.getCompilerHints().setUniqueField(new FieldSet(0));
+//        loadHashtags.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+
 
 
         /*
@@ -140,20 +131,20 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input2(datesMapper)
                 .name("Join tweets and dates")
                 .build();
-        datedTweets.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
-        datedTweets.getCompilerHints().setAvgBytesPerRecord(130);
+        //datedTweets.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //datedTweets.getCompilerHints().setAvgBytesPerRecord(130);
 
         MapContract cleanText = MapContract.builder(CleanTextMap.class)
                 .input(datedTweets)
                 .name("Clean Tweets")
                 .build();
-        cleanText.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //cleanText.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
 
         MapContract sentimentAnalysis = MapContract.builder(SentimentAnalysisMap.class)
                 .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
-        sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
 
         MapContract splitSentence = MapContract.builder(SplitSentenceMap.class)
                 .input(cleanText)
@@ -177,12 +168,12 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Filter English Tweets")
                 .build();
         dictionaryFilter.setParameter(WORDS_TRESHOLD, wordTreshold);
-        dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerStubCall(0.2f);
+        //dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerStubCall(0.2f);
 
         MatchContract tweetPolarityMatch = MatchContract.builder(TweetPolarityMatch.class, PactLong.class, 0, 0)
                 .input1(dictionaryFilter)
                 .input2(sentimentAnalysis)
-                .name("Tweet Polairty Match")
+                .name("Tweet Polarity Match")
                 .build();
 
         MapContract userExtract = MapContract.builder(UserExtractMap.class)
@@ -213,29 +204,31 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input2(loadHashtags)
                 .name("Hashtag User Match")
                 .build();
-        
+
         ReduceContract countHashtagUsers = new ReduceContract.Builder(CountHashtagUsersReduce.class, PactString.class, 0)
+                .keyField(PactInteger.class, 1)
                 .input(hashtagUserMatch)
                 .name("Count hastag users")
                 .build();
-//
-//        MatchContract hashtagPolarityMatch = MatchContract.builder(HashtagPolarityMatch.class, PactLong.class, 0, 0)
-//                .input1(timePolarity)
-//                .input2(loadHashtags)
-//                .name("Hashtag Polarity Match")
-//                .build();
-//
-//
+
+
+        MatchContract hashtagPolarityMatch = MatchContract.builder(HashtagPolarityMatch.class, PactLong.class, 0, 0)
+                .input1(timePolarity)
+                .input2(loadHashtags)
+                .name("Hashtag Polarity Match")
+                .build();
 //
 //        ReduceContract sumHashtagPolarity = new ReduceContract.Builder(SumHashtagPolarityReduce.class, PactString.class, 0)
+//                .keyField(PactInteger.class, 1)
 //                .input(hashtagPolarityMatch)
 //                .name("Sum Hashtag polarities")
 //                .build();
 //
-//        ReduceContract countHashtagTweets = new ReduceContract.Builder(CountHashtagTweetsReduce.class, PactString.class, 0)
-//                .input(hashtagPolarityMatch)
-//                .name("Count Hashtag Tweets")
-//                .build();
+        ReduceContract countHashtagTweets = new ReduceContract.Builder(CountHashtagTweetsReduce.class, PactString.class, 0)
+                .keyField(PactInteger.class, 1)
+                .input(hashtagPolarityMatch)
+                .name("Count Hashtag Tweets")
+                .build();
 //
 //        //NB reduce on key 1
 //        ReduceContract countAllHashtagTweets = ReduceContract.builder(CountAllHashtagTweetsReduce.class)
@@ -246,6 +239,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 //
 //
 //        CoGroupContract timestampPolarityGroup = CoGroupContract.builder(HashtagPolarityCoGroup.class, PactString.class, 0, 0)
+//                .keyField(PactInteger.class, 1,1)
 //                .input1(countHashtagTweets)
 //                .input2(sumHashtagPolarity)
 //                .name("Compute mean Divergence")
@@ -295,7 +289,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[3];
+        FileDataSink[] outputs = new FileDataSink[5];
         int i = 0;
 
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");
@@ -329,29 +323,29 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactString.class, 0)
                 .field(PactInteger.class, 1)
                 .field(PactInteger.class, 2);
+
+        i++; //timestampPolarityGroup
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagSentiment, hashtagPolarityMatch, "Hahtag Polarities ");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactString.class, 0)
+                .field(PactInteger.class, 1)
+                .field(PactDouble.class, 2)
+                .field(PactDouble.class, 3)
+                .field(PactDouble.class, 4);
 //
-//        i++;
-//        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagSentiment, timestampPolarityGroup, "Hahtag Polairties ");
-//        RecordOutputFormat.configureRecordFormat(outputs[i])
-//                .recordDelimiter('\n')
-//                .fieldDelimiter('\t')
-//                .lenient(true)
-//                .field(PactString.class, 0)
-//                .field(PactInteger.class, 1)
-//                .field(PactDouble.class, 2)
-//                .field(PactDouble.class, 3)
-//                .field(PactDouble.class, 4);
 //
-//
-//        i++;
-//        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
-//        RecordOutputFormat.configureRecordFormat(outputs[i])
-//                .recordDelimiter('\n')
-//                .fieldDelimiter('\t')
-//                .lenient(true)
-//                .field(PactString.class, 0)
-//                .field(PactInteger.class, 1)
-//                .field(PactInteger.class, 2);
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactString.class, 0)
+                .field(PactInteger.class, 1)
+                .field(PactInteger.class, 2);
 //
 //
 //        i++;

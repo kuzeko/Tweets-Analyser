@@ -29,5 +29,6 @@ public class UserTweetExtractMap extends MapStub {
         pr2.setField(1, pr.getField(1, PactInteger.class ));
         pr2.setField(2, pr.getField(4, PactString.class ));
         records.collect(pr2);
+        System.out.printf("UM %s\n", pr2.getField(0, PactLong.class));
     }
 }

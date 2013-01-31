@@ -4,6 +4,7 @@ import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
+import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.regex.Matcher;
@@ -27,7 +28,7 @@ public class CleanTextMap extends MapStub {
     private Pattern pHash = Pattern.compile("#");
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {        
+    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
         tweet = pr.getField(2, PactString.class);
         String text = tweet.getValue();
 

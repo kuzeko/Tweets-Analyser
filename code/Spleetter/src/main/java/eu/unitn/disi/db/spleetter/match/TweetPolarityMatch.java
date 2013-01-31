@@ -5,6 +5,7 @@ import eu.stratosphere.pact.common.stubs.MatchStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
+import eu.stratosphere.pact.common.type.base.PactLong;
 
 /**
  * Joins the cleaned english tweets with their correspondent polarities
@@ -32,7 +33,7 @@ public class TweetPolarityMatch extends MatchStub {
         englishTweet.setField(5, negPolarity);
         englishTweet.setField(6, posPolarity);
         records.collect(englishTweet);
-
+        System.out.printf("PM %s\n", englishTweet.getField(0, PactLong.class));
     }
 
 }

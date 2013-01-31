@@ -23,7 +23,7 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class TweetDateMatch extends MatchStub {
     private PactRecord output = new PactRecord(5);
-    
+
     @Override
     public void match(PactRecord tweet, PactRecord tweetDate, Collector<PactRecord> records) throws Exception {
         output.setField(0, tweet.getField(0, PactLong.class));
@@ -32,13 +32,6 @@ public class TweetDateMatch extends MatchStub {
         output.setField(3, tweet.getField(3, PactInteger.class));
         output.setField(4, tweetDate.getField(2, PactString.class));
         records.collect(output);
-//        System.out.printf("%d,%d,%s,%d,%s\n", 
-//                output.getField(0, PactLong.class).getValue(),
-//                output.getField(1, PactInteger.class).getValue(),
-//                output.getField(2, PactString.class).getValue(),
-//                output.getField(3, PactInteger.class).getValue(),
-//                output.getField(4, PactString.class).getValue()
-//                );
     }
 
 }
