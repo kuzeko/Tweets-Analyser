@@ -26,7 +26,6 @@ public class HashtagUserMatch extends MatchStub {
         pr2.setField(0, userTweet.getField(2, PactString.class));
         pr2.setField(1, hashtagRecord.getField(1, PactInteger.class));
         pr2.setField(2, userTweet.getField(1, PactInteger.class));
-        System.out.printf("HUM %s\n", pr2.getField(0, PactString.class));
         records.collect(pr2);
     }
 

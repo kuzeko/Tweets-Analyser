@@ -64,7 +64,5 @@ public class CountHashtagUsersReduce extends ReduceStub {
         pr2.setField(1, pr.getField(1, PactInteger.class));
         pr2.setField(2, numDistinctUsers);
         records.collect(pr2);
-
-        System.out.printf("UC %s\n", pr2.getField(0, PactLong.class));
     }
 }

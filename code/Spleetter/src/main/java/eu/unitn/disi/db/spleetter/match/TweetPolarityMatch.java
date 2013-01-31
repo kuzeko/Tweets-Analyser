@@ -33,7 +33,6 @@ public class TweetPolarityMatch extends MatchStub {
         englishTweet.setField(5, negPolarity);
         englishTweet.setField(6, posPolarity);
         records.collect(englishTweet);
-        System.out.printf("PM %s\n", englishTweet.getField(0, PactLong.class));
     }
 
 }

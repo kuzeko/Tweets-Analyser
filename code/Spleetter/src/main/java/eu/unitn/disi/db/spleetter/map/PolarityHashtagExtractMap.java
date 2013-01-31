@@ -31,15 +31,5 @@ public class PolarityHashtagExtractMap extends MapStub {
         pr2.setField(3, pr.getField(5, PactDouble.class ));
         pr2.setField(4, pr.getField(6, PactDouble.class ));
         records.collect(pr2);
-        System.out.printf("PHM %s\n", pr2.getField(0, PactLong.class));
-//        System.out.printf("%d,%d,%s,%d,%s\n",
-//                output.getField(0, PactLong.class).getValue(),
-//                output.getField(1, PactInteger.class).getValue(),
-//                output.getField(2, PactString.class).getValue(),
-//                output.getField(3, PactInteger.class).getValue(),
-//                output.getField(4, PactString.class).getValue()
-//                );
-
-
     }
 }

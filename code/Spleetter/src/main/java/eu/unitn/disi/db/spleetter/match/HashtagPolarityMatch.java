@@ -30,6 +30,7 @@ public class HashtagPolarityMatch extends MatchStub {
         pr2.setField(2, tweetRecord.getField(3, PactDouble.class));
         pr2.setField(3, tweetRecord.getField(4, PactDouble.class));
         records.collect(pr2);
+        System.out.printf("HPM %s\n", pr2.getField(0, PactString.class));
 
     }
 
