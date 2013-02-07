@@ -21,7 +21,7 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.ConstantFields(fields = {0,1})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class PolarityHashtagExtractMap extends MapStub {
-    private PactRecord pr2 = new PactRecord(1);
+    private PactRecord pr2 = new PactRecord(5);
 
     @Override
     public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
