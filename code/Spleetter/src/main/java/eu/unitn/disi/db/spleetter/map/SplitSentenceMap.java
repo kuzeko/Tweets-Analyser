@@ -21,7 +21,7 @@ public class SplitSentenceMap extends MapStub {
     private PactLong tid;
     private PactString word = new PactString();
     private StringUtils.WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
-    private PactRecord output = new PactRecord();
+    private PactRecord output = new PactRecord(3);
 
     @Override
     public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
