@@ -4,7 +4,7 @@
 
     <groupId>eu.unitn.disi.db</groupId>
     <artifactId>Spleetter</artifactId>
-    <version>0.1</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
 
     <name>Spleetter</name>
@@ -43,7 +43,7 @@
             <artifactId>senti-strength</artifactId>
             <version>1.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>eu.stratosphere</groupId>
             <artifactId>nephele-common</artifactId>
