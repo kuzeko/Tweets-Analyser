@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * 3 - number of words
  */
 @StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class LoadTweetMap extends MapStub {
     // initialize reusable mutable objects
 

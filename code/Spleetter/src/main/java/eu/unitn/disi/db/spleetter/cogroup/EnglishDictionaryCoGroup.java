@@ -18,7 +18,7 @@ import java.util.Iterator;
  */
 @StubAnnotation.ConstantFieldsFirst(fields = {})
 @StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
+@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class EnglishDictionaryCoGroup extends CoGroupStub {        
     private PactInteger one = new PactInteger(1);
     private PactRecord outputRecord  = new PactRecord();
@@ -36,6 +36,6 @@ public class EnglishDictionaryCoGroup extends CoGroupStub {
                 outputRecord.setField(1, one);
                 records.collect(outputRecord);
             }
-        }             
+        }
     }
 }
