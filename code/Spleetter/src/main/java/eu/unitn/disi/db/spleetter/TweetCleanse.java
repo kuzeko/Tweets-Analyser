@@ -49,6 +49,29 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
 
+    /*
+     * Profiling variables
+     */
+    public static final boolean LoadDictionaryMapLog        = false;  // LDM
+    public static final boolean LoadTweetMapLog             = false;  // LTM
+    public static final boolean LoadTweetDatesMapLog        = false;  // LTD
+    public static final boolean LoadHashtagMapLog           = false;  // LHM
+    public static final boolean EnglishDictionaryCoGroupLog = false;  // EDCG
+    public static final boolean CountEnglishWordsReduceLog  = true;   // CEWR
+    public static final boolean CleanTextMapLog             = true;   // CTM
+    public static final boolean DictionaryFilterMatchLog    = true;   // DFM
+    public static final boolean SplitSentenceMapLog         = false;
+    public static final boolean SentimentAnalysisMapLog     = true;   // SAM
+    public static final boolean TweetPolarityMatchLog       = true ;  // TPM
+    public static final boolean TweetDateMatchLog           = false;
+
+    public static final boolean HashtagPolarityMatchLog     = false;
+
+
+
+
+
+
     @Override
     public Plan getPlan(String... args) {
         int noSubTasks          = (args.length > 0 ? Integer.parseInt(args[0]) : 1);

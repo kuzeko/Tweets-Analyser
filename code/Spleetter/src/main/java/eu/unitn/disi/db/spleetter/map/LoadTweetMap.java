@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +58,11 @@ public class LoadTweetMap extends MapStub {
         this.outputRecord.setField(1, uid);
         this.outputRecord.setField(2, tweet);
         this.outputRecord.setField(3, numWords);
+
+
+        if(TweetCleanse.LoadTweetMapLog){
+            System.out.printf("LTM out\n");
+        }
         collector.collect(this.outputRecord);
     }
 }

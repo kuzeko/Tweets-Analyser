@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 
 
 /**
@@ -33,6 +34,12 @@ public class LoadHashtagMap extends MapStub {
 
         outputRecord.setField(0, tid);
         outputRecord.setField(1, hid);
+
+        if(TweetCleanse.LoadHashtagMapLog){
+            System.out.printf("LHM out\n");
+        }
+
+
         records.collect(outputRecord);
     }
 }

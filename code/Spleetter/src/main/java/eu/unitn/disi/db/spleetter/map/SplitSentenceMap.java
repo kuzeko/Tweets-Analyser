@@ -6,6 +6,7 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 
 /**
@@ -31,6 +32,11 @@ public class SplitSentenceMap extends MapStub {
         while (tokenizer.next(word)) {
             output.setField(0, word);
             output.setField(1, tid);
+
+            if(TweetCleanse.SplitSentenceMapLog){
+              System.out.printf("SSM out\n");
+            }
+
             records.collect(output);
         }
     }

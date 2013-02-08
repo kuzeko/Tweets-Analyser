@@ -4,8 +4,8 @@ import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +46,11 @@ public class CleanTextMap extends MapStub {
         if (text != null) {
             tweet.setValue(text);
             pr.setField(2, tweet);
+
+            if(TweetCleanse.CleanTextMapLog){
+              System.out.printf("CTM out\n");
+            }
+
             records.collect(pr);
         }
     }

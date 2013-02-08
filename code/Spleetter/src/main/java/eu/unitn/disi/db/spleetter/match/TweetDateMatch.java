@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 
 /**
  * Joins the tweet record with its corresponding date
@@ -31,6 +32,10 @@ public class TweetDateMatch extends MatchStub {
         output.setField(2, tweet.getField(2, PactString.class));
         output.setField(3, tweet.getField(3, PactInteger.class));
         output.setField(4, tweetDate.getField(2, PactString.class));
+        if(TweetCleanse.TweetDateMatchLog){
+            System.out.printf("TDM out\n");
+        }
+
         records.collect(output);
     }
 

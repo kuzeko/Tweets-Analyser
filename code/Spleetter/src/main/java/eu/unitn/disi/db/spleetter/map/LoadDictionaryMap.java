@@ -5,6 +5,7 @@ import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 
 /**
@@ -22,6 +23,11 @@ public class LoadDictionaryMap extends MapStub {
         word = pr.getField(0, PactString.class);
         StringUtils.toLowerCase(word);
         pr.setField(0, word);
+
+        if(TweetCleanse.LoadDictionaryMapLog){
+            System.out.printf("LDM out\n");
+        }
+
         records.collect(pr);
     }
 }

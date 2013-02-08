@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,10 @@ public class LoadTweetDatesMap extends MapStub {
         this.outputRecord.setField(0, tid);
         this.outputRecord.setField(1, uid);
         this.outputRecord.setField(2, timestampH);
+        if(TweetCleanse.LoadTweetDatesMapLog){
+            System.out.printf("LTD out\n");
+        }
+
         collector.collect(this.outputRecord);
     }
 }

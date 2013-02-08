@@ -5,6 +5,8 @@ import eu.stratosphere.pact.common.stubs.ReduceStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.pact.common.type.base.PactLong;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
 
 /**
@@ -32,6 +34,10 @@ public class CountEnglishWordsReduce extends ReduceStub {
         }
         numWords.setValue(sum);
         pr.setField(1, numWords);
+        if(TweetCleanse.CountEnglishWordsReduceLog){
+          System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+        }
+
         records.collect(pr);
     }
 }

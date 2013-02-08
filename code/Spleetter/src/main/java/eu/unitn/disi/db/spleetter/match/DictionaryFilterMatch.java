@@ -41,6 +41,9 @@ public class DictionaryFilterMatch extends MatchStub {
         int englishWords = english.getField(1, PactInteger.class).getValue();
         int totalWords = sentence.getField(3, PactInteger.class).getValue();
         if (englishWords/(double)totalWords > this.wordsThreshold) {
+            if(TweetCleanse.DictionaryFilterMatchLog){
+                System.out.printf("DFM out\n");
+            }
             records.collect(sentence);
         }
     }

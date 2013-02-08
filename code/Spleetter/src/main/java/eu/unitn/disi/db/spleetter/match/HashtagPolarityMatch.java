@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 
 /**
  * Joins tweets records polarities with their correspondent hashtags
@@ -29,8 +30,14 @@ public class HashtagPolarityMatch extends MatchStub {
         pr2.setField(1, hashtagRecord.getField(1, PactInteger.class));
         pr2.setField(2, tweetRecord.getField(3, PactDouble.class));
         pr2.setField(3, tweetRecord.getField(4, PactDouble.class));
+        if(TweetCleanse.HashtagPolarityMatchLog){
+            System.out.printf("HPM out %s\n", pr2.getField(0, PactString.class));
+        }
+
+
+
         records.collect(pr2);
-        System.out.printf("HPM %s\n", pr2.getField(0, PactString.class));
+
 
     }
 

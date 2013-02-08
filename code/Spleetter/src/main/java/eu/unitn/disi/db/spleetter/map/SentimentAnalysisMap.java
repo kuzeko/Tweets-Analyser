@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 
 /**
  * Analyze the polairties from the tweet text,
@@ -45,6 +46,11 @@ public class SentimentAnalysisMap extends MapStub {
             pr2.setField(1, pr.getField(1, PactInteger.class));
             pr2.setField(2, negPolarity);
             pr2.setField(3, posPolarity);
+            if(TweetCleanse.SentimentAnalysisMapLog){
+              System.out.printf("SAM out %d \n", pr2.getField(0, PactLong.class).getValue() );
+            }
+
+
             records.collect(pr2);
         }
     }
