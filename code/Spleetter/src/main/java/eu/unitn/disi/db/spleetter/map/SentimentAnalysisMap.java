@@ -34,12 +34,12 @@ public class SentimentAnalysisMap extends MapStub {
         tweet = pr.getField(2, PactString.class);
         String text = tweet.getValue();
 
-        SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
-        double[] polairties = analyzer.analyze(text);
-        negPolarity.setValue(polairties[0]);
-        posPolarity.setValue(polairties[1]);
-//        negPolarity.setValue(Math.random());
-//        posPolarity.setValue(Math.random());
+//        SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
+//        double[] polarities = analyzer.analyze(text);
+//        negPolarity.setValue(polarities[0]);
+//        posPolarity.setValue(polarities[1]);
+        negPolarity.setValue(-Math.random()*5);
+        posPolarity.setValue(Math.random()*5);
 
         if (text != null) {
             pr2.setField(0, pr.getField(0, PactLong.class));
