@@ -10,19 +10,23 @@ import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Converts a PactRecord containing one string in to multiple into a tweet record
  * containing the date of the tweet
  *
- * 0 - tweet id
- * 1 - user id
- * 2 - timestamp[h]
+ * 0 - tweet id<br />
+ * 1 - user id<br />
+ * 2 - timestamp[h]<br />
  */
 @StubAnnotation.ConstantFields(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class LoadTweetDatesMap extends MapStub {
     // initialize reusable mutable objects
+    private static final Log LOG = LogFactory.getLog(LoadTweetDatesMap.class);
+    private long counter = 0;
 
     private final PactRecord outputRecord = new PactRecord(3);
     private final PactLong tid = new PactLong();
@@ -51,10 +55,21 @@ public class LoadTweetDatesMap extends MapStub {
         this.outputRecord.setField(0, tid);
         this.outputRecord.setField(1, uid);
         this.outputRecord.setField(2, timestampH);
-        if(TweetCleanse.LoadTweetDatesMapLog){
-            System.out.printf("LTD out\n");
-        }
 
         collector.collect(this.outputRecord);
+        if(TweetCleanse.LoadTweetDatesMapLog){
+            //System.out.printf("LTD out\n");
+            this.counter++;
+        }
+
+
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.LoadTweetDatesMapLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
     }
 }

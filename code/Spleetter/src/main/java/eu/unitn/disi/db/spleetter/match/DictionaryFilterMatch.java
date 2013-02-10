@@ -1,5 +1,8 @@
 package eu.unitn.disi.db.spleetter.match;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MatchStub;
@@ -13,11 +16,11 @@ import eu.unitn.disi.db.spleetter.TweetCleanse;
  * filtering them depending on the ration
  * between the number of english words present in them
  *
- * 0 - tweet id
- * 1 - user id
- * 2 - text
- * 3 - num words
- * 4 - timestamp [h]
+ * 0 - tweet id<br />
+ * 1 - user id<br />
+ * 2 - text<br />
+ * 3 - num words<br />
+ * 4 - timestamp [h]<br />
  *
  */
 @StubAnnotation.ConstantFieldsSecond(fields = {0,1,2,3,4})
@@ -25,6 +28,10 @@ import eu.unitn.disi.db.spleetter.TweetCleanse;
 public class DictionaryFilterMatch extends MatchStub {
 
     private double wordsThreshold; //	minimum ratio of english words/ totla words
+    private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
+    private long counter = 0;
+
+
 
     /**
     * Reads the filter literals from the configuration.
@@ -41,11 +48,20 @@ public class DictionaryFilterMatch extends MatchStub {
         int englishWords = english.getField(1, PactInteger.class).getValue();
         int totalWords = sentence.getField(3, PactInteger.class).getValue();
         if (englishWords/(double)totalWords > this.wordsThreshold) {
+            records.collect(sentence);
             if(TweetCleanse.DictionaryFilterMatchLog){
                 System.out.printf("DFM out\n");
+                this.counter++;
             }
-            records.collect(sentence);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.DictionaryFilterMatchLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
     }
 
 }

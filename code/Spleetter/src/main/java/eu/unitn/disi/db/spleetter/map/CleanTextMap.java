@@ -9,6 +9,8 @@ import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Takes as input a tweet record and return is with a clean text
@@ -22,7 +24,11 @@ import java.util.regex.Pattern;
 @StubAnnotation.ConstantFields(fields = {0,1,3,4})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
 public class CleanTextMap extends MapStub {
-    private PactString tweet = new PactString();
+
+	private static final Log LOG = LogFactory.getLog(CleanTextMap.class);
+	private long counter = 0;
+
+	private PactString tweet = new PactString();
     private Pattern pAt = Pattern.compile("(@[a-zA-Z0-9]+)");
     private Pattern pUrl = Pattern.compile("(((ht|f)tp(s?)\\://)\\S+)");
     private Pattern pHash = Pattern.compile("#");
@@ -46,12 +52,21 @@ public class CleanTextMap extends MapStub {
         if (text != null) {
             tweet.setValue(text);
             pr.setField(2, tweet);
-
+            records.collect(pr);
             if(TweetCleanse.CleanTextMapLog){
-              System.out.printf("CTM out\n");
+              //System.out.printf("CTM out\n");
+              this.counter++;
             }
 
-            records.collect(pr);
         }
     }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.CleanTextMapLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
+    }
+
 }

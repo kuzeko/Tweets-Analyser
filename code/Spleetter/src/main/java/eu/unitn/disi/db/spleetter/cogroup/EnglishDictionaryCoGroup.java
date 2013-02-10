@@ -13,6 +13,9 @@ import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * For all the english words is outputs the tweets containing it.
  * The  tweet id is assumed to be at position <code>1</code>
@@ -25,7 +28,10 @@ import java.util.Iterator;
 @StubAnnotation.ConstantFieldsSecond(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class EnglishDictionaryCoGroup extends CoGroupStub {
-    private PactInteger one = new PactInteger(1);
+    private static final Log LOG = LogFactory.getLog(EnglishDictionaryCoGroup.class);
+	private long counter = 0;
+
+	private PactInteger one = new PactInteger(1);
     private PactRecord outputRecord  = new PactRecord();
     private PactLong tid;
 
@@ -39,13 +45,20 @@ public class EnglishDictionaryCoGroup extends CoGroupStub {
                 tid = pr.getField(1, PactLong.class);
                 outputRecord.setField(0, tid);
                 outputRecord.setField(1, one);
-
-                if(TweetCleanse.EnglishDictionaryCoGroupLog){
-                  System.out.printf("EDCG out\n");
-                }
-
                 records.collect(outputRecord);
+                if(TweetCleanse.EnglishDictionaryCoGroupLog){
+                  //System.out.printf("EDCG out\n");
+                  this.counter++;
+                }
             }
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.EnglishDictionaryCoGroupLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
     }
 }
