@@ -12,7 +12,6 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,19 +28,18 @@ import org.apache.commons.logging.LogFactory;
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class EnglishDictionaryCoGroup extends CoGroupStub {
     private static final Log LOG = LogFactory.getLog(EnglishDictionaryCoGroup.class);
-	private long counter = 0;
+    private long counter = 0;
 
-	private PactInteger one = new PactInteger(1);
+    private PactInteger one = new PactInteger(1);
     private PactRecord outputRecord  = new PactRecord();
     private PactLong tid;
 
     @Override
     public void coGroup(Iterator<PactRecord> wordMatch, Iterator<PactRecord> dictMatch, Collector<PactRecord> records) {
         PactRecord pr;
-        if (dictMatch.hasNext()) {
+        if (dictMatch.hasNext() && wordMatch.hasNext()) {
             while(wordMatch.hasNext()) {
                 pr = wordMatch.next();
-
                 tid = pr.getField(1, PactLong.class);
                 outputRecord.setField(0, tid);
                 outputRecord.setField(1, one);

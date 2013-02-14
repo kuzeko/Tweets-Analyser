@@ -11,6 +11,9 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Filters the tweet record keeping only the user id
@@ -21,6 +24,8 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.ConstantFields(fields = {0,1})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class UserTweetExtractMap extends MapStub {
+    private static final Log LOG = LogFactory.getLog(UserTweetExtractMap.class);
+    private long counter = 0;
     private PactRecord pr2 = new PactRecord(3);
 
     @Override
@@ -29,5 +34,17 @@ public class UserTweetExtractMap extends MapStub {
         pr2.setField(1, pr.getField(1, PactInteger.class ));
         pr2.setField(2, pr.getField(4, PactString.class ));
         records.collect(pr2);
+        if(TweetCleanse.UserTweetExtractMapLog){
+          this.counter++;
+        }
+
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.UserTweetExtractMapLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
     }
 }

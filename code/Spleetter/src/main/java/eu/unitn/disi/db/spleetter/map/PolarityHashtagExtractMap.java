@@ -8,6 +8,9 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Filters the tweet record keeping only the tweet id, user id, timestamp and polarity
@@ -21,6 +24,8 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.ConstantFields(fields = {0,1})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class PolarityHashtagExtractMap extends MapStub {
+    private static final Log LOG = LogFactory.getLog(PolarityHashtagExtractMap.class);
+    private long counter = 0;
     private PactRecord pr2 = new PactRecord(5);
 
     @Override
@@ -31,5 +36,18 @@ public class PolarityHashtagExtractMap extends MapStub {
         pr2.setField(3, pr.getField(5, PactDouble.class ));
         pr2.setField(4, pr.getField(6, PactDouble.class ));
         records.collect(pr2);
+        if(TweetCleanse.PolarityHashtagExtractMapLog){
+          this.counter++;
+        }
+
     }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.PolarityHashtagExtractMapLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
+    }
+
 }

@@ -6,6 +6,9 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Joins the tweets' first and last appearance date
@@ -19,6 +22,9 @@ import eu.stratosphere.pact.common.type.base.PactString;
 @StubAnnotation.ConstantFieldsSecond(fields = {1})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class HashtagLifespanMatch extends MatchStub {
+    private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
+    private long counter = 0;
+
     private PactRecord pr2 = new PactRecord(3);
 
     @Override
@@ -28,7 +34,18 @@ public class HashtagLifespanMatch extends MatchStub {
         pr2.setField(1, first.getField(1, PactString.class));
         pr2.setField(2, last.getField(1, PactString.class));
         records.collect(pr2);
+        if(TweetCleanse.HashtagLifespanMatchLog){
+            this.counter++;
+        }
 
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.HashtagLifespanMatchLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
     }
 
 }

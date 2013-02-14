@@ -1,8 +1,5 @@
 package eu.unitn.disi.db.spleetter.match;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import eu.stratosphere.nephele.configuration.Configuration;
 import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MatchStub;
@@ -10,6 +7,8 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Match tweets with tweets containing english words
@@ -26,10 +25,10 @@ import eu.unitn.disi.db.spleetter.TweetCleanse;
 @StubAnnotation.ConstantFieldsSecond(fields = {0,1,2,3,4})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
 public class DictionaryFilterMatch extends MatchStub {
-
-    private double wordsThreshold; //	minimum ratio of english words/ totla words
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;
+
+    private double wordsThreshold; //	minimum ratio of english words/ totla words
 
 
 
@@ -50,7 +49,7 @@ public class DictionaryFilterMatch extends MatchStub {
         if (englishWords/(double)totalWords > this.wordsThreshold) {
             records.collect(sentence);
             if(TweetCleanse.DictionaryFilterMatchLog){
-                System.out.printf("DFM out\n");
+                //System.out.printf("DFM out\n");
                 this.counter++;
             }
         }

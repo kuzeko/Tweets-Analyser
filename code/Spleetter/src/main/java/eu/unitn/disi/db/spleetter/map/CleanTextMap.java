@@ -25,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
 public class CleanTextMap extends MapStub {
 
-	private static final Log LOG = LogFactory.getLog(CleanTextMap.class);
-	private long counter = 0;
+    private static final Log LOG = LogFactory.getLog(CleanTextMap.class);
+    private long counter = 0;
 
-	private PactString tweet = new PactString();
+    private PactString tweet = new PactString();
     private Pattern pAt = Pattern.compile("(@[a-zA-Z0-9]+)");
     private Pattern pUrl = Pattern.compile("(((ht|f)tp(s?)\\://)\\S+)");
     private Pattern pHash = Pattern.compile("#");

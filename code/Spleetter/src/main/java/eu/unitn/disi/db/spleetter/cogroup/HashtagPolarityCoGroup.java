@@ -10,8 +10,11 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For each timestamp and each hashtag it computes the mean of the polarity values
@@ -26,6 +29,8 @@ import java.util.Iterator;
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
 public class HashtagPolarityCoGroup extends CoGroupStub {
     private HashMap<Integer, Integer> hashtagTweetsCount = new HashMap<Integer, Integer>();
+    private static final Log LOG = LogFactory.getLog(HashtagPolarityCoGroup.class);
+    private long counter = 0;
 
     @Override
     public void coGroup(Iterator<PactRecord> hashtagTweetsSum, Iterator<PactRecord> hashtagPolarities, Collector<PactRecord> records) {
@@ -72,8 +77,20 @@ public class HashtagPolarityCoGroup extends CoGroupStub {
                 pr.setField(4, divergence);
 
                 records.collect(pr);
+                if(TweetCleanse.HashtagPolarityCoGroupLog){
+                  this.counter++;
+                }
 
             }
         }
     }
+
+    @Override
+    public void close() throws Exception {
+        if(TweetCleanse.HashtagPolarityCoGroupLog){
+            LOG.fatal(counter);
+        }
+    	super.close();
+    }
+
 }

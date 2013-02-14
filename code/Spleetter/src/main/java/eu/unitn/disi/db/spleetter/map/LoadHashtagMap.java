@@ -8,6 +8,8 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -18,6 +20,10 @@ import eu.unitn.disi.db.spleetter.TweetCleanse;
 @StubAnnotation.ConstantFields(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
 public class LoadHashtagMap extends MapStub {
+
+    private static final Log LOG = LogFactory.getLog(LoadHashtagMap.class);
+    private long counter = 0;
+
 
     private PactRecord outputRecord = new PactRecord();
     private PactLong tid = new PactLong();
@@ -35,11 +41,18 @@ public class LoadHashtagMap extends MapStub {
         outputRecord.setField(0, tid);
         outputRecord.setField(1, hid);
 
-        if(TweetCleanse.LoadHashtagMapLog){
-            System.out.printf("LHM out\n");
-        }
-
-
         records.collect(outputRecord);
+        if (TweetCleanse.LoadHashtagMapLog) {
+            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            this.counter++;
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (TweetCleanse.LoadHashtagMapLog) {
+            LOG.fatal(counter);
+        }
+        super.close();
     }
 }

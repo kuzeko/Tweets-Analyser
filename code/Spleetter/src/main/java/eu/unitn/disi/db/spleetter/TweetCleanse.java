@@ -28,6 +28,7 @@ import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
 import eu.unitn.disi.db.spleetter.match.DictionaryFilterMatch;
+import eu.unitn.disi.db.spleetter.match.HashtagLifespanMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagPolarityMatch;
 import eu.unitn.disi.db.spleetter.match.HashtagUserMatch;
 import eu.unitn.disi.db.spleetter.match.TweetDateMatch;
@@ -37,6 +38,10 @@ import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
+import eu.unitn.disi.db.spleetter.reduce.HashtagFirstAppearanceReduce;
+import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
+import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
+import eu.unitn.disi.db.spleetter.reduce.HashtagPeeksReduce;
 import eu.unitn.disi.db.spleetter.reduce.SumHashtagPolarityReduce;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,23 +57,24 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     /*
      * Profiling variables
      */
-    public static final boolean LoadDictionaryMapLog        = false;  // LDM
-    public static final boolean LoadTweetMapLog             = false;  // LTM
-    public static final boolean LoadTweetDatesMapLog        = false;  // LTD
-    public static final boolean LoadHashtagMapLog           = false;  // LHM
-    public static final boolean EnglishDictionaryCoGroupLog = false;  // EDCG
-    public static final boolean CountEnglishWordsReduceLog  = true;   // CEWR
-    public static final boolean CleanTextMapLog             = true;   // CTM
-    public static final boolean DictionaryFilterMatchLog    = true;   // DFM
-    public static final boolean SplitSentenceMapLog         = false;
-    public static final boolean SentimentAnalysisMapLog     = true;   // SAM
-    public static final boolean TweetPolarityMatchLog       = true ;  // TPM
-    public static final boolean TweetDateMatchLog           = false;
-
-    public static final boolean HashtagPolarityMatchLog     = false;
-
-
-
+    public static final boolean LoadDictionaryMapLog          = false;  // LDM
+    public static final boolean LoadTweetMapLog               = false;  // LTM
+    public static final boolean LoadTweetDatesMapLog          = false;  // LTD
+    public static final boolean LoadHashtagMapLog             = false;  // LHM
+    public static final boolean EnglishDictionaryCoGroupLog   = true;  // EDCG
+    public static final boolean CountEnglishWordsReduceLog    = true;   // CEWR
+    public static final boolean CleanTextMapLog               = true;   // CTM
+    public static final boolean DictionaryFilterMatchLog      = true;   // DFM
+    public static final boolean SplitSentenceMapLog           = false;
+    public static final boolean SentimentAnalysisMapLog       = true;   // SAM
+    public static final boolean TweetPolarityMatchLog         = true ;  // TPM
+    public static final boolean TweetDateMatchLog             = true;
+    public static final boolean HashtagPolarityCoGroupLog     = true;
+    public static final boolean HashtagPolarityMatchLog       = false;
+    public static final boolean PolarityHashtagExtractMapLog  = false;
+    public static final boolean UserExtractMapLog             = true;
+    public static final boolean UserTweetExtractMapLog        = true;
+    public static final boolean HashtagLifespanMatchLog          = true;
 
 
 
@@ -87,9 +93,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String outputHashtagSentiment   = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_sentiment";
         String outputHashtagTweetsCount = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_tweets";
         String outputHashtagCount       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_count";
-//      String outputHashtagLows        = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lows";
-//      String outputHashtagPeeks       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_peeks";
-//      String outputHashtagLifespan    = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lifespan";
+        String outputHashtagLows        = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lows";
+        String outputHashtagPeeks       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_peeks";
+        String outputHashtagLifespan    = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lifespan";
 //        int outputFilesCount = 9;
 
         /*
@@ -271,42 +277,42 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input2(sumHashtagPolarity)
                 .name("Compute mean Divergence")
                 .build();
-//
-//        //NB reduce on key 1
-//        ReduceContract hashtagPeeks = ReduceContract.builder(HashtagPeeksReduce.class)
-//                .keyField( PactInteger.class, 1)
-//                .input(countHashtagTweets)
-//                .name("Find Hashtags Peeks")
-//                .build();
-//
-//        //NB reduce on key 1
-//        ReduceContract hashtagLows = ReduceContract.builder(HashtagLowsReduce.class)
-//                .keyField(PactInteger.class, 1)
-//                .input(countHashtagTweets)
-//                .name("Find Hashtags Low")
-//                .build();
-//
-//
-//        //NB reduce on key 1
-//        ReduceContract hashtagFirstAppearance = ReduceContract.builder(HashtagFirstAppearanceReduce.class)
-//                .keyField(PactInteger.class, 1)
-//                .input(countHashtagTweets)
-//                .name("Find Hashtag first Appearance")
-//                .build();
-//
-//
-//        //NB reduce on key 1
-//        ReduceContract hashtagLastAppearance = ReduceContract.builder(HashtagLastAppearanceReduce.class)
-//                .keyField(PactInteger.class, 1)
-//                .input(countHashtagTweets)
-//                .name("Find Hashtag last Appearance")
-//                .build();
-//
-//        MatchContract hastagLifespanMatch = MatchContract.builder(HashtagLifespanMatch.class, PactInteger.class, 0, 0)
-//                .input1(hashtagFirstAppearance)
-//                .input2(hashtagLastAppearance)
-//                .name("Compose Hashtag Time Window")
-//                .build();
+
+        //NB reduce on key 1
+        ReduceContract hashtagPeeks = ReduceContract.builder(HashtagPeeksReduce.class)
+                .keyField( PactInteger.class, 1)
+                .input(countHashtagTweets)
+                .name("Find Hashtags Peeks")
+                .build();
+
+        //NB reduce on key 1
+        ReduceContract hashtagLows = ReduceContract.builder(HashtagLowsReduce.class)
+                .keyField(PactInteger.class, 1)
+                .input(countHashtagTweets)
+                .name("Find Hashtags Low")
+                .build();
+
+
+        //NB reduce on key 1
+        ReduceContract hashtagFirstAppearance = ReduceContract.builder(HashtagFirstAppearanceReduce.class)
+                .keyField(PactInteger.class, 1)
+                .input(countHashtagTweets)
+                .name("Find Hashtag first Appearance")
+                .build();
+
+
+        //NB reduce on key 1
+        ReduceContract hashtagLastAppearance = ReduceContract.builder(HashtagLastAppearanceReduce.class)
+                .keyField(PactInteger.class, 1)
+                .input(countHashtagTweets)
+                .name("Find Hashtag last Appearance")
+                .build();
+
+        MatchContract hastagLifespanMatch = MatchContract.builder(HashtagLifespanMatch.class, PactInteger.class, 0, 0)
+                .input1(hashtagFirstAppearance)
+                .input2(hashtagLastAppearance)
+                .name("Compose Hashtag Time Window")
+                .build();
 
 
 
@@ -372,36 +378,36 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactInteger.class, 1)
                 .field(PactInteger.class, 2);
 
-//        i++;
-//        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks");
-//        RecordOutputFormat.configureRecordFormat(outputs[i])
-//                .recordDelimiter('\n')
-//                .fieldDelimiter('\t')
-//                .lenient(true)
-//                .field(PactInteger.class, 0)
-//                .field(PactString.class, 1)
-//                .field(PactInteger.class, 2);
-//
-//        i++;
-//        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLows, hashtagLows , "Hashtag Lows");
-//        RecordOutputFormat.configureRecordFormat(outputs[i])
-//                .recordDelimiter('\n')
-//                .fieldDelimiter('\t')
-//                .lenient(true)
-//                .field(PactInteger.class, 0)
-//                .field(PactString.class, 1)
-//                .field(PactInteger.class, 2);
-//
-//        i++;
-//        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLifespan, hastagLifespanMatch , "Hashtag Life Ssan");
-//        RecordOutputFormat.configureRecordFormat(outputs[i])
-//                .recordDelimiter('\n')
-//                .fieldDelimiter('\t')
-//                .lenient(true)
-//                .field(PactInteger.class, 0)
-//                .field(PactString.class, 1)
-//                .field(PactString.class, 2);
-//
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactInteger.class, 0)
+                .field(PactString.class, 1)
+                .field(PactInteger.class, 2);
+
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLows, hashtagLows , "Hashtag Lows");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactInteger.class, 0)
+                .field(PactString.class, 1)
+                .field(PactInteger.class, 2);
+
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLifespan, hastagLifespanMatch , "Hashtag Life Ssan");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactInteger.class, 0)
+                .field(PactString.class, 1)
+                .field(PactString.class, 2);
+
         i++;
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets");
         RecordOutputFormat.configureRecordFormat(outputs[i])

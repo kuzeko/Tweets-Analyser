@@ -77,11 +77,11 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
-                                    <exclude>log4j:log4j:jar:</exclude>
-                                    <exclude>commons-logging:commons-logging:</exclude>
+                                    <!-- <exclude>log4j:log4j:jar:</exclude> -->
+                                    <!-- <exclude>commons-logging:commons-logging:</exclude> -->
                                     <exclude>eu.stratosphere:pact-common:</exclude>
                                     <exclude>eu.stratosphere:nephele-common:</exclude>
-                                    <exclude>commons-codec:commons-codec</exclude>
+                                    <!--<exclude>commons-codec:commons-codec</exclude>-->
                                 </excludes>
                             </artifactSet>
                             <finalName>Spleeter-PACT-1.0</finalName>
