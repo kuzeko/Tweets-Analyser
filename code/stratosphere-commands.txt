@@ -1,1 +1,8 @@
+#100k test
 1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/1G_hashtags.csv file:///tmp/EXPORT/stats
+
+#1M test
+1 file:///tmp/EXPORT/1G_tweets.csv file:///tmp/EXPORT/1G_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats
+
+#10M test
+1 file:///tmp/EXPORT/10M_tweets.csv file:///tmp/EXPORT/10M_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats

@@ -1,1 +1,9 @@
-This is our abstract
+Twitter is the biggest micro-blogging system and users therein produce every day a 175 milion of short messages\footnote{\url{http://www.mediabistro.com/alltwitter/twitter-stats_b32050}}, namely tweets.
+The ability to perform analyses fast on the tweets is not only useful, but also vital to retrieve news and real-time statistics. 
+However, since the number of different statistics to compute on the same data is big (e.g., the hashtag trend over the time, the number of tweets per user), there is the need of performing several operations at the same time. 
+On one hand we can consider a Map-Reduce system in order to split the operations into different machines running several map and reduce steps.
+On the other hand, map and reduce paradigm may not suffice. 
+We propose to solve this problem with PACT flow, that is semantically reacher map-reduce like-system.
+Our solution is both simple and highly modular, being composed by simple operations that can be easily parallelized. 
+We show how to compute a set of interesting statistics out of 22 milion tweets downloaded in a period of two weeks, showing the polarity of each tweet and filtering the data to produce interesting analyses. 
+

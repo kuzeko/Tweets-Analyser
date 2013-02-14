@@ -33,3 +33,13 @@ report/paper.synctex.gz
 report/sig-alternate.cls
 
 report/paper.aux
+
+report/images/strato_pact_pt2.svg
+
+report/images/strato_pact_pt1.svg
+
+*.log
+
+report/paper.bbl
+
+report/paper.blg
