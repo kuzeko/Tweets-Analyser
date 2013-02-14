@@ -1,0 +1,135 @@
+\documentclass{acm_proc_article-sp}
+
+%\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{url}
+\usepackage{eufrak}
+\usepackage[colorlinks=true
+,urlcolor=black
+,anchorcolor=black
+,citecolor=black
+,filecolor=black
+,linkcolor=black
+,menucolor=black
+,pagecolor=black]{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{fancybox}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage[table]{xcolor}
+\usepackage{rotating}
+\usepackage{subfig}
+%\usepackage{program}
+%\usepackage{amsthm}
+\newcommand{\eat}[1]{}
+% allows the coloring of the background of cells and rows in tables.  
+% Use: \rowcolor[gray]{.80} or \cellcolor{grayL}
+% also you can have colorfull text. For instance: 
+% \textcolor{color}{words to be in color} 
+\usepackage{color}
+\usepackage{colortbl}
+\definecolor{Brown}{cmyk}{0, 0.8, 1, 0.6}
+%
+\renewcommand{\algorithmicfor}{\textbf{foreach}}
+\newcommand{\blackBox}{$\blacksquare$}
+\newcommand{\qset}[1]{{\mathfrak{Constrs}}(#1)}
+\newcommand{\ts}[2]{{\mathbb{TS}}_{#1}(#2)}
+%\newcommand{\qset}[1]{{\mathfrak{Conds}}$$($$#1$$)$}
+ 
+
+
+
+\DeclareCaptionType{copyrightbox}
+\newdef{theorem}{Theorem}
+\newdef{problem}{Problem definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+
+\begin{document}
+\title{Spleetter: a PACT-based Twitter Parser and Analyzer}
+
+
+\numberofauthors{2} 
+\author{
+\alignauthor
+Matteo Lissandrini\\
+       \affaddr{University of Trento}\\
+%       \affaddr{UNITN}\\
+       \email{{\small ml@disi.unitn.eu}}
+\alignauthor
+Davide Mottin\\
+      \affaddr{University of Trento}\\
+%       \affaddr{UNITN}\\
+       \email{{\small mottin@disi.unitn.eu}}
+}
+
+
+\maketitle
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+\maketitle
+%Abstract
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+% A category with the (minimum) three required fields
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%%A category including the fourth, optional field follows...
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+%
+%\terms{Todo}
+%
+\keywords{Twitter, Stratosphere, Data Analysis, Sentiment Analysis}
+
+\input{introduction}
+\input{motivation}
+\input{solution}
+\input{experiments}
+\input{conclusion}
+
+%\nocite{Garey:1990:CIG:574848}
+%\nocite{amer2004}
+
+%\appendix
+%\input{thoughts}
+%\input{problem}
+%\balancecolumns
+
+%\clearpage
+
+\def\thebibliography#1{
+  \section*{References}
+ %\normalsize                  % smaller; put \normalsize after bib --dt
+ %\small
+ \scriptsize
+  \list
+    {[\arabic{enumi}]}
+    {\settowidth\labelwidth{[#1]}
+     \leftmargin\labelwidth
+     \parsep 1pt                % tighter --dt
+     \itemsep 0.6pt               % tighter --dt
+     \advance\leftmargin\labelsep
+     \usecounter{enumi}
+    }
+  \def\newblock{\hskip .11em plus .33em minus .07em}
+  \sloppy\clubpenalty10000\widowpenalty10000
+  \sfcode`\.=1000\relax
+}
+\bibliographystyle{abbrv}
+\bibliography{paperbib}  
+
+
+\end{document}

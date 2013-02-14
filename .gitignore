@@ -21,3 +21,15 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
+
+report/paper.log
+
+report/paper.out
+
+report/model.log
+
+report/paper.synctex.gz
+
+report/sig-alternate.cls
+
+report/paper.aux
