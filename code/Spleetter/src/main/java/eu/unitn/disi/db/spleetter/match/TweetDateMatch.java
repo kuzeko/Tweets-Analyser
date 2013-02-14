@@ -25,11 +25,12 @@ import org.apache.commons.logging.LogFactory;
 @StubAnnotation.ConstantFieldsSecond(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class TweetDateMatch extends MatchStub {
-
     private static final Log LOG = LogFactory.getLog(TweetDateMatch.class);
     private long counter = 0;
     private PactRecord output = new PactRecord(5);
-
+    
+    
+    
     @Override
     public void match(PactRecord tweet, PactRecord tweetDate, Collector<PactRecord> records) throws Exception {
         output.setField(0, tweet.getField(0, PactLong.class));
@@ -52,4 +53,6 @@ public class TweetDateMatch extends MatchStub {
         }
         super.close();
     }
+    
+    
 }

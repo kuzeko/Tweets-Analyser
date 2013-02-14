@@ -9,7 +9,10 @@ import eu.stratosphere.pact.common.stubs.ReduceStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For each user counts the number of tweets
@@ -20,7 +23,8 @@ import java.util.Iterator;
 @StubAnnotation.ConstantFields(fields = {0})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class CountUserTweetsReduce extends ReduceStub {
-
+    private static final Log LOG = LogFactory.getLog(CountUserTweetsReduce.class);
+    private long counter = 0;
     private PactInteger numTweets = new PactInteger();
     private PactRecord pr2 = new PactRecord(2);
 
@@ -38,5 +42,17 @@ public class CountUserTweetsReduce extends ReduceStub {
         pr2.setField(0, pr.getField(0, PactInteger.class));
         pr2.setField(1, numTweets);
         records.collect(pr2);
+        if (TweetCleanse.CountUserTweetsReduceLog) {
+            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            this.counter++;
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (TweetCleanse.CountUserTweetsReduceLog) {
+            LOG.fatal(counter);
+        }
+        super.close();
     }
 }

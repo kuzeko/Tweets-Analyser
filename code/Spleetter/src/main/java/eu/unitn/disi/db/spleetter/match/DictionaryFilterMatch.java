@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 public class DictionaryFilterMatch extends MatchStub {
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;
-
     private double wordsThreshold; //	minimum ratio of english words/ totla words
 
 

@@ -6,8 +6,11 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For each hashtag emits time of peeks
@@ -19,7 +22,8 @@ import java.util.Iterator;
 @StubAnnotation.ConstantFields(fields = {2})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
 public class HashtagPeeksReduce extends ReduceStub {
-
+    private static final Log LOG = LogFactory.getLog(HashtagPeeksReduce.class);
+    private long counter = 0;
     private final PactInteger peekCount = new PactInteger();
     private final HashSet<PactString> timestamps = new HashSet<PactString>();
     private final PactRecord pr2 = new PactRecord(3);
@@ -52,7 +56,19 @@ public class HashtagPeeksReduce extends ReduceStub {
                 pr2.setField(1, timestamp);
                 pr2.setField(2, peekCount);
                 records.collect(pr2);
+                if (TweetCleanse.HashtagPeeksReduceLog) {
+                    //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+                    this.counter++;
+                }
             }
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (TweetCleanse.HashtagPeeksReduceLog) {
+            LOG.fatal(counter);
+        }
+        super.close();
     }
 }

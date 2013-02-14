@@ -7,7 +7,6 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 @StubAnnotation.ConstantFields(fields = {0})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
 public class CountEnglishWordsReduce extends ReduceStub {
-
     private static final Log LOG = LogFactory.getLog(CountEnglishWordsReduce.class);
     private long counter = 0;
     PactInteger numWords = new PactInteger();

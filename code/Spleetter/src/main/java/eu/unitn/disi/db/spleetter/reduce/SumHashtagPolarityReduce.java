@@ -11,8 +11,11 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For each timestamp, for each hashtag sums the negative, positive polairty and
@@ -27,8 +30,8 @@ import java.util.Iterator;
 @StubAnnotation.ConstantFields(fields = {0})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
 public class SumHashtagPolarityReduce extends ReduceStub {
-
-
+    private static final Log LOG = LogFactory.getLog(SumHashtagPolarityReduce.class);
+    private long counter = 0;
     private HashMap<Integer, PactDouble[]> hashtagPolarities = new HashMap<Integer, PactDouble[]>();
     private PactRecord pr2 = new PactRecord(5);
     private PactInteger pactHashtagID = new PactInteger();
@@ -85,7 +88,18 @@ public class SumHashtagPolarityReduce extends ReduceStub {
             pr2.setField(3, hashtagValues[1]);
             pr2.setField(4, hashtagValues[2]);
             records.collect(pr2);
+            if (TweetCleanse.SumHashtagPolarityReduceLog) {
+                //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+                this.counter++;
+            }
         }
+    }
 
+    @Override
+    public void close() throws Exception {
+        if (TweetCleanse.SumHashtagPolarityReduceLog) {
+            LOG.fatal(counter);
+        }
+        super.close();
     }
 }

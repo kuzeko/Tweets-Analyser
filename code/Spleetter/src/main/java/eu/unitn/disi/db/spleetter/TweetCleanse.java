@@ -57,25 +57,37 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     /*
      * Profiling variables
      */
-    public static final boolean LoadDictionaryMapLog          = false;  // LDM
-    public static final boolean LoadTweetMapLog               = false;  // LTM
-    public static final boolean LoadTweetDatesMapLog          = false;  // LTD
-    public static final boolean LoadHashtagMapLog             = false;  // LHM
+    public static final boolean LoadDictionaryMapLog          = true;  // LDM
+    public static final boolean LoadTweetMapLog               = true;  // LTM
+    public static final boolean LoadTweetDatesMapLog          = true;  // LTD
+    public static final boolean LoadHashtagMapLog             = true;  // LHM
     public static final boolean EnglishDictionaryCoGroupLog   = true;  // EDCG
     public static final boolean CountEnglishWordsReduceLog    = true;   // CEWR
     public static final boolean CleanTextMapLog               = true;   // CTM
     public static final boolean DictionaryFilterMatchLog      = true;   // DFM
-    public static final boolean SplitSentenceMapLog           = false;
+    public static final boolean SplitSentenceMapLog           = true;
     public static final boolean SentimentAnalysisMapLog       = true;   // SAM
     public static final boolean TweetPolarityMatchLog         = true ;  // TPM
     public static final boolean TweetDateMatchLog             = true;
     public static final boolean HashtagPolarityCoGroupLog     = true;
-    public static final boolean HashtagPolarityMatchLog       = false;
-    public static final boolean PolarityHashtagExtractMapLog  = false;
+    public static final boolean HashtagPolarityMatchLog       = true;
+    public static final boolean PolarityHashtagExtractMapLog  = true;
     public static final boolean UserExtractMapLog             = true;
     public static final boolean UserTweetExtractMapLog        = true;
-    public static final boolean HashtagLifespanMatchLog          = true;
-
+    public static final boolean HashtagLifespanMatchLog       = true;
+    public static final boolean HashtagUserMatchLog           = true;
+    public static final boolean CountAllHashtagTweetsReduceLog = true;
+    public static final boolean CountHashtagTweetsReduceLog   = true;
+    public static final boolean CountHashtagUsersReduceLog    = true;
+    public static final boolean CountUserTweetsReduceLog      = true;
+    public static final boolean HashtagFirstAppearanceReduceLog = true;
+    public static final boolean HashtagLastAppearanceReduceLog = true;
+    public static final boolean HashtagLowsReduceLog          = true;
+    public static final boolean HashtagPeeksReduceLog         = true;
+    public static final boolean SumHashtagPolarityReduceLog   = true;
+    
+    
+    
 
 
     @Override
@@ -322,7 +334,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[6];
+        FileDataSink[] outputs = new FileDataSink[9];
         int i = 0;
 
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");

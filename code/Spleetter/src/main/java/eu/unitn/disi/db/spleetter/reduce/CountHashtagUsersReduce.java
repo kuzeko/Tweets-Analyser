@@ -11,9 +11,12 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
+import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * For each timestamp, for each hashtag count the number of distinct users
@@ -25,7 +28,8 @@ import java.util.Iterator;
 @StubAnnotation.ConstantFields(fields = {0,1})
 @StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
 public class CountHashtagUsersReduce extends ReduceStub {
-
+    private static final Log LOG = LogFactory.getLog(CountHashtagUsersReduce.class);
+    private long counter = 0;
     private PactInteger numDistinctUsers = new PactInteger();
     private HashSet<PactInteger> users = new HashSet<PactInteger>();
     private PactRecord pr2 = new PactRecord(3);
@@ -64,5 +68,17 @@ public class CountHashtagUsersReduce extends ReduceStub {
         pr2.setField(1, pr.getField(1, PactInteger.class));
         pr2.setField(2, numDistinctUsers);
         records.collect(pr2);
+        if (TweetCleanse.CountHashtagUsersReduceLog) {
+            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            this.counter++;
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (TweetCleanse.CountHashtagUsersReduceLog) {
+            LOG.fatal(counter);
+        }
+        super.close();
     }
 }
