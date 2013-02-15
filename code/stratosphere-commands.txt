@@ -6,3 +6,7 @@
 
 #10M test
 1 file:///tmp/EXPORT/10M_tweets.csv file:///tmp/EXPORT/10M_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats
+
+#20M test
+1 file:///tmp/EXPORT/20M_tweets.csv file:///tmp/EXPORT/20M_dates_all.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats
+

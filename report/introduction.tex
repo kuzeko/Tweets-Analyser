@@ -1,15 +1,31 @@
 \section{Introduction}
 \label{sec:introduction}
 
-The ability to perform various statistical analyses with twitter has been attracted many research in the last few years~\cite{Hong:2012qy,Lehmann:2012kx} and used to influence politics~\cite{Tumasjan:2010vn} and advertising~\cite{Bakshy:2011ys}. 
+The ability to perform various statistical analyses with Twitter has been attracted many research in the last few years~\cite{Hong:2012qy,Lehmann:2012kx} and used to influence politics~\cite{Tumasjan:2010vn} and advertising~\cite{Bakshy:2011ys}. 
 This important trend must be taken into account, but the huge amount of information per day cannot be processed by a single machine. 
+
 To this end, we propose a schema based on PACT paradigm implemented in Stratosphere, that is a enhanced map-reduce system able, to mix second order functions. 
-Our goal is to conduct an analysis of a big dataset, automatically downloaded using the Twitter streaming APIs. 
+Our goal is to conduct an analysis of a big dataset, automatically downloaded using the Twitter streaming APIs.
+We propose a PACT flow or program\footnote{here flow or program are used interchangeably} that takes in input a set of tuples, having tweets and user ids, a set of users and a vocabulary and produces several statistcs. 
+We now describe the basic structure of Twitter system and an highlight of the proposed solution discussed in Section~\ref{sec:solution}. 
 
+\subsection{Twitter structure}
+Twitter is a micro-blogging system designed to allow users to send short messages having a maximum of 140 characters, called \textit{tweets}. 
+In the text, users are allowed to specify \textit{hashtags} that are sequence of characters usually describing an argument and marked by the character '\#'. 
+Users can also reference other users with '@user' notation. 
+A particular kind of reference is a \textit{retweet} which is a tweet preceded by the user name that first posted the message. 
+The last information in the tweets are the urls, that are usually shortened using some available URL shortener. 
 
+\subsection{Proposed solution}
+We aim to find information regarding user post trends, polarity of the tweets with respect to the time, topic trends. 
+The set of operations we propose to implement using the PACT programming is the following:  
 \begin{itemize}
-
-\item \textbf{Dictionary Cleansing}
-\item \textbf{Polarity extraction}
-
+\item \textbf{Tweet Cleansing}: we take in input the tuples containing the tweets and a dictionary of english words and we filter out hashtags, user mentions and tweets having a number of english words less than a threshold. The cleaned data are then use throughout the rest of the flow. 
+\item \textbf{Polarity extraction}: we use a well-known library for sentiment analysis to extract the general polarity of each tweet. The polarity is defined as value between $[-5,5]$, where a postive number means that the user is talking about something in a favorable manner. Conversely, if a text has a polarity close to $-5$ the words in the text are dissenting. 
+%\item \textbf{User Analysis}: we analyse a bunch of statistics, such as the number of tweets per user, the number of 
+% tweet per user/hashtag per user
+\item \textbf{Hashtag analysis}: we produce a deep analysis of the hashtags that takes into account the time in which the hashtag appeared and disappeared (not used anymore), the maximum and minimum number of mentions per hashtag with the timestamp,  
+\item \textbf{Topic Analysis}:  we perform an analysis on positive and negative trends per topic, identifying the topics with the hashtags. 
 \end{itemize}
+
+The document is structured as follows. Section~\ref{sec:data} describes the dataset we downloaded and used in our experiments. We propose a solution and describe the PACT program in detail in Section~\ref{sec:solution}. We also show the results of the analysis, with increasing size of the dataset in Section~\ref{sec:results}. Concluding, in Section~\ref{sec:issues} we describe the problems and the issues we encounterd during the development of the solution and we remark our findings.
