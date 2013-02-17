@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,12 +41,12 @@ public class SentimentAnalysisMap extends MapStub {
         tweet = pr.getField(2, PactString.class);
         String text = tweet.getValue();
 
-//        SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
-//        double[] polarities = analyzer.analyze(text);
-//        negPolarity.setValue(polarities[0]);
-//        posPolarity.setValue(polarities[1]);
-        negPolarity.setValue(-Math.random()*5);
-        posPolarity.setValue(Math.random()*5);
+        SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
+        double[] polarities = analyzer.analyze(text);
+        negPolarity.setValue(polarities[0]);
+        posPolarity.setValue(polarities[1]);
+//        negPolarity.setValue(-Math.random()*5);
+//        posPolarity.setValue(Math.random()*5);
 
         if (text != null) {
             pr2.setField(0, pr.getField(0, PactLong.class));
