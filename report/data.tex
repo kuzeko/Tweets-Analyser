@@ -1,13 +1,13 @@
 \section{Data}
 \label{sec:data}
 
-We downloaded 33 milion of US tweets from the tweet-stream using the streaming APIs\footnote{\url{https://dev.twitter.com/docs/streaming-apis}} on a period of two weeks from December 18, 2012 to January 18, 2013. 
+We downloaded 33 milion of English tweets from the tweet-stream using the streaming APIs\footnote{\url{https://dev.twitter.com/docs/streaming-apis}} on a period of approximately two weeks from December 18, 2012 to January 18, 2013~\footnote{We didn't downloaded any data durig the week between the 25-12-2012 and the 2-1-2013}. 
 A summary of the main characteristic of the dataset is represented in table~\ref{tbl:dataset}.
 The number of users is 16 milion, with an average of 2 tweets per user. 
 The number of hashtags is one order of magnitude less than the number of tweets meaning that users often talk about same topics.
-From this dataset we generated three datasets \textsc{100k-Tweets}, \textsc{1M-Tweets}, \textsc{10M-Tweets} with 100k,1 milion and 10 milion tweets respectively, in order to test performance with various sizes. 
-We also downloaded a dictionary of 213k English words to filter the meanngful tweets from those irrelevant or containing only symbols. 
-To perform the sentiment analysis and (i.e., to assign a positive or negative polarity to the tweets) we used the senti-strength\footnote{\url{http://sentistrength.wlv.ac.uk/}} library. 
+From this dataset we generated three datasets \textsc{100k-Tweets}, \textsc{1M-Tweets}, \textsc{10M-Tweets} with 100 thousands,1 million and 10 million tweets respectively, in order to test performance with various sizes of the dataset. 
+We also downloaded a dictionary of 213 thousands English words to filter the meaningful tweets from those irrelevant or containing only symbols. 
+To perform the sentiment analysis and (i.e., to assign a positive or negative polarity to the tweets) we used the SentiStrength library. 
 
 \begin{table}[htb]
 \centering 
