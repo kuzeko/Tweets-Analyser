@@ -1,13 +1,39 @@
 \section{Experimental evaluation}
 \label{sec:results}
-We tested our solution with Stratosphere 0.2\footnote{\url{https://stratosphere.eu/downloads}} running on a GNU\\Linux machine with 2Gb RAM DDR2, and a CPU AMD Athlon\texttrademark 64bit X2 Dual Core Processor 5000+ running on Linux kernel 3.0.0-12\footnote{Linux 3.0.0-12-generic #20-Ubuntu SMP x86_64 GNU/Linux}. 
+We tested our solution with Stratosphere 0.2.1\footnote{\url{https://stratosphere.eu/downloads}} running on a GNU/Linux machine with 2Gb RAM DDR2, and a CPU AMD Athlon\texttrademark 64bit X2 Dual Core Processor 5000+\footnote{Linux 3.0.0-12-generic \#20-Ubuntu SMP x86\_64}. 
+We used a version of Stratosphere which is not publicly available at the time of writing as still under beta-testing.
+Bugs present in the implementation required us to have it running with a degree of parallelism set to 1.
 All the experiments have been performed on samples of the original database, in order to show time and quality performance. 
-We used Java JRE 1.6.0\_26 to program the PACT using the Stratosphere libraries and server, additionally we integrated the SentiStrength java library\footnote{\url{http://sentistrength.wlv.ac.uk/}}. 
-We performed preliminary experiments to set the english word threshold and we finally set it to 0.1 in order not to prune to much. 
+We used Java JRE 1.6.0\_26 to program the PACT using the Stratosphere libraries and server, additionally we integrated the SentiStrength java library\footnote{\url{http://sentistrength.wlv.ac.uk}}. 
+We performed preliminary experiments to set the english word threshold and we finally set it to $\sigma=0.1$, i.e. requiring that at least 1 word out of then would be a valid English word, in order not to prune too many tweets. 
 Since we are matching with english words that are not stemmed a larger threshold removes interesting tweets.  
 
 \subsection{Time performance}
 %Describe the time over the (number of threads [if we could]? size of the database)
+In this section we briefly report and comment time performance registered in the various experiments.
+We performed a total of 4 different experiments, where the flow and so the statistics retrieved where always the same, but we changed the set of tweet over which we computed them.
+As said before we performed this experiment with a degree of parallelism se to 1.
+This means that the Stratosphere engine had been instructed to compute each step sequentially without exploiting possible parallel computations.
+In particular we had our flow running over the last 100 thousands, 1 million, 10 million and 20 million tweets, in reverse chronological order.
+Time results are present in table~\ref{tbl:times}. 
+As expected, we registered time performance rapidly increasing with respect to the number of tweets analysed.
+Anyway, given the size of the dataset and the type of complex statistics computed it has in the worst case a total running time of at most 1 hour for 20 millions tweets.
+
+\begin{table}[htb]
+\centering 
+\begin{tabular}{|l|r|}
+\hline		
+Number of Tweets			& Time (secs)\\
+\hline
+$100\times10^3$ tweets		&	50\\
+$1\times10^9$ tweets		& 183\\
+$10\times10^9$ tweets 		& 1516\\
+$20\times10^9$ tweets 		& 4006\\  
+\hline
+\end{tabular}
+\caption{Time performances for the computation of the statistics with respect to the size of the dataset analysed}
+\label{tbl:times}
+\end{table}
 
 \subsection{Output charts}
 % describe how we used the data and which parameters we extract. 
