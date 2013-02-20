@@ -7,7 +7,6 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
-import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +29,7 @@ public class HashtagUserMatch extends MatchStub {
     @Override
     public void match(PactRecord userTweet, PactRecord hashtagRecord, Collector<PactRecord> records) throws Exception {
         pr2.setField(0, userTweet.getField(2, PactString.class));
-        pr2.setField(1, hashtagRecord.getField(1, PactInteger.class));
+        pr2.setField(1, hashtagRecord.getField(2, PactInteger.class));
         pr2.setField(2, userTweet.getField(1, PactInteger.class));
         records.collect(pr2);
         if(TweetCleanse.HashtagUserMatchLog){

@@ -15,7 +15,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Converts a PactRecord containing one string in to multiple integer pairs.
  * 0 - tweet id
- * 1 - hashtag id
+ * 1 - user id
+ * 2 - hashtag id
  */
 @StubAnnotation.ConstantFields(fields = {})
 @StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
@@ -27,6 +28,7 @@ public class LoadHashtagMap extends MapStub {
 
     private PactRecord outputRecord = new PactRecord();
     private PactLong tid = new PactLong();
+    private PactInteger uid = new PactInteger();
     private PactInteger hid = new PactInteger();
     private final PactString line = new PactString();
 
@@ -36,10 +38,12 @@ public class LoadHashtagMap extends MapStub {
         String[] splittedLine = line.toString().split(",");
 
         tid.setValue(Long.parseLong(splittedLine[0]));
-        hid.setValue(Integer.parseInt(splittedLine[1]));
+        uid.setValue(Integer.parseInt(splittedLine[1]));
+        hid.setValue(Integer.parseInt(splittedLine[2]));
 
         outputRecord.setField(0, tid);
-        outputRecord.setField(1, hid);
+        outputRecord.setField(1, uid);
+        outputRecord.setField(2, hid);
 
         records.collect(outputRecord);
         if (TweetCleanse.LoadHashtagMapLog) {

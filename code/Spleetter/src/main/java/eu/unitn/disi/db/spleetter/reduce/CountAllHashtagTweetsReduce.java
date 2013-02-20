@@ -43,10 +43,11 @@ public class CountAllHashtagTweetsReduce extends ReduceStub {
                 hashtagID = pr.getField(1, PactInteger.class);
             }
 
-            sum = pr.getField(2, PactInteger.class).getValue() + numTweets.getValue();
-            numTweets.setValue(sum);
+            sum = pr.getField(2, PactInteger.class).getValue() + sum;
+
         }
 
+        numTweets.setValue(sum);
         pr2.setField(0, hashtagID);
         pr2.setField(1, numTweets);
         records.collect(pr2);

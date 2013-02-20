@@ -85,9 +85,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     public static final boolean HashtagLowsReduceLog          = true;
     public static final boolean HashtagPeeksReduceLog         = true;
     public static final boolean SumHashtagPolarityReduceLog   = true;
-    
-    
-    
+
+
+
 
 
     @Override
@@ -245,6 +245,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         MatchContract hashtagUserMatch = MatchContract.builder(HashtagUserMatch.class, PactLong.class, 0, 0)
+                .keyField(PactInteger.class, 1, 1)
                 .input1(userTweetExtract)
                 .input2(loadHashtags)
                 .name("Hashtag User Match")
@@ -258,6 +259,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         MatchContract hashtagPolarityMatch = MatchContract.builder(HashtagPolarityMatch.class, PactLong.class, 0, 0)
+                .keyField(PactInteger.class, 1, 1)
                 .input1(timePolarity)
                 .input2(loadHashtags)
                 .name("Hashtag Polarity Match")
@@ -276,8 +278,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .build();
 
         //NB reduce on key 1
-        ReduceContract countAllHashtagTweets = ReduceContract.builder(CountAllHashtagTweetsReduce.class)
-                .keyField(PactInteger.class, 1)
+        ReduceContract countAllHashtagTweets = ReduceContract.builder(CountAllHashtagTweetsReduce.class, PactInteger.class, 1)
                 .input(countHashtagTweets)
                 .name("Count Hashtag Tweets")
                 .build();

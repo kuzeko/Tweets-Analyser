@@ -32,7 +32,7 @@ public class HashtagPolarityMatch extends MatchStub {
     public void match(PactRecord tweetRecord, PactRecord hashtagRecord, Collector<PactRecord> records) throws Exception {
 
         pr2.setField(0, tweetRecord.getField(2, PactString.class));
-        pr2.setField(1, hashtagRecord.getField(1, PactInteger.class));
+        pr2.setField(1, hashtagRecord.getField(2, PactInteger.class));
         pr2.setField(2, tweetRecord.getField(3, PactDouble.class));
         pr2.setField(3, tweetRecord.getField(4, PactDouble.class));
         records.collect(pr2);
