@@ -5,5 +5,8 @@ Stratosphere PACT Program to run statistics over Tweets
 
 It parses tweets records, collecting statistics about hashtag evolution over time.
 
+![Tweets-Analyser in action](https://raw.github.com/kuzeko/Tweets-Analyser/master/report/images/obama-sentiment.png "Sentiment Analysis")
+
 It uses also a customized version of [SentiStrength](http://sentistrength.wlv.ac.uk/), which needs to be downloaded separately from the official website.
-Configuration of it is presnet in the maven file.
+
+Configuration of it is present in the maven file.
