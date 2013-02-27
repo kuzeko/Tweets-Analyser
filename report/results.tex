@@ -1,8 +1,29 @@
 \section{Experimental evaluation}
 \label{sec:results}
+\begin{figure*}[!Ht]
+\includegraphics[width=0.9\textwidth]{images/3-plots.png} 
+\caption{Popularity over time of three hashtags: gameinsight, goldenglobes, and obama. Number of tweets have been normalized through the \emph{log} function}
+\label{fig:trends}
+\end{figure*}
+
+\begin{figure*}[!Ht]
+\includegraphics[width=0.9\textwidth]{images/obama-sentiment.png} 
+\caption{Sentiment polairty expressed through tweets containing the hashtag ``obama''. The dashed line on the top, represent in each point in time the average emotional divergenge.}
+\label{fig:obama-sentiment}
+\end{figure*}
+
+\begin{figure*}[!Ht]
+\includegraphics[width=0.9\textwidth]{images/game-sentiment.png} 
+\caption{Sentiment polairty expressed through tweets containing the hashtag ``gameinsight''. The dashed line on the top, represent in each point in time the average emotional divergenge.}
+\label{fig:game-sentiment}
+\end{figure*}
+
+
+
 We tested our solution with Stratosphere 0.2.1\footnote{\url{https://stratosphere.eu/downloads}} running on a GNU/Linux machine with 2Gb RAM DDR2, and a CPU AMD Athlon\texttrademark 64bit X2 Dual Core Processor 5000+\footnote{Linux 3.0.0-12-generic \#20-Ubuntu SMP x86\_64}. 
 We used a version of Stratosphere which is not publicly available at the time of writing as still under beta-testing.
 Bugs present in the implementation required us to have it running with a degree of parallelism set to 1.
+
 All the experiments have been performed on samples of the original database, in order to show time and quality performance. 
 We used Java JRE 1.6.0\_26 to program the PACT using the Stratosphere libraries and server, additionally we integrated the SentiStrength java library\footnote{\url{http://sentistrength.wlv.ac.uk}}. 
 We performed preliminary experiments to set the english word threshold and we finally set it to $\sigma=0.1$, i.e. requiring that at least 1 word out of then would be a valid English word, in order not to prune too many tweets. 
@@ -12,10 +33,12 @@ Since we are matching with english words that are not stemmed a larger threshold
 %Describe the time over the (number of threads [if we could]? size of the database)
 In this section we briefly report and comment time performance registered in the various experiments.
 We performed a total of 4 different experiments, where the flow and so the statistics retrieved where always the same, but we changed the set of tweet over which we computed them.
+
 As said before we performed this experiment with a degree of parallelism se to 1.
 This means that the Stratosphere engine had been instructed to compute each step sequentially without exploiting possible parallel computations.
 In particular we had our flow running over the last 100 thousands, 1 million, 10 million and 20 million tweets, in reverse chronological order.
 Time results are present in table~\ref{tbl:times}. 
+
 As expected, we registered time performance rapidly increasing with respect to the number of tweets analysed.
 Anyway, given the size of the dataset and the type of complex statistics computed it has in the worst case a total running time of at most 1 hour for 20 millions tweets.
 
@@ -25,15 +48,76 @@ Anyway, given the size of the dataset and the type of complex statistics compute
 \hline		
 Number of Tweets			& Time (secs)\\
 \hline
-$100\times10^3$ tweets		&	50\\
-$1\times10^9$ tweets		& 183\\
-$10\times10^9$ tweets 		& 1516\\
-$20\times10^9$ tweets 		& 4006\\  
+$100$ thousands tweets		&	50\\
+$1$ million tweets		& 183\\
+$10$ million tweets 		& 1516\\
+$20$ million tweets 		& 4006\\  
 \hline
 \end{tabular}
 \caption{Time performances for the computation of the statistics with respect to the size of the dataset analysed}
 \label{tbl:times}
 \end{table}
 
+\begin{figure}[!ht]
+\includegraphics[width=0.45\textwidth]{images/hashtag-tweets-hist_20.png} 
+\caption{Top10 hashtags for popularities within tweets, plus the hashtag for ``obama''; reported with the number of tweets in which they appear}
+\label{fig:tweets-hist}
+\end{figure}
+
+\begin{figure}[!hb]
+\includegraphics[width=0.45\textwidth]{images/hashtags-timewindow.png} 
+\caption{Lifespan of the Top10 hashtags plus ``obama'', the thicker line delimits where the first and third quartile of tweets for that hashtag lies}
+\label{fig:tweets-lifespan}
+\end{figure}
+
 \subsection{Output charts}
 % describe how we used the data and which parameters we extract. 
+As described previously, the scope of this work is building a flow that can cope with an large amount of tweets, and which can parse, clean and filter them.
+Moreover this flow is designed to compute and aggregate statistics for the hashtags present in the flow and can be extended  to many more analysis.
+Our initial assumption is that we can consider hashtags as indicators of events or discussion topics.
+
+\begin{table}[htb]
+\centering 
+\begin{tabular}{|l|r|}
+\hline		
+Hashtag			& Number of Tweets\\
+\hline
+obama		&	1771\\
+obamacare		& 173\\
+nobama 		& 120\\
+impeachobama 		& 73\\  
+obama2012 		& 63\\  
+\hline
+\end{tabular}
+\caption{Hashtags referring to ``Barack Obama'' and the number of tweets containing them}
+\label{tbl:obama-tweets}
+\end{table}
+
+For instance we can consider the evolution of some hashtags, (in Figure~\ref{fig:tweets-hist} we show the Top10 hashtags for popularity, plus the hashtag for ``obama'' as a possibly interesting case)  and we can analyse their lifespan as in Figure~\ref{fig:tweets-lifespan}.
+Indeed identifying that an hashtag has a limited lifespan within the flow of tweets may be evidence of an event happening in that  particular time window.
+Looking instead to the actual evolution, hour-by-hour, of the popularity of each tweet we can identify interesting trends, points of peeks and lows.
+In Figure~\ref{fig:trends} we can see how the popularity of some hashtags (expressed as hourly number of tweets), can have very different evolutions.
+In the figure the hashtag ``gameinsight'' refers to the name of one developer and publisher of mobile games and social games, they and their followers use this hashtag when referring to some of these games.
+We can see that during the time of the analysis the number of tweets mentioning this tag each our is pretty stable.
+Instead, the other two hashtags have some highly unstable behaviour.
+The one referring to Barack Obama is not so much popular, even considering that there are more than one hashtag referring to President Obama, as we shown in Figure~\ref{tbl:obama-tweets}.
+In contrast to the previous hashtag, the hourly number of tweets containing the tag ``obama'' is more unstable, and we can see that there are time windows where this number is actually zero.
+Finally, in Figure~\ref{fig:trends} , we analyse also tweets regarding the ``goldenglobe'' hashtag, referring to the annual Golden Globe Awards, held in 2013 on the night of 13Th. of January.
+The data-peek we can observe is indicative of when the award night where held, and we can easily see how before and after that peek was and returned to be pretty low.
+
+Finally, another information to take into account, about the evolution of an event, is the polarity expressed in tweets about it.
+In Figure \ref{fig:obama-sentiment} and ~\ref{fig:game-sentiment} we show average emotional polarities present in tweets in the hourly time-window.
+These pictures demonstrates how while tweets containing the ``gameinsight'' keyword are more popular, tweets tagged with the hashtag ``obama'' have a more strong weight in terms of sentiment polarities.
+These statistics combined with the evolution of popularity of hashtags are starting points for more complex models and analysis.
+They can be used to actually identify which hashtags in which time windows are likely to be indicator of events happening.
+Additionally, approaches like the ones presented in \cite{Vlachos:2004:ISP:1007568.1007586} can be applied not only to identify burst in popularity or in sentiment polarities, but also to identify overlapping bursts, i.e. bursts in popularity for different hashtags in the same time window, so that we can actually try to detected which hashtags may refer to the same event.
+
+
+
+
+In the end of our process we where able to aggregate, for the biggest dataset, statistics for  more than 480 thousands hashtags, keeping tweets from more than 604 thousands users over 247 time windows.
+These aggregated statistics can easily be used as grounds for more complex and structured reasoning, but they are already able to highlight popular hashtags
+
+
+
+

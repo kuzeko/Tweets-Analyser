@@ -1,6 +1,30 @@
 \section{Solution}
 \label{sec:solution}
 
+\begin{figure*}[!Ht]
+\includegraphics[width=\textwidth]{images/strato_pact_pt1.png} 
+\caption{Data cleaning PACT}
+\label{fig:cleaning}
+\end{figure*}
+
+\begin{figure*}[!Ht]
+\includegraphics[width=\textwidth]{images/strato_pact_pt2.png} 
+\caption{Compute statistics PACT}
+\label{fig:statistics}
+\end{figure*}
+
+We describe here the PACT program diagram we implemented to produce the statistics on tweets that we want. 
+To recap briefly, a PACT program is a generalisation of the Map-Reduce paradigm, in which sequence of second order functions are issued in parallel or in sequence and combined to execute complex tasks. 
+The programming paradigm defines 5 second order functions: map, reduce, match, cross and co-group.
+It allows the user to specify any kind of combination between them, in any order.
+We propose a flow that uses all the operator except the cross. 
+For ease of explanation we describe the PACT program as composed in two different blocks: data cleaning (Section~\ref{sec:cleaning}) and the computation of the statistics (Section~\ref{sec:statistics}).
+
+\subsection{Data cleaning}
+\label{sec:cleaning}
+In the data cleaning part we take as input a comma separated file having the format $\langle tweet\_id$,$user\_id$,$tweet \rangle$. 
+Table~\ref{tbl:tweets} shows an excerpt of the tweet tuples. 
+
 \begin{table*}[!t]
 \begin{tabular}{|l|l|l|}
 \hline
@@ -16,18 +40,6 @@ tweet id & user id & tweet\\
 \label{tbl:tweets}
 \end{table*}
 
-
-We describe here the PACT program diagram we implemented to produce the statistics on tweets that we want. 
-To recap briefly, a PACT program is a generalisation of the Map-Reduce paradigm, in which sequence of second order functions are issued in parallel or in sequence and combined to execute complex tasks. 
-The programming paradigm defines 5 second order functions: map, reduce, match, cross and co-group.
-It allows the user to specify any kind of combination between them, in any order.
-We propose a flow that uses all the operator except the cross. 
-For ease of explanation we describe the PACT program as composed in two different blocks: data cleaning (Section~\ref{sec:cleaning}) and the computation of the statistics (Section~\ref{sec:statistics}).
-
-\subsection{Data cleaning}
-\label{sec:cleaning}
-In the data cleaning part we take as input a comma separated file having the format $\langle tweet\_id$,$user\_id$,$tweet \rangle$. 
-Table~\ref{tbl:tweets} shows an excerpt of the tweet tuples. 
 Note that it is not always easy to find interesting information from arbitrarily short-texts.
 Therefore, we propose a first flow that tries to remove useless or uninformative tweets by filtering-out the ones that do not contain a minimum portion of english words. 
 Figure~\ref{fig:cleaning} depicts the sequence of operations we designed to clean the data in the preliminary phase. 
@@ -41,14 +53,10 @@ If a tweet has a percentage of english words greater than a threshold $\sigma$ w
 
 From the pruned tweets we extract the users, and we assign to the cleaned text the polarities found in the previous step. 
 
-\begin{figure*}[ht]
-\includegraphics[width=\textwidth]{images/strato_pact_pt1.png} 
-\caption{Data cleaning PACT}
-\label{fig:cleaning}
-\end{figure*}
 
 \subsection{Compute statistics}
 \label{sec:statistics}
+
 After having cleaned the raw data and after evaluating text polarities, we compute the statistics using the tuples we have kept in the aforementioned steps. 
 First, we load and match the tuples with the tweet timestamp we get from the database.
 For each timestamp, we  keep the date and time up to the hour, this means that any further analysis is condensed in a time window of 1 hour.
@@ -59,11 +67,11 @@ The first information we want to extract is about the evolution of the popularit
 To obtain this information we will count hour by hour how many tweets contain each hashtag, and similarly we also keep track of how many different users tweet about the same hashtag.
 In the same way we are keeping track, hour by hour, of how popularity changes for each hashtag.
 Then we collect for each hashtag the moment in which it reached his peak in popularity alongside the date of first and last appearance, marking in this way the lifespan of the hashtag.
+Sentiment analysis is performed not only to compute polarities of each tweet, but for each hashtag we aggregate three values, namely the average positive sentiment, the average negative sentiment and the emotional divergence present in each of them.
+These statistics can give us some insights on people's opinion towards the topic to which the hashtag is referring to.
+In particular, in \cite{DBLP:conf:icwsm:PfitznerGS12}  is demonstrated how the overall sentiment (polarity) in one tweet does not influence its probability to be reshared.
+For this reason they propose emotional divergence as a new measure able to identify which tweets have a better chance of being retweeted.
+Aggregating this information for each hashtag we can gather additional informations in support of one hashtag being relevant and interesting.
 
 
 
-\begin{figure*}[ht]
-\includegraphics[width=\textwidth]{images/strato_pact_pt2.png} 
-\caption{Compute statistics PACT}
-\label{fig:statistics}
-\end{figure*}

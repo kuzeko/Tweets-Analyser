@@ -1,2 +1,21 @@
 \section{Issues and conclusions}
 \label{sec:issues}
+
+During the design and the main development of the project we didn't encounter big difficulties or problems with the software provided.
+We found the PACT model intuitive and flexible for our needs, covering the design and the first implementation without any big issues.
+The software demonstrated fair performance even on the relative small machine at our disposal, coping with 20 millions tweets and being able to filter and join, for the more loaded component of the flow, more than 90million tuples.
+
+Problems where encountered during the final testing of the application.
+Firstly we reported the following exception:
+\begin{verbatim}
+java.lang.RuntimeException: 
+Data distribution must not be null when 
+the ship strategy is range partitioning
+\end{verbatim}
+which was stopping the Nephele runtime, and it web panel, from executing the PACT program submitted.
+
+Later we noticed some non-coherent results being returned as output of subsequent computations.
+In this second case, we found that the same PACT program, executed over the same machine with the same input, where actually computing different results in 1 out of 5 subsequent computations on average.
+Debug of this problem required time due to the current absence of a complete logging environment for the system, in its current version.
+After extensive analysis we traced back the origin of the problem to a mismatch in attributes used as field for an equijoin in the early steps of the flow, still we are not able to explain the apparent non-deterministic behaviour of the system. 
+

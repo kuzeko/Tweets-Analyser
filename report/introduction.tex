@@ -1,6 +1,5 @@
 \section{Introduction}
 \label{sec:introduction}
-
 The ability to perform various statistical analyses with Twitter has attracted much interest and research in the last few years~\cite{Hong:2012qy,Lehmann:2012kx} and used to influence politics~\cite{Tumasjan:2010vn} and advertising~\cite{Bakshy:2011ys}. 
 With a 140,000,000 subscribers to its service, Twitter is far and away the leading social network for the real time sharing and re-sharing of information, becoming the most used communication media in the spreading of socio-cultural events across the world~\footnote{\url{http://www.umpf.co.uk/blog/?p=6830}}\cite{DBLP:journals:corr:abs-1003-2664}. 
 Moreover, Twitter has an enormous advantage over other social networks like Facebook in one key area: while people on Facebook tend to friend their friends, people on Twitter tend to follow their interests\footnote{http://dcurt.is/twitters-graph}.
@@ -12,7 +11,7 @@ To do this we need to actually mine social media timelines to collect relevant s
 
 To this end, we propose a schema based on the PACT paradigm implemented in Stratosphere, that is an enhanced map-reduce system able to mix second order functions. 
 Our goal is to conduct an analysis of a big dataset, automatically downloaded using the Twitter streaming APIs.
-We propose a PACT flow or program\footnote{here flow or program are used interchangeably} that takes in input a set of tuples, having tweets and user ids, a set of users and a vocabulary and produces several statistics. 
+We propose a PACT flow or program\footnote{here flow or program are used interchangeably} that takes in input a set of tuples, having tweets and user ids, a set of users and a vocabulary and produces several statistics to be of use to for the data analyst in order to perform in depth data analysis and event discovery. 
 We now describe the basic structure of the Twitter system and an highlight of the proposed solution discussed in Section~\ref{sec:solution}. 
 
 \subsection{Twitter structure}
@@ -24,6 +23,7 @@ A user is \emph{retweeting} the tweet from another user when she thinks that it 
 The last information in the tweets are the urls, that are usually shortened using some available URL shortener. 
 
 \subsection{Proposed solution}
+
 We aim to find information regarding topic trends, analysing user post trends, polarity of the tweets with respect to the timing of those tweets, and with respect also to hashtags contained in them. 
 The set of operations we propose to implement using the PACT programming is the following:  
 \begin{itemize}
@@ -34,8 +34,9 @@ It combines a lexicon-based approach with more sophisticated linguistic rules.
 
 %\item \textbf{User Analysis}: we analyse a bunch of statistics, such as the number of tweets per user, the number of 
 % tweet per user/hashtag per user
-\item \textbf{Hashtag analysis}: we produce a deep analysis of the hashtags that takes into account the time in which the hashtag appeared and disappeared (not used anymore), the maximum and minimum number of mentions per hashtag with the timestamp,  
-\item \textbf{Topic Analysis}:  we perform an analysis on positive and negative trends per topic, identifying the topics with the hashtags. 
+\item \textbf{Hashtag analysis}: we produce a various statistics about hashtags. 
+Those take into account the time in which the hashtag appeared and disappeared (i.e. is not used anymore), the maximum and minimum number of mentions per hashtag with the timestamp of those peaks,  
+\item \textbf{Topic Analysis}:  we perform an analysis on positive and negative trends per topic, aggregating for each hashtag, for each point in time, the average polarity expressed in tweets containing it. We compute also the average Emotional Divergence\cite{DBLP:conf:icwsm:PfitznerGS12}  for each tag.
 \end{itemize}
 
 The document is structured as follows. Section~\ref{sec:data} describes the dataset we downloaded and used in our experiments. We propose a solution and describe the PACT program in detail in Section~\ref{sec:solution}. We also show the results of the analysis, with increasing size of the dataset in Section~\ref{sec:results}. Concluding, in Section~\ref{sec:issues} we describe the problems and the issues we encountered during the development of the solution and we remark our findings.
