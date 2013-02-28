@@ -2,6 +2,7 @@
 \label{sec:solution}
 
 
+
 We describe here the PACT program diagram we implemented to produce the statistics on tweets that we need. 
 Recall that a PACT program is a generalization of the Map-Reduce paradigm, in which sequence of second order functions are issued in parallel or in sequence and combined to execute complex tasks. 
 The programming paradigm defines five second order functions: map, reduce, match, cross and co-group.
@@ -13,21 +14,6 @@ For ease of explanation we describe the PACT program\footnote{\url{https://githu
 \label{sec:cleaning}
 In the data cleaning part we take as input a comma separated file having the format $\langle tweet\_id$,$user\_id$,$tweet \rangle$. 
 Table~\ref{tbl:tweets} shows an excerpt of the tweet tuples. 
-
-\begin{table*}[!t]
-\begin{tabular}{|l|l|l|}
-\hline
-tweet id & user id & tweet\\
-\hline
-292375792485298176&858488612& \#KidCudi - \#EraseMe - The Whizz Bells : http://t.co/Lp1zABOV via @youtube\\
-292375792481099777&486970282& RT @Kirra\_\_: Today is a day where I need to crawl into my bed and sleep the day away.\\
-292375792481099776&336390437& There are poor people, money is the only thing they got.\\
-292375792476909568&74570186& I can't do anything without listening to music while I do it.\\
-\hline
-\end{tabular}
-\caption{A sample of the tweet dataset}
-\label{tbl:tweets}
-\end{table*}
 
 Note that it is not obvious how to find interesting information from arbitrarily short-texts.
 Therefore, we propose a first flow that tries to remove useless or uninformative tweets by filtering-out the ones that do not contain a minimum number of english words. 
