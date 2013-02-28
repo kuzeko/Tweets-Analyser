@@ -1,8 +1,9 @@
-\documentclass{acm_proc_article-sp}
+\documentclass{vldb}
 
 %\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
 \usepackage{graphicx}
 \usepackage{graphics}
+\usepackage{lscape}
 \usepackage{array}
 \usepackage{enumerate}
 \usepackage{url}
@@ -108,6 +109,26 @@ Davide Mottin\\
 \input{results}
 \input{issues}
 
+\bibliographystyle{abbrv}
+\bibliography{paperbib}  
+
+\clearpage
+\appendix
+\section{PACT flow}
+
+\vspace*{3cm}
+\begin{figure}[h]
+\centering
+\includegraphics[angle=90,height=0.75\textheight]{images/strato_pact_pt1.png} 
+\caption{Data cleaning PACT}
+\label{fig:cleaning}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[angle=90,height=0.9\textheight]{images/strato_pact_pt2.png} 
+\caption{Compute statistics PACT}
+\label{fig:statistics}
+\end{figure}
 
 %\clearpage
 
@@ -129,8 +150,6 @@ Davide Mottin\\
 %  \sloppy\clubpenalty10000\widowpenalty10000
 %  \sfcode`\.=1000\relax
 %}
-\bibliographystyle{abbrv}
-\bibliography{paperbib}  
 
 
 

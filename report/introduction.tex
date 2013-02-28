@@ -1,42 +1,47 @@
 \section{Introduction}
 \label{sec:introduction}
 The ability to perform various statistical analyses with Twitter has attracted much interest and research in the last few years~\cite{Hong:2012qy,Lehmann:2012kx} and used to influence politics~\cite{Tumasjan:2010vn} and advertising~\cite{Bakshy:2011ys}. 
-With a 140,000,000 subscribers to its service, Twitter is far and away the leading social network for the real time sharing and re-sharing of information, becoming the most used communication media in the spreading of socio-cultural events across the world~\footnote{\url{http://www.umpf.co.uk/blog/?p=6830}}\cite{DBLP:journals:corr:abs-1003-2664}. 
-Moreover, Twitter has an enormous advantage over other social networks like Facebook in one key area: while people on Facebook tend to friend their friends, people on Twitter tend to follow their interests\footnote{http://dcurt.is/twitters-graph}.
-Previous works as \cite{DBLP:journals:corr:abs-1003-2664}, \cite{Mathioudakis:2010:EOI:1718487.1718525} and \cite{DBLP:conf:chi:MarcusBBKMM11} present different techniques to identify peak of activities around particular keywords, \emph{hashtags} or users.
-They highlight possibilities for topic discovery techniques for informative summarisation of events, and for user-friendly visualisations of specific streams of postings.
-All these previous approaches aim to do real time identification of data peaks, smart labelling or even post-mortem analysis of events.
-We would like to mine a real time stream of posts and to identify trends and patterns that can allow us to forecast which topics, keywords or events will became popular in the near future.
-To do this we need to actually mine social media timelines to collect relevant statistics and insights on how events resonates in a social network, but the huge amount of information per day cannot be processed by a single machine. .
+With 140 millions of users, Twitter is the leading social network for the real time sharing and re-sharing of information, having become the most used communication media in the spreading of socio-cultural events across the world
+%~\footnote{\url{http://www.umpf.co.uk/blog/?p=6830}}
+~\cite{DBLP:journals:corr:abs-1003-2664}. 
+Moreover, Twitter has an enormous advantage over other social networks like Facebook in one key area: while people on Facebook tend to be friend their friends, users on Twitter subscribe to other users if they match their own interests\footnote{http://dcurt.is/twitters-graph}.
+In~\cite{DBLP:journals:corr:abs-1003-2664,Mathioudakis:2010:EOI:1718487.1718525,DBLP:conf:chi:MarcusBBKMM11} authors introduce different techniques to identify peak of activities around particular keywords, \emph{hashtags} or users.
+They describe topic discovery techniques to mine informative summarization of events, and to visualize user-friendly  streams of postings.
+All these previous approaches aim to do real time identification of data peaks, smart labeling or even post-mortem analysis of events.
+
+We would like to mine a real time stream of posts and to identify trends and patterns that allow us to forecast which topics, keywords or events will became popular in the near future.
+For this reason, we need to gather social media timelines and to collect relevant statistics and insights on how events propagates in a social network.
+However, the huge amount of information per day cannot be processed by a single machine.
 
 To this end, we propose a schema based on the PACT paradigm implemented in Stratosphere, that is an enhanced map-reduce system able to mix second order functions. 
 Our goal is to conduct an analysis of a big dataset, automatically downloaded using the Twitter streaming APIs.
-We propose a PACT flow or program\footnote{here flow or program are used interchangeably} that takes in input a set of tuples, having tweets and user ids, a set of users and a vocabulary and produces several statistics to be of use to for the data analyst in order to perform in depth data analysis and event discovery. 
-We now describe the basic structure of the Twitter system and an highlight of the proposed solution discussed in Section~\ref{sec:solution}. 
+We propose a PACT flow or program\footnote{here flow or program are used interchangeably} that takes in input a set of tuples, having tweets and user ids, a set of users and a vocabulary and produces several statistics used by data analysts in order to perform in-depth data analysis and event discovery. 
+We now describe the basic structure of the Twitter system and a highlight of the proposed solution discussed in Section~\ref{sec:solution}. 
 
 \subsection{Twitter structure}
 Twitter is a micro-blogging system designed to allow users to send short messages having a maximum of 140 characters, called \textit{tweets}. 
 In the text, users are allowed to specify \textit{hashtags} that are sequence of characters usually describing an argument and marked by the character '\#'. 
 Users can also reference other users with '@user' notation. 
 A particular kind of reference is a \textit{retweet} which is a tweet preceded by the tag ``RT'' and the user name that first posted the message. 
-A user is \emph{retweeting} the tweet from another user when she thinks that it is worth spreading such post to a broader audience.
-The last information in the tweets are the urls, that are usually shortened using some available URL shortener. 
+A user is \emph{retweeting} the tweet from another user when she thinks that it is an interesting piece of text to be shared her followers.
+The last information in the tweets are the urls, that are usually shortened using available online services. 
 
 \subsection{Proposed solution}
 
-We aim to find information regarding topic trends, analysing user post trends, polarity of the tweets with respect to the timing of those tweets, and with respect also to hashtags contained in them. 
-The set of operations we propose to implement using the PACT programming is the following:  
+We aim to find information regarding topic trends, analyzing user post trends, polarity of the tweets with respect to the creation time, and with respect also to hashtags contained in them. 
+The set of operations we propose is the following:  
 \begin{itemize}
-\item \textbf{Tweet Cleansing}: we take in input the tuples containing the tweets and a dictionary of english words and we filter out hashtags, user mentions and tweets having a number of english words less than a threshold. The cleaned data are then use throughout the rest of the flow. 
-\item \textbf{Polarity extraction}: we use a well-known library for sentiment analysis to extract the general polarity of each tweet. The polarity is defined as value between $[-5,5]$, where a positive number means that the user is talking about something in a favorable manner. Conversely, if a text has a polarity close to $-5$ the words in the text are dissenting. 
-From \cite{Thelwall:2010:SSS:1890706.1890713}  we will adopt the SentiStrength  classifier, which was built especially to cope with sentiment detection in short informal text.
+\item \textbf{Tweet Cleansing}: we take in input the tuples containing the tweets and a dictionary of english words and we filter out hashtags, user mentions and tweets having a number of english words less than a threshold. The cleaned data are then used throughout the rest of the flow. 
+\item \textbf{Polarity extraction}: we use a well-known library for sentiment analysis to extract the general polarity of each tweet. The polarity is defined as value in the range $[-5,5]$, where a positive number means that the user is talking about something in a favorable manner. Conversely, if a text has a negative polarity the text is written in a dissenting manner. 
+We adopt the SentiStrength classifier (as in \cite{Thelwall:2010:SSS:1890706.1890713}) that was originally built to perform sentiment detection in short informal texts.
 It combines a lexicon-based approach with more sophisticated linguistic rules.
 
 %\item \textbf{User Analysis}: we analyse a bunch of statistics, such as the number of tweets per user, the number of 
 % tweet per user/hashtag per user
 \item \textbf{Hashtag analysis}: we produce a various statistics about hashtags. 
-Those take into account the time in which the hashtag appeared and disappeared (i.e. is not used anymore), the maximum and minimum number of mentions per hashtag with the timestamp of those peaks,  
-\item \textbf{Topic Analysis}:  we perform an analysis on positive and negative trends per topic, aggregating for each hashtag, for each point in time, the average polarity expressed in tweets containing it. We compute also the average Emotional Divergence\cite{DBLP:conf:icwsm:PfitznerGS12}  for each tag.
+that take into account the time in which the hashtag appeared and disappeared (i.e. is not used anymore), the maximum and minimum number of mentions per hashtag with the timestamp of the peaks,  
+\item \textbf{Topic Analysis}:  we perform an analysis of positive and negative per-topic trends, aggregating for each hashtag, for each point in time, the average polarity expressed in tweets containing it. 
+We compute also the average Emotional Divergence\cite{DBLP:conf:icwsm:PfitznerGS12}  for each tag.
 \end{itemize}
 
 The document is structured as follows. Section~\ref{sec:data} describes the dataset we downloaded and used in our experiments. We propose a solution and describe the PACT program in detail in Section~\ref{sec:solution}. We also show the results of the analysis, with increasing size of the dataset in Section~\ref{sec:results}. Concluding, in Section~\ref{sec:issues} we describe the problems and the issues we encountered during the development of the solution and we remark our findings.
