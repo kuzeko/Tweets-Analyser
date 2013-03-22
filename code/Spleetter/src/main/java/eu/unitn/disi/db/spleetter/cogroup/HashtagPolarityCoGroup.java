@@ -23,6 +23,10 @@ import org.apache.commons.logging.LogFactory;
  * 2 - mean neg polarity
  * 3 - mean pos polarity
  * 4 - mean divergence
+ * 5 - tot neg polairty
+ * 6 - tot pos polarity
+ * 7 - tot divergence
+ * 8 - count
  */
 @StubAnnotation.ConstantFieldsFirst(fields = {0,1})
 @StubAnnotation.ConstantFieldsSecond(fields = {})
@@ -59,22 +63,34 @@ public class HashtagPolarityCoGroup extends CoGroupStub {
                 hashtagID = pr.getField(1, PactInteger.class).getValue();
                 count = hashtagTweetsCount.get(hashtagID);
 
+                // -------
                 negPolarity = pr.getField(2, PactDouble.class);
+                pr.setField(5, negPolarity);
+
+                posPolarity = pr.getField(3, PactDouble.class);
+                pr.setField(6, posPolarity);
+
+                divergence = pr.getField(4, PactDouble.class);
+                pr.setField(7, divergence);
+
+                pr.setField(8, new PactInteger(count));
+                // -------
+
+
                 tmpD = negPolarity.getValue() / count;
                 negPolarity.setValue(tmpD);
                 pr.setField(2, negPolarity);
 
-
-                posPolarity = pr.getField(3, PactDouble.class);
                 tmpD = posPolarity.getValue() / count;
                 posPolarity.setValue(tmpD);
                 pr.setField(3, posPolarity);
-
 
                 divergence = pr.getField(4, PactDouble.class);
                 tmpD = divergence.getValue() / count;
                 divergence.setValue(tmpD);
                 pr.setField(4, divergence);
+
+
 
                 records.collect(pr);
                 if(TweetCleanse.HashtagPolarityCoGroupLog){

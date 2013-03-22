@@ -380,7 +380,11 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactInteger.class, 1)
                 .field(PactDouble.class, 2)
                 .field(PactDouble.class, 3)
-                .field(PactDouble.class, 4);
+                .field(PactDouble.class, 4)
+                .field(PactDouble.class, 5)
+                .field(PactDouble.class, 6)
+                .field(PactDouble.class, 7)
+                .field(PactInteger.class, 8);
         i++;
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
         RecordOutputFormat.configureRecordFormat(outputs[i])
