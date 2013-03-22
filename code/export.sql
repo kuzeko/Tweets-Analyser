@@ -52,5 +52,22 @@ FROM temp_tweet_hashtag  AS h
 ORDER BY tweet_id DESC, user_id DESC;
 
 
+SELECT
+t.tweet_id,
+t.user_id,
+REPLACE(t.text, '\n', ' ')
+INTO OUTFILE '/tmp/EXPORT/ALL_tweets.csv'
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM tweet_text_01 AS t;
 
-
+SELECT
+i.id,
+i.user_id,
+i.created_at
+INTO OUTFILE '/tmp/EXPORT/ALL_dates.csv'
+FIELDS TERMINATED BY ','
+OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM tweet_01 AS i;
