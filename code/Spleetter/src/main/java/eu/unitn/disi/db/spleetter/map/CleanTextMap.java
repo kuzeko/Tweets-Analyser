@@ -50,6 +50,7 @@ public class CleanTextMap extends MapStub {
         text = matchHash.replaceAll("");
         text = StringUtils.removeStopwords(text);
         if (text != null) {
+            text = text.toLowerCase();
             tweet.setValue(text);
             pr.setField(2, tweet);
             records.collect(pr);

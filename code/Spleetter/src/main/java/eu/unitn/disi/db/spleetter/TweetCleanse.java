@@ -38,6 +38,7 @@ import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountWordsAppearancesReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagFirstAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
@@ -53,6 +54,7 @@ import java.util.HashSet;
 public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
+    public static final String APPEARANCE_TRESHOLD = "parameter.APPEARANCE_TRESHOLD";
 
     /*
      * Profiling variables
@@ -85,6 +87,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     public static final boolean HashtagLowsReduceLog          = true;
     public static final boolean HashtagPeeksReduceLog         = true;
     public static final boolean SumHashtagPolarityReduceLog   = true;
+    public static final boolean CountWordsAppearancesReduceLog = true;
 
 
 
@@ -108,6 +111,8 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String outputHashtagLows        = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lows";
         String outputHashtagPeeks       = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_peeks";
         String outputHashtagLifespan    = (args.length > 6 ? args[6] : "file:///tmp/") +"/hashtag_lifespan";
+        String outputWordAppearances    = (args.length > 6 ? args[6] : "file:///tmp/") +"/words_count";
+        String appearanceTreshold     = (args.length > 7 ? args[7] : "1");
 //        int outputFilesCount = 9;
 
         /*
@@ -195,6 +200,13 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(cleanText)
                 .name("Split to words")
                 .build();
+
+        ReduceContract countWordAppearances = new ReduceContract.Builder(CountWordsAppearancesReduce.class, PactString.class, 0)
+                .input(splitSentence)
+                .name("Count word appearances")
+                .build();
+        countWordAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
+
 
         CoGroupContract englishGroup = CoGroupContract.builder(EnglishDictionaryCoGroup.class, PactString.class, 0, 0)
                 .input1(splitSentence)
@@ -335,7 +347,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[9];
+        FileDataSink[] outputs = new FileDataSink[10];
         int i = 0;
 
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");
@@ -434,6 +446,17 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactInteger.class, 0)
                 .field(PactInteger.class, 1);
 
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputWordAppearances, countWordAppearances , "Word Total Appearances");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactString.class, 0)
+                .field(PactInteger.class, 1);
+
+
+
 
 
 
@@ -448,6 +471,6 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     @Override
     public String getDescription() {
-        return "Parameters: [noSubStasks] [dataInput] [datesInput] [dictionaryFileIn] [wordsTreshold] [hashtagInput] [outputDir]";
+        return "Parameters: [noSubStasks] [dataInput] [datesInput] [dictionaryFileIn] [wordsTreshold] [hashtagInput] [outputDir] [wordAppearanceTreshold]";
     }
 }

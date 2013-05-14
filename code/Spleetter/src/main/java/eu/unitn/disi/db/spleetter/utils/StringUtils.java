@@ -18,6 +18,7 @@ import eu.stratosphere.pact.common.type.base.PactString;
 import eu.stratosphere.pact.common.util.MutableObjectIterator;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -517,8 +518,9 @@ public class StringUtils {
 
 
     public static int numWords(String line) {
-        if (line == null || line.length() == 0)
+        if (line == null || line.length() == 0) {
             return 0;
+        }
         return wordSepPattern.split(line).length;
     }
 
@@ -527,13 +529,12 @@ public class StringUtils {
         StringBuilder sb = new StringBuilder();
         if (stopWords == null) {
             stopWords = new HashSet<String>();
-            for (int i = 0; i < words.length; i++) {
-                stopWords.add(words[i]);
-            }
+            stopWords.addAll(Arrays.asList(words));
         }
         for (int i = 0; i < splittedSentence.length; i++) {
-            if (!stopWords.contains(splittedSentence[i]))
+            if (!stopWords.contains(splittedSentence[i])) {
                 sb.append(splittedSentence[i]).append(" ");
+            }
         }
         return sb.toString();
     }
