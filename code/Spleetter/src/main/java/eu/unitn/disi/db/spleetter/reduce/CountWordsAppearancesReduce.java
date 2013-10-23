@@ -45,7 +45,7 @@ public class CountWordsAppearancesReduce extends ReduceStub {
             pr = matches.next();
             sum++;
         }
-        if(sum > this.numThreshold) {
+        if(sum >= this.numThreshold) {
             numAppearances.setValue(sum);
             pr.setField(1, numAppearances);
             records.collect(pr);
