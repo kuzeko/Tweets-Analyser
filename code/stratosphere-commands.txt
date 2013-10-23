@@ -13,3 +13,5 @@
 #ALL test
 1 file:///tmp/EXPORT/ALL_tweets.csv file:///tmp/EXPORT/ALL_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats_ALL
 
+#100k demo
+1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/1G_hashtags.csv file:///tmp/EXPORT/stats_100k
