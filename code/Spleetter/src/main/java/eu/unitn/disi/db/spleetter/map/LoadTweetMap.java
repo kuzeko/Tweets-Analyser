@@ -35,7 +35,7 @@ public class LoadTweetMap extends MapStub {
 
     private final PactRecord outputRecord = new PactRecord(4);
     private final PactLong tid = new PactLong();
-    private final PactInteger uid = new PactInteger();
+    private final PactLong uid = new PactLong();
     private final PactString tweet = new PactString();
     private final PactInteger numWords = new PactInteger();
     private Pattern recordTextPattern = Pattern.compile(",\"(.+)\"$");
@@ -48,7 +48,7 @@ public class LoadTweetMap extends MapStub {
         Matcher matchRecordText = recordTextPattern.matcher(tweetText);
 
         tid.setValue(Long.valueOf(splittedLine[0]));
-        uid.setValue(Integer.parseInt(splittedLine[1]));
+        uid.setValue(Long.parseLong(splittedLine[1]));
 
 
         if (matchRecordText.find()) {

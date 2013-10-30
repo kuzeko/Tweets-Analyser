@@ -35,7 +35,7 @@ public class TweetPolarityMatch extends MatchStub {
     @Override
     public void match(PactRecord englishTweet, PactRecord polarityValue, Collector<PactRecord> records) throws Exception {
         output.setField(0, polarityValue.getField(0, PactLong.class));
-        output.setField(1, polarityValue.getField(1, PactInteger.class));
+        output.setField(1, polarityValue.getField(1, PactLong.class));
         output.setField(2, englishTweet.getField(2, PactString.class));
         output.setField(3, englishTweet.getField(3, PactInteger.class));
         output.setField(4, englishTweet.getField(4, PactString.class));

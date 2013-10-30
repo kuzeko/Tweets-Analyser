@@ -5,7 +5,6 @@ import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
@@ -50,7 +49,7 @@ public class SentimentAnalysisMap extends MapStub {
 
         if (text != null) {
             pr2.setField(0, pr.getField(0, PactLong.class));
-            pr2.setField(1, pr.getField(1, PactInteger.class));
+            pr2.setField(1, pr.getField(1, PactLong.class));
             pr2.setField(2, negPolarity);
             pr2.setField(3, posPolarity);
             records.collect(pr2);

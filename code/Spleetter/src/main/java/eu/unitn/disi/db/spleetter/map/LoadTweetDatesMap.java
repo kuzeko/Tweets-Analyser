@@ -4,7 +4,6 @@ import eu.stratosphere.pact.common.stubs.Collector;
 import eu.stratosphere.pact.common.stubs.MapStub;
 import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
@@ -30,7 +29,7 @@ public class LoadTweetDatesMap extends MapStub {
 
     private final PactRecord outputRecord = new PactRecord(3);
     private final PactLong tid = new PactLong();
-    private final PactInteger uid = new PactInteger();
+    private final PactLong uid = new PactLong();
     private final PactString timestampH = new PactString();
     private Pattern datePattern = Pattern.compile(",\"(2[0-9]{3}-[0-9]{2}-[0-9]{2}\\W[0-9]{2}).+\"$");
 
@@ -42,7 +41,7 @@ public class LoadTweetDatesMap extends MapStub {
         Matcher matchRecordDate = datePattern.matcher(tweetText);
 
         tid.setValue(Long.valueOf(splittedLine[0]));
-        uid.setValue(Integer.parseInt(splittedLine[1]));
+        uid.setValue(Long.parseLong(splittedLine[1]));
 
         if (matchRecordDate.find()) {
             tweetTimestamp = matchRecordDate.group(1).replace(' ', '-');

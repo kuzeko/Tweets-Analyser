@@ -28,7 +28,7 @@ public class LoadHashtagMap extends MapStub {
 
     private PactRecord outputRecord = new PactRecord();
     private PactLong tid = new PactLong();
-    private PactInteger uid = new PactInteger();
+    private PactLong uid = new PactLong();
     private PactInteger hid = new PactInteger();
     private final PactString line = new PactString();
 
@@ -38,7 +38,7 @@ public class LoadHashtagMap extends MapStub {
         String[] splittedLine = line.toString().split(",");
 
         tid.setValue(Long.parseLong(splittedLine[0]));
-        uid.setValue(Integer.parseInt(splittedLine[1]));
+        uid.setValue(Long.parseLong(splittedLine[1]));
         hid.setValue(Integer.parseInt(splittedLine[2]));
 
         outputRecord.setField(0, tid);

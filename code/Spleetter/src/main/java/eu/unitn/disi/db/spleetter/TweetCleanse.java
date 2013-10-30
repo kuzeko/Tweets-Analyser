@@ -178,7 +178,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         MatchContract datedTweets = MatchContract.builder(TweetDateMatch.class, PactLong.class, 0,0)
-                .keyField(PactInteger.class, 1, 1)
+                .keyField(PactLong.class, 1, 1)
                 .input1(tokenizeMapper)
                 .input2(datesMapper)
                 .name("Join tweets and dates")
@@ -240,7 +240,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Extract User")
                 .build();
 
-        ReduceContract countUserTweets = new ReduceContract.Builder(CountUserTweetsReduce.class, PactInteger.class, 0)
+        ReduceContract countUserTweets = new ReduceContract.Builder(CountUserTweetsReduce.class, PactLong.class, 0)
                 .input(userExtract)
                 .name("Count user tweets")
                 .build();
