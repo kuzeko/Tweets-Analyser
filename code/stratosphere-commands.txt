@@ -15,3 +15,7 @@
 
 #100k demo
 1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/1G_hashtags.csv file:///tmp/EXPORT/stats_100k
+
+
+#Cluster demo
+1 hdfs://dbis11:50041/lissama/ALL_tweets.csv hdfs://dbis11:50041/lissama/ALL_dates.csv hdfs://dbis11:50041/lissama/words 0.1 hdfs://dbis11:50041/lissama/ALL_hashtags.csv hdfs://dbis11:50041/lissama/out_1
