@@ -45,3 +45,5 @@ report/paper.bbl
 report/paper.blg
 
 *.pdf
+
+code/export.sql
