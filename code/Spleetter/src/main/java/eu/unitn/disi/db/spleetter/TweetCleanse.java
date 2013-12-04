@@ -203,7 +203,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Split to words")
                 .build();
 
-        ReduceContract countWordAppearances = new ReduceContract.Builder(CountWordsAppearancesReduce.class, PactString.class, 0)
+        ReduceContract countWordAppearances = ReduceContract.builder(CountWordsAppearancesReduce.class, PactString.class, 0)
                 .input(splitSentence)
                 .name("Count word appearances")
                 .build();
@@ -216,7 +216,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Group en-words")
                 .build();
 
-        ReduceContract countEnglishWords = new ReduceContract.Builder(CountEnglishWordsReduce.class, PactLong.class, 0)
+        ReduceContract countEnglishWords = ReduceContract.builder(CountEnglishWordsReduce.class, PactLong.class, 0)
                 .input(englishGroup)
                 .name("Count en-words")
                 .build();
@@ -240,7 +240,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Extract User")
                 .build();
 
-        ReduceContract countUserTweets = new ReduceContract.Builder(CountUserTweetsReduce.class, PactLong.class, 0)
+        ReduceContract countUserTweets = ReduceContract.builder(CountUserTweetsReduce.class, PactLong.class, 0)
                 .input(userExtract)
                 .name("Count user tweets")
                 .build();
@@ -265,7 +265,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Hashtag User Match")
                 .build();
 
-        ReduceContract countHashtagUsers = new ReduceContract.Builder(CountHashtagUsersReduce.class, PactString.class, 0)
+        ReduceContract countHashtagUsers = ReduceContract.builder(CountHashtagUsersReduce.class, PactString.class, 0)
                 .keyField(PactInteger.class, 1)
                 .input(hashtagUserMatch)
                 .name("Count hastag users")
@@ -279,13 +279,13 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Hashtag Polarity Match")
                 .build();
 
-        ReduceContract sumHashtagPolarity = new ReduceContract.Builder(SumHashtagPolarityReduce.class, PactString.class, 0)
+        ReduceContract sumHashtagPolarity = ReduceContract.builder(SumHashtagPolarityReduce.class, PactString.class, 0)
                 .keyField(PactInteger.class, 1)
                 .input(hashtagPolarityMatch)
                 .name("Sum Hashtag polarities")
                 .build();
 
-        ReduceContract countHashtagTweets = new ReduceContract.Builder(CountHashtagTweetsReduce.class, PactString.class, 0)
+        ReduceContract countHashtagTweets = ReduceContract.builder(CountHashtagTweetsReduce.class, PactString.class, 0)
                 .keyField(PactInteger.class, 1)
                 .input(hashtagPolarityMatch)
                 .name("Count Hashtag Tweets")
