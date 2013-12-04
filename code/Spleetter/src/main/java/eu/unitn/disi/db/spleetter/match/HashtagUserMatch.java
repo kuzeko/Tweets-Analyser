@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -20,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @StubAnnotation.ConstantFieldsFirst({})
-public class HashtagUserMatch extends MatchStub {
+public class HashtagUserMatch extends MatchStub implements Serializable {
     private PactRecord pr2 = new PactRecord(3);
     private static final Log LOG = LogFactory.getLog(HashtagUserMatch.class);
     private long counter = 0;

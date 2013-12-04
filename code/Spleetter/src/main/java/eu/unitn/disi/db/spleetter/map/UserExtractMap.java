@@ -10,6 +10,7 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * 0 - user id
  */
 @StubAnnotation.ConstantFields({})
-public class UserExtractMap extends MapStub {
+public class UserExtractMap extends MapStub  implements Serializable{
     private static final Log LOG = LogFactory.getLog(UserExtractMap.class);
     private long counter = 0;
     private PactRecord pr2 = new PactRecord(1);

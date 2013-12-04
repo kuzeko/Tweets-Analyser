@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
@@ -22,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
  * 4 - timestamp [h]
  */
 @StubAnnotation.ConstantFields({0,1,3,4})
-public class CleanTextMap extends MapStub {
+public class CleanTextMap extends MapStub implements Serializable{
 
     private static final Log LOG = LogFactory.getLog(CleanTextMap.class);
     private long counter = 0;

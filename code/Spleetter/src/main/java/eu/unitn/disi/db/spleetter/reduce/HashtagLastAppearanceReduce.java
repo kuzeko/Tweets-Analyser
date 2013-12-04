@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -20,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 @StubAnnotation.ConstantFields({})
-public class HashtagLastAppearanceReduce extends ReduceStub {
+public class HashtagLastAppearanceReduce extends ReduceStub    implements Serializable {
     private static final Log LOG = LogFactory.getLog(HashtagLastAppearanceReduce.class);
     private long counter = 0;
     private final PactString timestamp = new PactString();

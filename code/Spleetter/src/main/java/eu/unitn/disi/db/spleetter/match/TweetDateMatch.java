@@ -8,6 +8,7 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @StubAnnotation.ConstantFieldsFirst({0, 1, 2, 3})
 @StubAnnotation.ConstantFieldsSecond({})
-public class TweetDateMatch extends MatchStub {
+public class TweetDateMatch extends MatchStub implements Serializable {
     private static final Log LOG = LogFactory.getLog(TweetDateMatch.class);
     private long counter = 0;
     private PactRecord output = new PactRecord(5);

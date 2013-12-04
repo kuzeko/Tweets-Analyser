@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @StubAnnotation.ConstantFields({0})
-public class CountWordsAppearancesReduce extends ReduceStub {
+public class CountWordsAppearancesReduce extends ReduceStub implements Serializable {
     private static final Log LOG = LogFactory.getLog(CountWordsAppearancesReduce.class);
     private long counter = 0;
     private int numThreshold = 0;

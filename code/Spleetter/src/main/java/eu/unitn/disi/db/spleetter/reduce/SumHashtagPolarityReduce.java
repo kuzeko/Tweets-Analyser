@@ -12,6 +12,7 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -28,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * 4 - sum emotional divergence
  */
 @StubAnnotation.ConstantFields({0})
-public class SumHashtagPolarityReduce extends ReduceStub {
+public class SumHashtagPolarityReduce extends ReduceStub implements Serializable{
     private static final Log LOG = LogFactory.getLog(SumHashtagPolarityReduce.class);
     private long counter = 0;
     private HashMap<Integer, PactDouble[]> hashtagPolarities = new HashMap<Integer, PactDouble[]>();

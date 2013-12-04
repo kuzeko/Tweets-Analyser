@@ -8,6 +8,7 @@ import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -21,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @StubAnnotation.ConstantFieldsFirst({})
 @StubAnnotation.ConstantFieldsSecond({})
-public class HashtagPolarityMatch extends MatchStub {
+public class HashtagPolarityMatch extends MatchStub implements Serializable{
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;
 

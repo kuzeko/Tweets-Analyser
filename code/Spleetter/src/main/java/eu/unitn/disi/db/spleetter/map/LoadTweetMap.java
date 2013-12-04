@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * 3 - number of words<br />
  */
 @StubAnnotation.ConstantFields({})
-public class LoadTweetMap extends MapStub {
+public class LoadTweetMap extends MapStub implements Serializable{
     // initialize reusable mutable objects
 
     private static final Log LOG = LogFactory.getLog(LoadTweetMap.class);

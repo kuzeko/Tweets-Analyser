@@ -11,6 +11,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -24,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * 2 - num tweets
  */
 @StubAnnotation.ConstantFields({0,1})
-public class CountHashtagTweetsReduce extends ReduceStub {
+public class CountHashtagTweetsReduce extends ReduceStub implements Serializable{
     private static final Log LOG = LogFactory.getLog(CountHashtagTweetsReduce.class);
     private long counter = 0;
     private PactInteger numTweets = new PactInteger();

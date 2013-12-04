@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
  * 3 - positive polarity<br />
  */
 @StubAnnotation.ConstantFields({0, 1})
-public class SentimentAnalysisMap extends MapStub {
+public class SentimentAnalysisMap extends MapStub implements Serializable{
 
 	private long counter = 0;
 

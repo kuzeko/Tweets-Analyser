@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
  */
 
 @StubAnnotation.ConstantFields({0,1})
-public class PolarityHashtagExtractMap extends MapStub {
+public class PolarityHashtagExtractMap extends MapStub  implements Serializable{
     private static final Log LOG = LogFactory.getLog(PolarityHashtagExtractMap.class);
     private long counter = 0;
     private PactRecord pr2 = new PactRecord(5);

@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
  * 6 - positive polarity<br />
  */
 @StubAnnotation.ConstantFieldsFirst({0, 2, 3, 4})
-public class TweetPolarityMatch extends MatchStub {
+public class TweetPolarityMatch extends MatchStub implements Serializable{
 
     private static final Log LOG = LogFactory.getLog(TweetPolarityMatch.class);
     long counter = 0;

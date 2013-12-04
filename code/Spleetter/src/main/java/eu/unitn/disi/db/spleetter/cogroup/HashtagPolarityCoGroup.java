@@ -11,6 +11,7 @@ import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactDouble;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -30,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @StubAnnotation.ConstantFieldsFirst({0,1})
 @StubAnnotation.ConstantFieldsSecond({})
-public class HashtagPolarityCoGroup extends CoGroupStub {
+public class HashtagPolarityCoGroup extends CoGroupStub implements Serializable {
     private HashMap<Integer, Integer> hashtagTweetsCount = new HashMap<Integer, Integer>();
     private static final Log LOG = LogFactory.getLog(HashtagPolarityCoGroup.class);
     private long counter = 0;

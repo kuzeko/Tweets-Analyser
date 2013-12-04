@@ -4,13 +4,14 @@
  */
 package eu.unitn.disi.db.spleetter.utils;
 
+import java.io.Serializable;
 import uk.ac.wlv.sentistrength.SentiStrength;
 
 /**
  * Wrapper for the SentiStrength library
  *
  */
-public class SentiStrengthWrapper {
+public class SentiStrengthWrapper implements Serializable {
 
     private SentiStrength classifier;
 

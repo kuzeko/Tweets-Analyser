@@ -8,6 +8,7 @@ import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * 2 - hashtag id
  */
 @StubAnnotation.ConstantFields({})
-public class LoadHashtagMap extends MapStub {
+public class LoadHashtagMap extends MapStub implements Serializable{
 
     private static final Log LOG = LogFactory.getLog(LoadHashtagMap.class);
     private long counter = 0;

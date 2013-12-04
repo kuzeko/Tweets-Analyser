@@ -7,6 +7,7 @@ import eu.stratosphere.pact.common.stubs.StubAnnotation;
 import eu.stratosphere.pact.common.type.PactRecord;
 import eu.stratosphere.pact.common.type.base.PactInteger;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @StubAnnotation.ConstantFieldsSecond({0,1,2,3,4})
-public class DictionaryFilterMatch extends MatchStub {
+public class DictionaryFilterMatch extends MatchStub implements Serializable{
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;
     private double wordsThreshold; //	minimum ratio of english words/ totla words

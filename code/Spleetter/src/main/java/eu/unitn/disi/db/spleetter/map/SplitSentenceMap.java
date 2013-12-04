@@ -9,6 +9,7 @@ import eu.stratosphere.pact.common.type.base.PactLong;
 import eu.stratosphere.pact.common.type.base.PactString;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -21,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @StubAnnotation.ConstantFields({})
-public class SplitSentenceMap extends MapStub {
+public class SplitSentenceMap extends MapStub implements Serializable{
 
     private long counter = 0;
     private static final Log LOG = LogFactory.getLog(SplitSentenceMap.class);
