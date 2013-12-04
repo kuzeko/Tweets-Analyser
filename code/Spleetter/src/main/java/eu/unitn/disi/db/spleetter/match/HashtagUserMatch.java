@@ -19,8 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * 2 - user id
  *
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({})
 public class HashtagUserMatch extends MatchStub {
     private PactRecord pr2 = new PactRecord(3);
     private static final Log LOG = LogFactory.getLog(HashtagUserMatch.class);

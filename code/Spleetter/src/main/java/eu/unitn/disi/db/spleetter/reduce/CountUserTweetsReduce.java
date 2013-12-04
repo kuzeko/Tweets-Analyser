@@ -20,8 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - number of tweets
  */
 
-@StubAnnotation.ConstantFields(fields = {0})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0})
 public class CountUserTweetsReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(CountUserTweetsReduce.class);
     private long counter = 0;

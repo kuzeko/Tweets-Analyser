@@ -23,9 +23,8 @@ import org.apache.commons.logging.LogFactory;
  * 0 - tweet id
  * 1 - 1
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.ConstantFieldsFirst({})
+@StubAnnotation.ConstantFieldsSecond({})
 public class EnglishDictionaryCoGroup extends CoGroupStub {
     private static final Log LOG = LogFactory.getLog(EnglishDictionaryCoGroup.class);
     private long counter = 0;

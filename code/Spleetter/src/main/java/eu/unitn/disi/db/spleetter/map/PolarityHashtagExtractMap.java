@@ -21,8 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * 4 - pos polarity
  */
 
-@StubAnnotation.ConstantFields(fields = {0,1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0,1})
 public class PolarityHashtagExtractMap extends MapStub {
     private static final Log LOG = LogFactory.getLog(PolarityHashtagExtractMap.class);
     private long counter = 0;

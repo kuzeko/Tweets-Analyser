@@ -19,8 +19,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - peek timestamp [h]
  */
 
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({})
 public class HashtagFirstAppearanceReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(HashtagFirstAppearanceReduce.class);
     private long counter = 0;

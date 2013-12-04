@@ -18,9 +18,8 @@ import org.apache.commons.logging.LogFactory;
  * 2 - last timestamp [h]
  *
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {1})
-@StubAnnotation.ConstantFieldsSecond(fields = {1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({1})
+@StubAnnotation.ConstantFieldsSecond({1})
 public class HashtagLifespanMatch extends MatchStub {
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;

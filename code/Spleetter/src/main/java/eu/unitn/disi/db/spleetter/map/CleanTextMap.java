@@ -21,8 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * 3 - number of words in original tweet
  * 4 - timestamp [h]
  */
-@StubAnnotation.ConstantFields(fields = {0,1,3,4})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
+@StubAnnotation.ConstantFields({0,1,3,4})
 public class CleanTextMap extends MapStub {
 
     private static final Log LOG = LogFactory.getLog(CleanTextMap.class);

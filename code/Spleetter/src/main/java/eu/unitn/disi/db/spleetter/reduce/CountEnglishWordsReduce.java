@@ -18,8 +18,7 @@ import org.apache.commons.logging.LogFactory;
  *
  *
  */
-@StubAnnotation.ConstantFields(fields = {0})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0})
 public class CountEnglishWordsReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(CountEnglishWordsReduce.class);
     private long counter = 0;

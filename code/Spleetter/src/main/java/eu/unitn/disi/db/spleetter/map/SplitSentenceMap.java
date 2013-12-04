@@ -20,8 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * 0 - word<br /> 1 - tweet id<br />
  *
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.ConstantFields({})
 public class SplitSentenceMap extends MapStub {
 
     private long counter = 0;

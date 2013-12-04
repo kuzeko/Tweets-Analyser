@@ -20,8 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - user id<br />
  * 2 - timestamp[h]<br />
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.ConstantFields({})
 public class LoadTweetDatesMap extends MapStub {
     // initialize reusable mutable objects
     private static final Log LOG = LogFactory.getLog(LoadTweetDatesMap.class);

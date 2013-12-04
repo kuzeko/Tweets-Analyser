@@ -25,8 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * 2 - tweet text<br />
  * 3 - number of words<br />
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({})
 public class LoadTweetMap extends MapStub {
     // initialize reusable mutable objects
 

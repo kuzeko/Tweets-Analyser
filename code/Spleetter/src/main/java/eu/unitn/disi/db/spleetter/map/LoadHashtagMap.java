@@ -18,8 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - user id
  * 2 - hashtag id
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.ConstantFields({})
 public class LoadHashtagMap extends MapStub {
 
     private static final Log LOG = LogFactory.getLog(LoadHashtagMap.class);

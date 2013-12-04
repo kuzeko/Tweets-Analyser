@@ -16,8 +16,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * 0 - word
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
+@StubAnnotation.ConstantFields({})
 public class LoadDictionaryMap extends MapStub {
 
 	private static final Log LOG = LogFactory.getLog(LoadDictionaryMap.class);

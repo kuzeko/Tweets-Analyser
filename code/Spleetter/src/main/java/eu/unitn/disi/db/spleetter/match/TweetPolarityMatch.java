@@ -24,8 +24,7 @@ import org.apache.commons.logging.LogFactory;
  * 5 - negative polarity<br />
  * 6 - positive polarity<br />
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {0, 2, 3, 4})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({0, 2, 3, 4})
 public class TweetPolarityMatch extends MatchStub {
 
     private static final Log LOG = LogFactory.getLog(TweetPolarityMatch.class);

@@ -19,9 +19,8 @@ import org.apache.commons.logging.LogFactory;
  * 2 - negative polarity
  * 3 - positive polarity
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({})
+@StubAnnotation.ConstantFieldsSecond({})
 public class HashtagPolarityMatch extends MatchStub {
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;

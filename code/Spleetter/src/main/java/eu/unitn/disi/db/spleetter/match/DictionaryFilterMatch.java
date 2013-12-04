@@ -22,8 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * 4 - timestamp [h]<br />
  *
  */
-@StubAnnotation.ConstantFieldsSecond(fields = {0,1,2,3,4})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
+@StubAnnotation.ConstantFieldsSecond({0,1,2,3,4})
 public class DictionaryFilterMatch extends MatchStub {
     private static final Log LOG = LogFactory.getLog(DictionaryFilterMatch.class);
     private long counter = 0;

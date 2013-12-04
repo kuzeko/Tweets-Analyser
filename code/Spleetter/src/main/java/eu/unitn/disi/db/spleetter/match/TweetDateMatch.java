@@ -21,9 +21,8 @@ import org.apache.commons.logging.LogFactory;
  * 3 - num of words in the original tweet<br />
  * 4 - timestamp [h]<br />
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {0, 1, 2, 3})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({0, 1, 2, 3})
+@StubAnnotation.ConstantFieldsSecond({})
 public class TweetDateMatch extends MatchStub {
     private static final Log LOG = LogFactory.getLog(TweetDateMatch.class);
     private long counter = 0;

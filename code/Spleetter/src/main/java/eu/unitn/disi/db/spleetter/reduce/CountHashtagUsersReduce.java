@@ -25,8 +25,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - hashtag
  * 2 - num distinct users
  */
-@StubAnnotation.ConstantFields(fields = {0,1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
+@StubAnnotation.ConstantFields({0,1})
 public class CountHashtagUsersReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(CountHashtagUsersReduce.class);
     private long counter = 0;

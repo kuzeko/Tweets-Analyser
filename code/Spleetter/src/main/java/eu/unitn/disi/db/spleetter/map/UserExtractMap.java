@@ -17,8 +17,7 @@ import org.apache.commons.logging.LogFactory;
  * Filters the tweet record keeping only the user id
  * 0 - user id
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({})
 public class UserExtractMap extends MapStub {
     private static final Log LOG = LogFactory.getLog(UserExtractMap.class);
     private long counter = 0;

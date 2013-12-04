@@ -22,8 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * 2 - negative polarity<br />
  * 3 - positive polarity<br />
  */
-@StubAnnotation.ConstantFields(fields = {0, 1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0, 1})
 public class SentimentAnalysisMap extends MapStub {
 
 	private long counter = 0;

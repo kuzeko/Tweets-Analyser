@@ -18,8 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - number of appearances<br />
  *
  */
-@StubAnnotation.ConstantFields(fields = {0})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0})
 public class CountWordsAppearancesReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(CountWordsAppearancesReduce.class);
     private long counter = 0;

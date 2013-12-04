@@ -28,9 +28,8 @@ import org.apache.commons.logging.LogFactory;
  * 7 - tot divergence
  * 8 - count
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {0,1})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
+@StubAnnotation.ConstantFieldsFirst({0,1})
+@StubAnnotation.ConstantFieldsSecond({})
 public class HashtagPolarityCoGroup extends CoGroupStub {
     private HashMap<Integer, Integer> hashtagTweetsCount = new HashMap<Integer, Integer>();
     private static final Log LOG = LogFactory.getLog(HashtagPolarityCoGroup.class);

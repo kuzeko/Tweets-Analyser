@@ -23,8 +23,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - hashtag
  * 2 - num tweets
  */
-@StubAnnotation.ConstantFields(fields = {0,1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
+@StubAnnotation.ConstantFields({0,1})
 public class CountHashtagTweetsReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(CountHashtagTweetsReduce.class);
     private long counter = 0;

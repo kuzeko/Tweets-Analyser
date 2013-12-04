@@ -21,8 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * 1 - user id
  * 2 - timestamp [h]
  */
-@StubAnnotation.ConstantFields(fields = {0,1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
+@StubAnnotation.ConstantFields({0,1})
 public class UserTweetExtractMap extends MapStub {
     private static final Log LOG = LogFactory.getLog(UserTweetExtractMap.class);
     private long counter = 0;

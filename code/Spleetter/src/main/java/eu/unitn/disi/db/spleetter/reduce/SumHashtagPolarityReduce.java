@@ -27,8 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * 3 - sum pos polarity
  * 4 - sum emotional divergence
  */
-@StubAnnotation.ConstantFields(fields = {0})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
+@StubAnnotation.ConstantFields({0})
 public class SumHashtagPolarityReduce extends ReduceStub {
     private static final Log LOG = LogFactory.getLog(SumHashtagPolarityReduce.class);
     private long counter = 0;
