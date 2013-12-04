@@ -4,6 +4,10 @@
  */
 package eu.unitn.disi.db.spleetter.utils;
 
+
+import java.io.File;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.wlv.sentistrength.SentiStrength;
 
 /**
@@ -13,33 +17,49 @@ import uk.ac.wlv.sentistrength.SentiStrength;
 public class SentiStrengthWrapper {
 
     private SentiStrength classifier;
+    private static String sentiDataFolder = "/tmp/SentiStrength_Data/";
+    private static final Log LOG = LogFactory.getLog(SentiStrengthWrapper.class);
 
-    /** The unique instance **/
+
+    public static void setSentiStrengthData(String dirPath) {
+        if (sentiDataFolder != null && !sentiDataFolder.isEmpty()) {
+            sentiDataFolder = dirPath;
+        }
+    }
+    /**
+     * The unique instance *
+     */
     private volatile static SentiStrengthWrapper instance;
 
-    /** The private constructor **/
+    /**
+     * The private constructor *
+     */
     private SentiStrengthWrapper() {
-        String[] args = {"sentidata", "/tmp/SentiStrength_Data/", "text", "i don't hate you. I really hate you"};
+        String[] args = {"sentidata", sentiDataFolder, "text", "i don't hate you. I really hate you"};
         classifier = new SentiStrength(args);
     }
 
     public static SentiStrengthWrapper getInstance() {
-      if (instance == null) {
-          synchronized(SentiStrengthWrapper.class) {
-             if (instance == null) {
-                instance = new SentiStrengthWrapper();
-             }
-          }
-       }
-       return instance;
+        if (instance == null) {
+            synchronized (SentiStrengthWrapper.class) {
+                if (instance == null) {
+                    if (new File(SentiStrengthWrapper.sentiDataFolder).isDirectory()) {
+                        instance = new SentiStrengthWrapper();
+                    } else {
+                        LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder);
+                    }
+
+                }
+            }
+        }
+        return instance;
     }
 
-
-    public double[] analyze(String text){
+    public double[] analyze(String text) {
         double[] polarities = new double[2];
 
         String result = this.classifier.computeSentimentScores(text);
-        String [] tokens = result.split(" ");
+        String[] tokens = result.split(" ");
         polarities[0] = Double.parseDouble(tokens[1]);
         polarities[1] = Double.parseDouble(tokens[0]);
         return polarities;

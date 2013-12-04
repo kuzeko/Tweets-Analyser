@@ -44,6 +44,7 @@ import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagPeeksReduce;
 import eu.unitn.disi.db.spleetter.reduce.SumHashtagPolarityReduce;
+import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -102,6 +103,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String wordTreshold     = (args.length > 4 ? args[4] : "0.2");
         String hashtagInput     = (args.length > 5 ? args[5] : "");
         String appearanceTreshold     = (args.length > 6 ? args[6] : "1");
+        String sentimentData    = (args.length > 7 ? args[7] : "");
 
         String outputCleanTweets        = (args.length > 7 ? args[7] : "file:///tmp/") +"/clean_tweets";
         String outputUsersTweetsCount   = (args.length > 7 ? args[7] : "file:///tmp/") +"/users_tweets";
@@ -116,6 +118,12 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
 //        int outputFilesCount = 9;
+
+        /*
+         * Setting up the sentiment analysis
+         */
+         SentiStrengthWrapper.setSentiStrengthData(sentimentData);
+
 
         /*
          * Load Data
