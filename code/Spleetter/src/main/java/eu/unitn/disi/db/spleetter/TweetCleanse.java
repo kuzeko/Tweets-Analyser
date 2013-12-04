@@ -100,22 +100,22 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String dataInput        = (args.length > 1 ? args[1] : "");
         String datesInput       = (args.length > 2 ? args[2] : "");
         String dictionaryInput  = (args.length > 3 ? args[3] : "");
-        String wordTreshold     = (args.length > 4 ? args[4] : "0.2");
-        String hashtagInput     = (args.length > 5 ? args[5] : "");
-        String appearanceTreshold     = (args.length > 6 ? args[6] : "1");
-        String sentimentData    = (args.length > 7 ? args[7] : "");
+        String sentimentData    = (args.length > 4 ? args[4] : "");
+        String wordTreshold     = (args.length > 5 ? args[5] : "0.2");
+        String hashtagInput     = (args.length > 6 ? args[6] : "");
+        String appearanceTreshold     = (args.length > 7 ? args[7] : "1");
 
-        String outputCleanTweets        = (args.length > 7 ? args[7] : "file:///tmp/") +"/clean_tweets";
-        String outputUsersTweetsCount   = (args.length > 7 ? args[7] : "file:///tmp/") +"/users_tweets";
-        String outputHashtagUsersCount  = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_users";
-        String outputHashtagSentiment   = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_sentiment";
-        String outputHashtagTweetsCount = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_tweets";
-        String outputHashtagCount       = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_count";
-        String outputHashtagLows        = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_lows";
-        String outputHashtagPeeks       = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_peeks";
-        String outputHashtagLifespan    = (args.length > 7 ? args[7] : "file:///tmp/") +"/hashtag_lifespan";
-        String outputWordAppearances    = (args.length > 7 ? args[7] : "file:///tmp/") +"/words_count";
 
+        String outputCleanTweets        = (args.length > 8 ? args[8] : "file:///tmp/") +"/clean_tweets";
+        String outputUsersTweetsCount   = (args.length > 8 ? args[8] : "file:///tmp/") +"/users_tweets";
+        String outputHashtagUsersCount  = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_users";
+        String outputHashtagSentiment   = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_sentiment";
+        String outputHashtagTweetsCount = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_tweets";
+        String outputHashtagCount       = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_count";
+        String outputHashtagLows        = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_lows";
+        String outputHashtagPeeks       = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_peeks";
+        String outputHashtagLifespan    = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_lifespan";
+        String outputWordAppearances    = (args.length > 8 ? args[8] : "file:///tmp/") +"/words_count";
 
 //        int outputFilesCount = 9;
 
@@ -481,6 +481,6 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     @Override
     public String getDescription() {
-        return "Parameters: [No Tasks] [Tweets] [Dates] [DictionaryFile] [WordsTreshold] [Hashtags] [outputDir] [wordAppearanceTreshold]";
+        return "Parameters: [No Tasks] [Tweets] [Dates] [DictionaryFile] [SentiDataFolder] [WordsTreshold] [Hashtags] [outputDir] [wordAppearanceTreshold]";
     }
 }
