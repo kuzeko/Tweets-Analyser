@@ -1,21 +1,21 @@
 #100k test
-1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/1G_hashtags.csv file:///tmp/EXPORT/stats_100k
+1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/1G_hashtags.csv 3 file:///tmp/EXPORT/stats_100k
 
 #1M test
-1 file:///tmp/EXPORT/1G_tweets.csv file:///tmp/EXPORT/1G_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats_1M
+1 file:///tmp/EXPORT/1G_tweets.csv file:///tmp/EXPORT/1G_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv 3 file:///tmp/EXPORT/stats_1M
 
 #10M test
-1 file:///tmp/EXPORT/10M_tweets.csv file:///tmp/EXPORT/10M_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats_10M
+1 file:///tmp/EXPORT/10M_tweets.csv file:///tmp/EXPORT/10M_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv 3 file:///tmp/EXPORT/stats_10M
 
 #20M test
-1 file:///tmp/EXPORT/20M_tweets.csv file:///tmp/EXPORT/20M_dates_all.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats_20M
+1 file:///tmp/EXPORT/20M_tweets.csv file:///tmp/EXPORT/20M_dates_all.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv  3 file:///tmp/EXPORT/stats_20M
 
 #ALL test
-1 file:///tmp/EXPORT/ALL_tweets.csv file:///tmp/EXPORT/ALL_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/ALL_hashtags.csv file:///tmp/EXPORT/stats_ALL
+1 file:///tmp/EXPORT/ALL_tweets.csv file:///tmp/EXPORT/ALL_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv 3 file:///tmp/EXPORT/stats_ALL
 
 #100k demo
-1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words 0.1 file:///tmp/EXPORT/1G_hashtags.csv file:///tmp/EXPORT/stats_100k
+1 file:///tmp/EXPORT/100k_tweets.csv file:///tmp/EXPORT/100k_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/1G_hashtags.csv 3 file:///tmp/EXPORT/stats_100k
 
 
 #Cluster demo
-1 hdfs://dbis11:50041/lissama/ALL_tweets.csv hdfs://dbis11:50041/lissama/ALL_dates.csv hdfs://dbis11:50041/lissama/words 0.1 hdfs://dbis11:50041/lissama/ALL_hashtags.csv hdfs://dbis11:50041/lissama/out_1
+1 hdfs://dbis11:50041/lissama/ALL_tweets.csv hdfs://dbis11:50041/lissama/ALL_dates.csv hdfs://dbis11:50041/lissama/words hdfs://dbis11:50041/lissama/SentiStrength_Data/ 0.1 hdfs://dbis11:50041/lissama/ALL_hashtags.csv 3 hdfs://dbis11:50041/lissama/out_1
