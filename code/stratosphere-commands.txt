@@ -8,7 +8,7 @@
 1 file:///tmp/EXPORT/10M_tweets.csv file:///tmp/EXPORT/10M_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv 3 file:///tmp/EXPORT/stats_10M
 
 #20M test
-1 file:///tmp/EXPORT/20M_tweets.csv file:///tmp/EXPORT/20M_dates_all.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv  3 file:///tmp/EXPORT/stats_20M
+1 file:///tmp/EXPORT/20M_tweets.csv file:///tmp/EXPORT/20M_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv  3 file:///tmp/EXPORT/stats_20M
 
 #ALL test
 1 file:///tmp/EXPORT/ALL_tweets.csv file:///tmp/EXPORT/ALL_dates.csv file:///tmp/EXPORT/words file:///tmp/EXPORT/SentiStrength_Data/ 0.1 file:///tmp/EXPORT/ALL_hashtags.csv 3 file:///tmp/EXPORT/stats_ALL
