@@ -44,7 +44,6 @@ import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagPeeksReduce;
 import eu.unitn.disi.db.spleetter.reduce.SumHashtagPolarityReduce;
-import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -56,6 +55,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
     public static final String APPEARANCE_TRESHOLD = "parameter.APPEARANCE_TRESHOLD";
+    public static final String SNETIMENT_PATH = "parameter.SENTIMENT_PATH";
 
     /*
      * Profiling variables
@@ -118,11 +118,6 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String outputWordAppearances    = (args.length > 8 ? args[8] : "file:///tmp/") +"/words_count";
 
 //        int outputFilesCount = 9;
-
-        /*
-         * Setting up the sentiment analysis
-         */
-         SentiStrengthWrapper.setSentiStrengthData(sentimentData);
 
 
         /*
@@ -204,6 +199,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
+        sentimentAnalysis.setParameter(SNETIMENT_PATH, sentimentData);
         //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
 
         MapContract splitSentence = MapContract.builder(SplitSentenceMap.class)

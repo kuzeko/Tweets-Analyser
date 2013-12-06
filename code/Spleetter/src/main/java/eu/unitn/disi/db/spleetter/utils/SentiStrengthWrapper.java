@@ -6,6 +6,7 @@ package eu.unitn.disi.db.spleetter.utils;
 
 
 import java.io.File;
+import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.wlv.sentistrength.SentiStrength;
@@ -22,10 +23,12 @@ public class SentiStrengthWrapper {
 
 
     public static void setSentiStrengthData(String dirPath) {
-        if (sentiDataFolder != null && !sentiDataFolder.isEmpty()) {
+        if (dirPath != null && !dirPath.isEmpty()) {
             sentiDataFolder = dirPath;
+            LOG.fatal( "Changed Sentiment Directory to: " + SentiStrengthWrapper.sentiDataFolder);
         }
     }
+
     /**
      * The unique instance *
      */
@@ -43,10 +46,19 @@ public class SentiStrengthWrapper {
         if (instance == null) {
             synchronized (SentiStrengthWrapper.class) {
                 if (instance == null) {
-                    if (new File(SentiStrengthWrapper.sentiDataFolder).isDirectory()) {
+                    File dirFile = null;
+                    try{
+
+                        dirFile = new File(new URL(SentiStrengthWrapper.sentiDataFolder).toURI());
+                        dirFile.canRead();
+                    } catch(Exception e){
+                        LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " err:" + e.getMessage() );
+                    }
+
+                    if (dirFile.isDirectory()) {
                         instance = new SentiStrengthWrapper();
                     } else {
-                        LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder);
+                        LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " is not Directory");
                     }
 
                 }
@@ -54,6 +66,9 @@ public class SentiStrengthWrapper {
         }
         return instance;
     }
+
+
+
 
     public double[] analyze(String text) {
         double[] polarities = new double[2];
