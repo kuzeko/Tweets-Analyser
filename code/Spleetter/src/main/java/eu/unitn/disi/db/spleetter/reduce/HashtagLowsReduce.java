@@ -1,11 +1,11 @@
 package eu.unitn.disi.db.spleetter.reduce;
 
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.ReduceStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.ReduceFunction;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,45 +19,44 @@ import org.apache.commons.logging.LogFactory;
  * 2 - tweets count
  */
 
-@StubAnnotation.ConstantFields(fields = {2})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
-public class HashtagLowsReduce extends ReduceStub {
+@FunctionAnnotation.ConstantFields({2})
+public class HashtagLowsReduce extends ReduceFunction {
     private static final Log LOG = LogFactory.getLog(HashtagLowsReduce.class);
     private long counter = 0;
-    private final PactInteger lowsCount = new PactInteger();
-    private final HashSet<PactString> timestamps = new HashSet<PactString>();
-    private final PactRecord pr2 = new PactRecord(3);
+    private final IntValue lowsCount = new IntValue();
+    private final HashSet<StringValue> timestamps = new HashSet<StringValue>();
+    private final Record pr2 = new Record(3);
 
     @Override
-    public void reduce(Iterator<PactRecord> matches, Collector<PactRecord> records) throws Exception {
-        PactRecord pr = null;
-        PactInteger hashtagID = null;
+    public void reduce(Iterator<Record> matches, Collector<Record> records) throws Exception {
+        Record pr = null;
+        IntValue hashtagID = null;
         int count = 0;
         int minValue = -1;
         timestamps.clear();
 
         while (matches.hasNext()) {
             pr = matches.next();
-            count = pr.getField(2, PactInteger.class).getValue();
+            count = pr.getField(2, IntValue.class).getValue();
             if(count < minValue || minValue == -1){
                 minValue = count;
-                hashtagID =pr.getField(1, PactInteger.class);
+                hashtagID =pr.getField(1, IntValue.class);
                 timestamps.clear();
-                timestamps.add(pr.getField(0, PactString.class));
+                timestamps.add(pr.getField(0, StringValue.class));
             } else if(count == minValue){
-                timestamps.add(pr.getField(0, PactString.class));
+                timestamps.add(pr.getField(0, StringValue.class));
             }
         }
 
         if(hashtagID!=null){
             lowsCount.setValue(minValue);
-            for (PactString timestamp : timestamps) {
+            for (StringValue timestamp : timestamps) {
                 pr2.setField(0, hashtagID);
                 pr2.setField(1, timestamp);
                 pr2.setField(2, lowsCount);
                 records.collect(pr2);
                 if (TweetCleanse.HashtagLowsReduceLog) {
-                   //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+                   //System.out.printf("CEWR out %d \n", pr.getField(0, LongValue.class).getValue() );
                     this.counter++;
                 }
             }

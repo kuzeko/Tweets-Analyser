@@ -14,8 +14,8 @@
  **********************************************************************************************************************/
 package eu.unitn.disi.db.spleetter.utils;
 
-import eu.stratosphere.pact.common.type.base.PactString;
-import eu.stratosphere.pact.common.util.MutableObjectIterator;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.MutableObjectIterator;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Arrays;
@@ -447,14 +447,14 @@ public class StringUtils {
 
 
     /**
-     * Converts the given <code>PactString</code> into a lower case variant.
+     * Converts the given <code>StringValue</code> into a lower case variant.
      * <p>
      * NOTE: This method assumes that the string contains only characters that are valid in the
      * ASCII type set.
      *
      * @param string The string to convert to lower case.
      */
-    public static void toLowerCase(PactString string)
+    public static void toLowerCase(StringValue string)
     {
         final char[] chars = string.getCharArray();
         final int len = string.length();
@@ -473,7 +473,7 @@ public class StringUtils {
      * @param string The pact string to have the non-word characters replaced.
      * @param replacement The character to use as the replacement.
      */
-    public static void replaceNonWordChars(PactString string, char replacement) {
+    public static void replaceNonWordChars(StringValue string, char replacement) {
         final char[] chars = string.getCharArray();
 
         replaceNonWordChars(chars, replacement);
@@ -545,9 +545,9 @@ public class StringUtils {
      * The tokenizer is designed to have a resettable state and operate on mutable objects,
      * sparing object allocation and garbage collection overhead.
      */
-    public static final class WhitespaceTokenizer implements MutableObjectIterator<PactString> {
+    public static final class WhitespaceTokenizer implements MutableObjectIterator<StringValue> {
 
-        private PactString toTokenize;		// the string to tokenize
+        private StringValue toTokenize;		// the string to tokenize
         private int pos;					// the current position in the string
         private int limit;					// the limit in the string's character data
 
@@ -562,7 +562,7 @@ public class StringUtils {
          *
          * @param string The pact string to be tokenized.
          */
-        public void setStringToTokenize(PactString string) {
+        public void setStringToTokenize(StringValue string) {
             this.toTokenize = string;
             this.pos = 0;
             this.limit = string.length();
@@ -573,28 +573,30 @@ public class StringUtils {
          * in the given target string object and <code>true</code> is returned. Otherwise,
          * the target object is left unchanged and <code>false</code> is returned.
          *
-         * @param target The PactString object to store the next token in.
+         * @param target The StringValue object to store the next token in.
          * @return True, if there was another token, false if not.
          * @see eu.stratosphere.pact.common.util.MutableObjectIterator#next(java.lang.Object)
          */
         @Override
-        public boolean next(PactString target) {
+        public boolean next(StringValue target) {
             final char[] data = this.toTokenize.getCharArray();
-            final int limit = this.limit;
-            int pos = this.pos;
+            final int flimit = this.limit;
+            int p = this.pos;
 
             // skip the delimiter
-            for (; pos < limit && Character.isWhitespace(data[pos]); pos++);
+            while(p < flimit && Character.isWhitespace(data[p])){
+                p++;
+            }
 
-            if (pos >= limit) {
-                this.pos = pos;
+            if (p >= flimit) {
+                this.pos = p;
                 return false;
             }
 
-            final int start = pos;
-            for (; pos < limit && !Character.isWhitespace(data[pos]); pos++);
-            this.pos = pos;
-            target.setValue(this.toTokenize, start, pos - start);
+            final int start = p;
+            for (; p < flimit && !Character.isWhitespace(data[p]); p++);
+            this.pos = p;
+            target.setValue(this.toTokenize, start, p - start);
             return true;
         }
     }

@@ -4,13 +4,14 @@
  */
 package eu.unitn.disi.db.spleetter.cogroup;
 
-import eu.stratosphere.pact.common.stubs.CoGroupStub;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactLong;
+import eu.stratosphere.api.java.record.functions.CoGroupFunction;
+import eu.stratosphere.util.Collector;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,24 +24,23 @@ import org.apache.commons.logging.LogFactory;
  * 0 - tweet id
  * 1 - 1
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
-public class EnglishDictionaryCoGroup extends CoGroupStub {
+@FunctionAnnotation.ConstantFieldsFirst({})
+@FunctionAnnotation.ConstantFieldsSecond({})
+public class EnglishDictionaryCoGroup extends CoGroupFunction  implements Serializable {
     private static final Log LOG = LogFactory.getLog(EnglishDictionaryCoGroup.class);
     private long counter = 0;
 
-    private PactInteger one = new PactInteger(1);
-    private PactRecord outputRecord  = new PactRecord();
-    private PactLong tid;
+    private IntValue one = new IntValue(1);
+    private Record outputRecord  = new Record();
+    private LongValue tid;
 
     @Override
-    public void coGroup(Iterator<PactRecord> wordMatch, Iterator<PactRecord> dictMatch, Collector<PactRecord> records) {
-        PactRecord pr;
-        if (dictMatch.hasNext() && wordMatch.hasNext()) {
-            while(wordMatch.hasNext()) {
-                pr = wordMatch.next();
-                tid = pr.getField(1, PactLong.class);
+    public void coGroup(Iterator<Record> wordJoin, Iterator<Record> dictJoin, Collector<Record> records) {
+        Record pr;
+        if (dictJoin.hasNext() && wordJoin.hasNext()) {
+            while(wordJoin.hasNext()) {
+                pr = wordJoin.next();
+                tid = pr.getField(1, LongValue.class);
                 outputRecord.setField(0, tid);
                 outputRecord.setField(1, one);
                 records.collect(outputRecord);

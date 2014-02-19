@@ -1,13 +1,13 @@
 package eu.unitn.disi.db.spleetter.map;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactLong;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.LongValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
 import org.apache.commons.logging.Log;
@@ -23,17 +23,16 @@ import org.apache.commons.logging.LogFactory;
  * 2 - negative polarity<br />
  * 3 - positive polarity<br />
  */
-@StubAnnotation.ConstantFields(fields = {0, 1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
-public class SentimentAnalysisMap extends MapStub {
+@FunctionAnnotation.ConstantFields({0, 1})
+public class SentimentAnalysisMap extends MapFunction{
 
     private long counter = 0;
     private String sentimentDirPath ="";
 
-    private PactString tweet = new PactString();
-    private PactDouble negPolarity = new PactDouble();
-    private PactDouble posPolarity = new PactDouble();
-    private PactRecord pr2 = new PactRecord(4);
+    private StringValue tweet = new StringValue();
+    private DoubleValue negPolarity = new DoubleValue();
+    private DoubleValue posPolarity = new DoubleValue();
+    private Record pr2 = new Record(4);
 
     private static final Log LOG = LogFactory.getLog(SentimentAnalysisMap.class);
 
@@ -42,7 +41,7 @@ public class SentimentAnalysisMap extends MapStub {
     /**
     * Reads the filter literals from the configuration.
     *
-    * @see eu.stratosphere.pact.common.stubs.Stub#open(eu.stratosphere.nephele.configuration.Configuration)
+    * @see eu.stratosphere.pact.common.stubs.Function#open(eu.stratosphere.nephele.configuration.Configuration)
     */
    @Override
    public void open(Configuration parameters) {
@@ -52,8 +51,8 @@ public class SentimentAnalysisMap extends MapStub {
 
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
-        tweet = pr.getField(2, PactString.class);
+    public void map(Record pr, Collector<Record> records) throws Exception {
+        tweet = pr.getField(2, StringValue.class);
         String text = tweet.getValue();
 
         SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
@@ -67,8 +66,8 @@ public class SentimentAnalysisMap extends MapStub {
             negPolarity.setValue(polarities[0]);
             posPolarity.setValue(polarities[1]);
 
-            pr2.setField(0, pr.getField(0, PactLong.class));
-            pr2.setField(1, pr.getField(1, PactLong.class));
+            pr2.setField(0, pr.getField(0, LongValue.class));
+            pr2.setField(1, pr.getField(1, LongValue.class));
             pr2.setField(2, negPolarity);
             pr2.setField(3, posPolarity);
             records.collect(pr2);

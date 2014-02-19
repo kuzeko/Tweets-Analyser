@@ -4,13 +4,14 @@
  */
 package eu.unitn.disi.db.spleetter.cogroup;
 
-import eu.stratosphere.pact.common.stubs.CoGroupStub;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.api.java.record.functions.CoGroupFunction;
+import eu.stratosphere.util.Collector;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.IntValue;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -23,28 +24,27 @@ import org.apache.commons.logging.LogFactory;
  * 2 - mean neg polarity
  * 3 - mean pos polarity
  * 4 - mean divergence
- * 5 - tot neg polairty
+ * 5 - tot neg polarity
  * 6 - tot pos polarity
  * 7 - tot divergence
  * 8 - count
  */
-@StubAnnotation.ConstantFieldsFirst(fields = {0,1})
-@StubAnnotation.ConstantFieldsSecond(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = 1)
-public class HashtagPolarityCoGroup extends CoGroupStub {
+@FunctionAnnotation.ConstantFieldsFirst({0,1})
+@FunctionAnnotation.ConstantFieldsSecond({})
+public class HashtagPolarityCoGroup extends CoGroupFunction {
     private HashMap<Integer, Integer> hashtagTweetsCount = new HashMap<Integer, Integer>();
     private static final Log LOG = LogFactory.getLog(HashtagPolarityCoGroup.class);
     private long counter = 0;
 
     @Override
-    public void coGroup(Iterator<PactRecord> hashtagTweetsSum, Iterator<PactRecord> hashtagPolarities, Collector<PactRecord> records) {
-        PactRecord pr;
+    public void coGroup(Iterator<Record> hashtagTweetsSum, Iterator<Record> hashtagPolarities, Collector<Record> records) {
+        Record pr;
         Integer hashtagID;
         Integer count;
         Double tmpD;
-        PactDouble negPolarity;
-        PactDouble posPolarity;
-        PactDouble divergence;
+        DoubleValue negPolarity;
+        DoubleValue posPolarity;
+        DoubleValue divergence;
 
         hashtagTweetsCount.clear();
 
@@ -52,28 +52,28 @@ public class HashtagPolarityCoGroup extends CoGroupStub {
             while(hashtagTweetsSum.hasNext()){
                 pr = hashtagTweetsSum.next();
 
-                hashtagID = pr.getField(1, PactInteger.class).getValue();
-                count = pr.getField(2, PactInteger.class).getValue();
+                hashtagID = pr.getField(1, IntValue.class).getValue();
+                count = pr.getField(2, IntValue.class).getValue();
 
                 hashtagTweetsCount.put(hashtagID,count);
             }
 
             while (hashtagPolarities.hasNext()) {
                 pr = hashtagPolarities.next();
-                hashtagID = pr.getField(1, PactInteger.class).getValue();
+                hashtagID = pr.getField(1, IntValue.class).getValue();
                 count = hashtagTweetsCount.get(hashtagID);
 
                 // -------
-                negPolarity = pr.getField(2, PactDouble.class);
+                negPolarity = pr.getField(2, DoubleValue.class);
                 pr.setField(5, negPolarity);
 
-                posPolarity = pr.getField(3, PactDouble.class);
+                posPolarity = pr.getField(3, DoubleValue.class);
                 pr.setField(6, posPolarity);
 
-                divergence = pr.getField(4, PactDouble.class);
+                divergence = pr.getField(4, DoubleValue.class);
                 pr.setField(7, divergence);
 
-                pr.setField(8, new PactInteger(count));
+                pr.setField(8, new IntValue(count));
                 // -------
 
 
@@ -85,7 +85,7 @@ public class HashtagPolarityCoGroup extends CoGroupStub {
                 posPolarity.setValue(tmpD);
                 pr.setField(3, posPolarity);
 
-                divergence = pr.getField(4, PactDouble.class);
+                divergence = pr.getField(4, DoubleValue.class);
                 tmpD = divergence.getValue() / count;
                 divergence.setValue(tmpD);
                 pr.setField(4, divergence);

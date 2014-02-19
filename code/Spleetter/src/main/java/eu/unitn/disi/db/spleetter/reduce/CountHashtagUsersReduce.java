@@ -4,15 +4,14 @@
  */
 package eu.unitn.disi.db.spleetter.reduce;
 
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.ReduceStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactLong;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.ReduceFunction;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -25,30 +24,29 @@ import org.apache.commons.logging.LogFactory;
  * 1 - hashtag
  * 2 - num distinct users
  */
-@StubAnnotation.ConstantFields(fields = {0,1})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.INPUTCARD)
-public class CountHashtagUsersReduce extends ReduceStub {
+@FunctionAnnotation.ConstantFields({0,1})
+public class CountHashtagUsersReduce extends ReduceFunction     implements Serializable{
     private static final Log LOG = LogFactory.getLog(CountHashtagUsersReduce.class);
     private long counter = 0;
-    private PactInteger numDistinctUsers = new PactInteger();
-    private HashSet<PactInteger> users = new HashSet<PactInteger>();
-    private PactRecord pr2 = new PactRecord(3);
+    private IntValue numDistinctUsers = new IntValue();
+    private HashSet<IntValue> users = new HashSet<IntValue>();
+    private Record pr2 = new Record(3);
 
     @Override
-    public void reduce(Iterator<PactRecord> matches, Collector<PactRecord> records) throws Exception {
-        PactRecord pr = null;
-        PactInteger hashtagID = null;
-        PactInteger hashtagID2 = null;
-        PactInteger userID;
+    public void reduce(Iterator<Record> matches, Collector<Record> records) throws Exception {
+        Record pr = null;
+        IntValue hashtagID = null;
+        IntValue hashtagID2 = null;
+        IntValue userID;
 
         users.clear();
 
         while (matches.hasNext()) {
             pr = matches.next();
-            userID = pr.getField(2, PactInteger.class);
+            userID = pr.getField(2, IntValue.class);
 
             //TO BE REMOVED
-            hashtagID2 = pr.getField(1, PactInteger.class);
+            hashtagID2 = pr.getField(1, IntValue.class);
             if(hashtagID==null){
                 hashtagID = hashtagID2;
             } else if(!hashtagID.equals(hashtagID2)){
@@ -64,12 +62,12 @@ public class CountHashtagUsersReduce extends ReduceStub {
         }
 
         numDistinctUsers.setValue(users.size());
-        pr2.setField(0, pr.getField(0, PactString.class));
-        pr2.setField(1, pr.getField(1, PactInteger.class));
+        pr2.setField(0, pr.getField(0, StringValue.class));
+        pr2.setField(1, pr.getField(1, IntValue.class));
         pr2.setField(2, numDistinctUsers);
         records.collect(pr2);
         if (TweetCleanse.CountHashtagUsersReduceLog) {
-            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            //System.out.printf("CEWR out %d \n", pr.getField(0, LongValue.class).getValue() );
             this.counter++;
         }
     }

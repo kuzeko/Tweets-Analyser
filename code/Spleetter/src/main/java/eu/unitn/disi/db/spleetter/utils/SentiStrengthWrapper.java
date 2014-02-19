@@ -4,8 +4,8 @@
  */
 package eu.unitn.disi.db.spleetter.utils;
 
-
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,7 @@ import uk.ac.wlv.sentistrength.SentiStrength;
  * Wrapper for the SentiStrength library
  *
  */
-public class SentiStrengthWrapper {
+public class SentiStrengthWrapper implements Serializable {
 
     private SentiStrength classifier;
     private static String sentiDataFolder = "/tmp/EXPORT/SentiStrength_Data/"; // file:// ?

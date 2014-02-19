@@ -1,40 +1,40 @@
 package eu.unitn.disi.db.spleetter.map;
 
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactLong;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.util.Collector;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
+import eu.stratosphere.types.StringValue;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
+import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Converts a PactRecord containing one string in to multiple integer pairs.
+ * Converts a Record containing one string in to multiple integer pairs.
  * 0 - tweet id
  * 1 - user id
  * 2 - hashtag id
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
-public class LoadHashtagMap extends MapStub {
+@FunctionAnnotation.ConstantFields({})
+public class LoadHashtagMap extends MapFunction{
 
     private static final Log LOG = LogFactory.getLog(LoadHashtagMap.class);
     private long counter = 0;
 
 
-    private PactRecord outputRecord = new PactRecord();
-    private PactLong tid = new PactLong();
-    private PactLong uid = new PactLong();
-    private PactInteger hid = new PactInteger();
-    private final PactString line = new PactString();
+    private Record outputRecord = new Record();
+    private LongValue tid = new LongValue();
+    private LongValue uid = new LongValue();
+    private IntValue hid = new IntValue();
+    private final StringValue line = new StringValue();
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
-        line.setValue(pr.getField(0, PactString.class));
+    public void map(Record pr, Collector<Record> records) throws Exception {
+        line.setValue(pr.getField(0, StringValue.class));
         String[] splittedLine = line.toString().split(",");
 
         tid.setValue(Long.parseLong(splittedLine[0]));
@@ -47,7 +47,7 @@ public class LoadHashtagMap extends MapStub {
 
         records.collect(outputRecord);
         if (TweetCleanse.LoadHashtagMapLog) {
-            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            //System.out.printf("CEWR out %d \n", pr.getField(0, LongValue.class).getValue() );
             this.counter++;
         }
     }

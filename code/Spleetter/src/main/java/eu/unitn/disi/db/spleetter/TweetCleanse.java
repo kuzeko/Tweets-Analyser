@@ -1,22 +1,28 @@
 package eu.unitn.disi.db.spleetter;
 
-import eu.stratosphere.pact.common.contract.CoGroupContract;
-import eu.stratosphere.pact.common.contract.FileDataSink;
-import eu.stratosphere.pact.common.contract.FileDataSource;
-import eu.stratosphere.pact.common.contract.MapContract;
-import eu.stratosphere.pact.common.contract.MatchContract;
-import eu.stratosphere.pact.common.contract.ReduceContract;
-import eu.stratosphere.pact.common.io.RecordOutputFormat;
-import eu.stratosphere.pact.common.io.TextInputFormat;
-import eu.stratosphere.pact.common.plan.Plan;
-import eu.stratosphere.pact.common.plan.PlanAssembler;
-import eu.stratosphere.pact.common.plan.PlanAssemblerDescription;
-import eu.stratosphere.pact.common.type.base.PactDouble;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactLong;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.common.Plan;
+import eu.stratosphere.api.common.Program;
+import eu.stratosphere.api.common.ProgramDescription;
+import eu.stratosphere.api.common.operators.FileDataSink;
+import eu.stratosphere.api.common.operators.FileDataSource;
+import eu.stratosphere.api.java.record.io.CsvOutputFormat;
+import eu.stratosphere.api.java.record.io.TextInputFormat;
+import eu.stratosphere.api.java.record.operators.CoGroupOperator;
+import eu.stratosphere.api.java.record.operators.JoinOperator;
+import eu.stratosphere.api.java.record.operators.MapOperator;
+import eu.stratosphere.api.java.record.operators.ReduceOperator;
+import eu.stratosphere.types.DoubleValue;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
+import eu.stratosphere.types.StringValue;
 import eu.unitn.disi.db.spleetter.cogroup.EnglishDictionaryCoGroup;
 import eu.unitn.disi.db.spleetter.cogroup.HashtagPolarityCoGroup;
+import eu.unitn.disi.db.spleetter.join.DictionaryFilterJoin;
+import eu.unitn.disi.db.spleetter.join.HashtagLifespanJoin;
+import eu.unitn.disi.db.spleetter.join.HashtagPolarityJoin;
+import eu.unitn.disi.db.spleetter.join.HashtagUserJoin;
+import eu.unitn.disi.db.spleetter.join.TweetDateJoin;
+import eu.unitn.disi.db.spleetter.join.TweetPolarityJoin;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
 import eu.unitn.disi.db.spleetter.map.LoadHashtagMap;
@@ -28,12 +34,6 @@ import eu.unitn.disi.db.spleetter.map.SpamFlagMap;
 import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
-import eu.unitn.disi.db.spleetter.match.DictionaryFilterMatch;
-import eu.unitn.disi.db.spleetter.match.HashtagLifespanMatch;
-import eu.unitn.disi.db.spleetter.match.HashtagPolarityMatch;
-import eu.unitn.disi.db.spleetter.match.HashtagUserMatch;
-import eu.unitn.disi.db.spleetter.match.TweetDateMatch;
-import eu.unitn.disi.db.spleetter.match.TweetPolarityMatch;
 import eu.unitn.disi.db.spleetter.reduce.CountAllHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
@@ -52,7 +52,7 @@ import java.util.HashSet;
  * Perform cleansing phase of tweets.
  * @author Davide Mottin <mottin@disi.unitn.eu>
  */
-public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
+public class TweetCleanse implements Program, ProgramDescription {
 
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
     public static final String APPEARANCE_TRESHOLD = "parameter.APPEARANCE_TRESHOLD";
@@ -68,18 +68,18 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     public static final boolean EnglishDictionaryCoGroupLog   = true;  // EDCG
     public static final boolean CountEnglishWordsReduceLog    = true;   // CEWR
     public static final boolean CleanTextMapLog               = true;   // CTM
-    public static final boolean DictionaryFilterMatchLog      = true;   // DFM
+    public static final boolean DictionaryFilterJoinLog      = true;   // DFM
     public static final boolean SplitSentenceMapLog           = true;
     public static final boolean SentimentAnalysisMapLog       = true;   // SAM
-    public static final boolean TweetPolarityMatchLog         = true ;  // TPM
-    public static final boolean TweetDateMatchLog             = true;
+    public static final boolean TweetPolarityJoinLog         = true ;  // TPM
+    public static final boolean TweetDateJoinLog             = true;
     public static final boolean HashtagPolarityCoGroupLog     = true;
-    public static final boolean HashtagPolarityMatchLog       = true;
+    public static final boolean HashtagPolarityJoinLog       = true;
     public static final boolean PolarityHashtagExtractMapLog  = true;
     public static final boolean UserExtractMapLog             = true;
     public static final boolean UserTweetExtractMapLog        = true;
-    public static final boolean HashtagLifespanMatchLog       = true;
-    public static final boolean HashtagUserMatchLog           = true;
+    public static final boolean HashtagLifespanJoinLog       = true;
+    public static final boolean HashtagUserJoinLog           = true;
     public static final boolean CountAllHashtagTweetsReduceLog = true;
     public static final boolean CountHashtagTweetsReduceLog    = true;
     public static final boolean CountHashtagUsersReduceLog     = true;
@@ -129,7 +129,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         FileDataSource tweets = new FileDataSource(TextInputFormat.class, dataInput, "Input Lines");
         tweets.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);	// comment out this line for UTF-8 inputs
 
-        MapContract tokenizeMapper = MapContract.builder(LoadTweetMap.class)
+        MapOperator tokenizeMapper = MapOperator.builder(LoadTweetMap.class)
                 .input(tweets)
                 .name("Tokenize Lines")
                 .build();
@@ -142,7 +142,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         FileDataSource dates = new FileDataSource(TextInputFormat.class, datesInput, "Tweet dates");
         dates.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
 
-        MapContract datesMapper = MapContract.builder(LoadTweetDatesMap.class)
+        MapOperator datesMapper = MapOperator.builder(LoadTweetDatesMap.class)
                 .input(dates)
                 .name("Tokenize Dates")
                 .build();
@@ -154,7 +154,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         FileDataSource dict = new FileDataSource(TextInputFormat.class, dictionaryInput, "English words");
         dict.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
 
-        MapContract dictionaryMap = MapContract.builder(LoadDictionaryMap.class)
+        MapOperator dictionaryMap = MapOperator.builder(LoadDictionaryMap.class)
                 .input(dict)
                 .name("Load dictionary")
                 .build();
@@ -166,7 +166,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         FileDataSource hashtags = new FileDataSource(TextInputFormat.class, hashtagInput, "Hashtags");
         hashtags.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);		// comment out this line for UTF-8 inputs
 
-        MapContract loadHashtags = MapContract.builder(LoadHashtagMap.class)
+        MapOperator loadHashtags = MapOperator.builder(LoadHashtagMap.class)
                 .input(hashtags)
                 .name("Load Hashtags")
                 .build();
@@ -182,172 +182,172 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
          */
 
 
-        MatchContract datedTweets = MatchContract.builder(TweetDateMatch.class, PactLong.class, 0,0)
-                .keyField(PactLong.class, 1, 1)
+        JoinOperator datedTweets = JoinOperator.builder(TweetDateJoin.class, LongValue.class, 0,0)
+                .keyField(LongValue.class, 1, 1)
                 .input1(tokenizeMapper)
                 .input2(datesMapper)
                 .name("Join tweets and dates")
                 .build();
-        //datedTweets.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //datedTweets.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(1.0f);
         //datedTweets.getCompilerHints().setAvgBytesPerRecord(130);
 
-        MapContract cleanText = MapContract.builder(CleanTextMap.class)
+        MapOperator cleanText = MapOperator.builder(CleanTextMap.class)
                 .input(datedTweets)
                 .name("Clean Tweets")
                 .build();
-        //cleanText.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //cleanText.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(1.0f);
 
-        MapContract sentimentAnalysis = MapContract.builder(SentimentAnalysisMap.class)
+        MapOperator sentimentAnalysis = MapOperator.builder(SentimentAnalysisMap.class)
                 .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
         sentimentAnalysis.setParameter(SNETIMENT_PATH, sentimentData);
-        //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+        //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(1.0f);
 
-        MapContract spamMatcher = MapContract.builder(SpamFlagMap.class)
+        MapOperator spamMatcher = MapOperator.builder(SpamFlagMap.class)
                 .input(datedTweets)
                 .name("Spam Flagging")
                 .build();
 
 
-        MapContract splitSentence = MapContract.builder(SplitSentenceMap.class)
+        MapOperator splitSentence = MapOperator.builder(SplitSentenceMap.class)
                 .input(cleanText)
                 .name("Split to words")
                 .build();
 
-        ReduceContract countWordAppearances = new ReduceContract.Builder(CountWordsAppearancesReduce.class, PactString.class, 0)
+        ReduceOperator countWordAppearances = ReduceOperator.builder(CountWordsAppearancesReduce.class, StringValue.class, 0)
                 .input(splitSentence)
                 .name("Count word appearances")
                 .build();
         countWordAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
 
 
-        CoGroupContract englishGroup = CoGroupContract.builder(EnglishDictionaryCoGroup.class, PactString.class, 0, 0)
+        CoGroupOperator englishGroup = CoGroupOperator.builder(EnglishDictionaryCoGroup.class, StringValue.class, 0, 0)
                 .input1(splitSentence)
                 .input2(dictionaryMap)
                 .name("Group en-words")
                 .build();
 
-        ReduceContract countEnglishWords = new ReduceContract.Builder(CountEnglishWordsReduce.class, PactLong.class, 0)
+        ReduceOperator countEnglishWords = ReduceOperator.builder(CountEnglishWordsReduce.class, LongValue.class, 0)
                 .input(englishGroup)
                 .name("Count en-words")
                 .build();
 
-        MatchContract dictionaryFilter = MatchContract.builder(DictionaryFilterMatch.class, PactLong.class, 0, 0)
+        JoinOperator dictionaryFilter = JoinOperator.builder(DictionaryFilterJoin.class, LongValue.class, 0, 0)
                 .input1(countEnglishWords)
                 .input2(cleanText)
                 .name("Filter English Tweets")
                 .build();
         dictionaryFilter.setParameter(WORDS_TRESHOLD, wordTreshold);
-        //dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerStubCall(0.2f);
+        //dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(0.2f);
 
-        MatchContract tweetPolarityMatch = MatchContract.builder(TweetPolarityMatch.class, PactLong.class, 0, 0)
+        JoinOperator tweetPolarityJoin = JoinOperator.builder(TweetPolarityJoin.class, LongValue.class, 0, 0)
                 .input1(dictionaryFilter)
                 .input2(sentimentAnalysis)
-                .name("Tweet Polarity Match")
+                .name("Tweet Polarity Join")
                 .build();
 
-        MapContract userExtract = MapContract.builder(UserExtractMap.class)
-                .input(tweetPolarityMatch)
+        MapOperator userExtract = MapOperator.builder(UserExtractMap.class)
+                .input(tweetPolarityJoin)
                 .name("Extract User")
                 .build();
 
-        ReduceContract countUserTweets = new ReduceContract.Builder(CountUserTweetsReduce.class, PactLong.class, 0)
+        ReduceOperator countUserTweets = ReduceOperator.builder(CountUserTweetsReduce.class, LongValue.class, 0)
                 .input(userExtract)
                 .name("Count user tweets")
                 .build();
 
 
 
-        MapContract timePolarity = MapContract.builder(PolarityHashtagExtractMap.class)
-                .input(tweetPolarityMatch)
+        MapOperator timePolarity = MapOperator.builder(PolarityHashtagExtractMap.class)
+                .input(tweetPolarityJoin)
                 .name("Tweet Time & Polarity")
                 .build();
 
-        MapContract userTweetExtract = MapContract.builder(UserTweetExtractMap.class)
-                .input(tweetPolarityMatch)
+        MapOperator userTweetExtract = MapOperator.builder(UserTweetExtractMap.class)
+                .input(tweetPolarityJoin)
                 .name("Extract User")
                 .build();
 
 
-        MatchContract hashtagUserMatch = MatchContract.builder(HashtagUserMatch.class, PactLong.class, 0, 0)
-                .keyField(PactInteger.class, 1, 1)
+        JoinOperator hashtagUserJoin = JoinOperator.builder(HashtagUserJoin.class, LongValue.class, 0, 0)
+                .keyField(IntValue.class, 1, 1)
                 .input1(userTweetExtract)
                 .input2(loadHashtags)
-                .name("Hashtag User Match")
+                .name("Hashtag User Join")
                 .build();
 
-        ReduceContract countHashtagUsers = new ReduceContract.Builder(CountHashtagUsersReduce.class, PactString.class, 0)
-                .keyField(PactInteger.class, 1)
-                .input(hashtagUserMatch)
+        ReduceOperator countHashtagUsers = ReduceOperator.builder(CountHashtagUsersReduce.class, StringValue.class, 0)
+                .keyField(IntValue.class, 1)
+                .input(hashtagUserJoin)
                 .name("Count hastag users")
                 .build();
 
 
-        MatchContract hashtagPolarityMatch = MatchContract.builder(HashtagPolarityMatch.class, PactLong.class, 0, 0)
-                .keyField(PactInteger.class, 1, 1)
+        JoinOperator hashtagPolarityJoin = JoinOperator.builder(HashtagPolarityJoin.class, LongValue.class, 0, 0)
+                .keyField(IntValue.class, 1, 1)
                 .input1(timePolarity)
                 .input2(loadHashtags)
-                .name("Hashtag Polarity Match")
+                .name("Hashtag Polarity Join")
                 .build();
 
-        ReduceContract sumHashtagPolarity = new ReduceContract.Builder(SumHashtagPolarityReduce.class, PactString.class, 0)
-                .keyField(PactInteger.class, 1)
-                .input(hashtagPolarityMatch)
+        ReduceOperator sumHashtagPolarity = ReduceOperator.builder(SumHashtagPolarityReduce.class, StringValue.class, 0)
+                .keyField(IntValue.class, 1)
+                .input(hashtagPolarityJoin)
                 .name("Sum Hashtag polarities")
                 .build();
 
-        ReduceContract countHashtagTweets = new ReduceContract.Builder(CountHashtagTweetsReduce.class, PactString.class, 0)
-                .keyField(PactInteger.class, 1)
-                .input(hashtagPolarityMatch)
+        ReduceOperator countHashtagTweets = ReduceOperator.builder(CountHashtagTweetsReduce.class, StringValue.class, 0)
+                .keyField(IntValue.class, 1)
+                .input(hashtagPolarityJoin)
                 .name("Count Hashtag Tweets")
                 .build();
 
         //NB reduce on key 1
-        ReduceContract countAllHashtagTweets = ReduceContract.builder(CountAllHashtagTweetsReduce.class, PactInteger.class, 1)
+        ReduceOperator countAllHashtagTweets = ReduceOperator.builder(CountAllHashtagTweetsReduce.class, IntValue.class, 1)
                 .input(countHashtagTweets)
                 .name("Count Hashtag Tweets")
                 .build();
 
 
-        CoGroupContract timestampPolarityGroup = CoGroupContract.builder(HashtagPolarityCoGroup.class, PactString.class, 0, 0)
-                .keyField(PactInteger.class, 1,1)
+        CoGroupOperator timestampPolarityGroup = CoGroupOperator.builder(HashtagPolarityCoGroup.class, StringValue.class, 0, 0)
+                .keyField(IntValue.class, 1,1)
                 .input1(countHashtagTweets)
                 .input2(sumHashtagPolarity)
                 .name("Compute mean Divergence")
                 .build();
 
         //NB reduce on key 1
-        ReduceContract hashtagPeeks = ReduceContract.builder(HashtagPeeksReduce.class)
-                .keyField( PactInteger.class, 1)
+        ReduceOperator hashtagPeeks = ReduceOperator.builder(HashtagPeeksReduce.class)
+                .keyField( IntValue.class, 1)
                 .input(countHashtagTweets)
                 .name("Find Hashtags Peeks")
                 .build();
 
         //NB reduce on key 1
-        ReduceContract hashtagLows = ReduceContract.builder(HashtagLowsReduce.class)
-                .keyField(PactInteger.class, 1)
+        ReduceOperator hashtagLows = ReduceOperator.builder(HashtagLowsReduce.class)
+                .keyField(IntValue.class, 1)
                 .input(countHashtagTweets)
                 .name("Find Hashtags Low")
                 .build();
 
 
         //NB reduce on key 1
-        ReduceContract hashtagFirstAppearance = ReduceContract.builder(HashtagFirstAppearanceReduce.class)
-                .keyField(PactInteger.class, 1)
+        ReduceOperator hashtagFirstAppearance = ReduceOperator.builder(HashtagFirstAppearanceReduce.class)
+                .keyField(IntValue.class, 1)
                 .input(countHashtagTweets)
                 .name("Find Hashtag first Appearance")
                 .build();
 
 
         //NB reduce on key 1
-        ReduceContract hashtagLastAppearance = ReduceContract.builder(HashtagLastAppearanceReduce.class)
-                .keyField(PactInteger.class, 1)
+        ReduceOperator hashtagLastAppearance = ReduceOperator.builder(HashtagLastAppearanceReduce.class)
+                .keyField(IntValue.class, 1)
                 .input(countHashtagTweets)
                 .name("Find Hashtag last Appearance")
                 .build();
 
-        MatchContract hastagLifespanMatch = MatchContract.builder(HashtagLifespanMatch.class, PactInteger.class, 0, 0)
+        JoinOperator hastagLifespanJoin = JoinOperator.builder(HashtagLifespanJoin.class, IntValue.class, 0, 0)
                 .input1(hashtagFirstAppearance)
                 .input2(hashtagLastAppearance)
                 .name("Compose Hashtag Time Window")
@@ -364,120 +364,120 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         FileDataSink[] outputs = new FileDataSink[11];
         int i = 0;
 
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputCleanTweets, tweetPolarityJoin, "Pruned tweets with polarities");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactLong.class, 0)
-                .field(PactInteger.class, 1)
-                .field(PactString.class, 2)
-                .field(PactInteger.class, 3)
-                .field(PactString.class, 4)
-                .field(PactDouble.class, 5)
-                .field(PactDouble.class, 6);
+                .field(LongValue.class, 0)
+                .field(IntValue.class, 1)
+                .field(StringValue.class, 2)
+                .field(IntValue.class, 3)
+                .field(StringValue.class, 4)
+                .field(DoubleValue.class, 5)
+                .field(DoubleValue.class, 6);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputSpamTweets, spamMatcher, "Tweets marked as spam");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputSpamTweets, spamMatcher, "Tweets marked as spam");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactLong.class, 0)
-                .field(PactInteger.class, 1)
-                .field(PactInteger.class, 2);
-            
-        i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputUsersTweetsCount, countUserTweets, "User tweets count");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
-                .recordDelimiter('\n')
-                .fieldDelimiter('\t')
-                .lenient(true)
-                .field(PactInteger.class, 0)
-                .field(PactInteger.class, 1);
+                .field(LongValue.class, 0)
+                .field(IntValue.class, 1)
+                .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagUsersCount, countHashtagUsers, "Hahtag Users count");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputUsersTweetsCount, countUserTweets, "User tweets count");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactString.class, 0)
-                .field(PactInteger.class, 1)
-                .field(PactInteger.class, 2);
+                .field(IntValue.class, 0)
+                .field(IntValue.class, 1);
+
+        i++;
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagUsersCount, countHashtagUsers, "Hahtag Users count");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1)
+                .field(IntValue.class, 2);
 
         i++; //timestampPolarityGroup
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagSentiment, timestampPolarityGroup, "Hahtag Polarities ");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagSentiment, timestampPolarityGroup, "Hahtag Polarities ");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactString.class, 0)
-                .field(PactInteger.class, 1)
-                .field(PactDouble.class, 2)
-                .field(PactDouble.class, 3)
-                .field(PactDouble.class, 4)
-                .field(PactDouble.class, 5)
-                .field(PactDouble.class, 6)
-                .field(PactDouble.class, 7)
-                .field(PactInteger.class, 8);
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1)
+                .field(DoubleValue.class, 2)
+                .field(DoubleValue.class, 3)
+                .field(DoubleValue.class, 4)
+                .field(DoubleValue.class, 5)
+                .field(DoubleValue.class, 6)
+                .field(DoubleValue.class, 7)
+                .field(IntValue.class, 8);
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactString.class, 0)
-                .field(PactInteger.class, 1)
-                .field(PactInteger.class, 2);
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1)
+                .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactInteger.class, 0)
-                .field(PactString.class, 1)
-                .field(PactInteger.class, 2);
+                .field(IntValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLows, hashtagLows , "Hashtag Lows");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLows, hashtagLows , "Hashtag Lows");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactInteger.class, 0)
-                .field(PactString.class, 1)
-                .field(PactInteger.class, 2);
+                .field(IntValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagLifespan, hastagLifespanMatch , "Hashtag Life Ssan");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLifespan, hastagLifespanJoin , "Hashtag Life Ssan");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactInteger.class, 0)
-                .field(PactString.class, 1)
-                .field(PactString.class, 2);
+                .field(IntValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(StringValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactInteger.class, 0)
-                .field(PactInteger.class, 1);
+                .field(IntValue.class, 0)
+                .field(IntValue.class, 1);
 
         i++;
-        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputWordAppearances, countWordAppearances , "Word Total Appearances");
-        RecordOutputFormat.configureRecordFormat(outputs[i])
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputWordAppearances, countWordAppearances , "Word Total Appearances");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(PactString.class, 0)
-                .field(PactInteger.class, 1);
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1);
 
 
 

@@ -1,12 +1,12 @@
 package eu.unitn.disi.db.spleetter.map;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactLong;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.LongValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import java.util.Arrays;
@@ -20,18 +20,17 @@ import org.apache.commons.logging.LogFactory;
  * 0 - word<br /> 1 - tweet id<br />
  *
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
-public class SplitSentenceMap extends MapStub {
+@FunctionAnnotation.ConstantFields({})
+public class SplitSentenceMap extends MapFunction{
 
     private long counter = 0;
     private static final Log LOG = LogFactory.getLog(SplitSentenceMap.class);
     private List<String> stopwordsList;
-    private PactString line;
-    private PactLong tid;
-    private PactString word = new PactString();
+    private StringValue line;
+    private LongValue tid;
+    private StringValue word = new StringValue();
     private StringUtils.WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
-    private PactRecord output = new PactRecord(3);
+    private Record output = new Record(3);
 
     @Override
     public void open(Configuration parameters) {
@@ -39,9 +38,9 @@ public class SplitSentenceMap extends MapStub {
     }
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
-        tid = pr.getField(0, PactLong.class);
-        line = pr.getField(2, PactString.class);
+    public void map(Record pr, Collector<Record> records) throws Exception {
+        tid = pr.getField(0, LongValue.class);
+        line = pr.getField(2, StringValue.class);
         tokenizer.setStringToTokenize(line);
         while (tokenizer.next(word)) {
             String wordString = word.getValue().toLowerCase();

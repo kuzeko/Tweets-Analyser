@@ -14,14 +14,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>stratosphere.eu</id>
-            <url>http://www.stratosphere.eu/maven2/</url>
-        </repository>
-    </repositories>
 
 
+<repositories>
+  <repository>
+    <id>snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases><enabled>false</enabled></releases>
+    <snapshots><enabled>true</enabled></snapshots>
+  </repository>
+</repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -30,27 +32,25 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
-            <groupId>eu.stratosphere</groupId>
-            <artifactId>pact-common</artifactId>
-            <version>0.2</version>
-            <type>jar</type>
-            <scope>compile</scope>
+          <groupId>eu.stratosphere</groupId>
+          <artifactId>stratosphere-java</artifactId>
+          <version>0.4</version>
         </dependency>
+        <dependency>
+          <groupId>eu.stratosphere</groupId>
+          <artifactId>stratosphere-clients</artifactId>
+          <version>0.4</version>
+        </dependency>
+
+
         <dependency>
             <groupId>SentiStength</groupId>
             <artifactId>senti-strength</artifactId>
             <version>1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>eu.stratosphere</groupId>
-            <artifactId>nephele-common</artifactId>
-            <version>0.2</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>

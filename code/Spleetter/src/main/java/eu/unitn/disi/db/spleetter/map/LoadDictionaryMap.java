@@ -1,33 +1,32 @@
 package eu.unitn.disi.db.spleetter.map;
 
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.MapStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.MapFunction;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Converts a PactRecord containing one string in to a string tuple
+ * Converts a Record containing one string in to a string tuple
  * a tuple is a English word from the dictionary
  *
  * 0 - word
  */
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 0, upperBound = StubAnnotation.OutCardBounds.UNBOUNDED)
-public class LoadDictionaryMap extends MapStub {
+@FunctionAnnotation.ConstantFields({})
+public class LoadDictionaryMap extends MapFunction{
 
 	private static final Log LOG = LogFactory.getLog(LoadDictionaryMap.class);
 	private long counter = 0;
 
-	private PactString word = new PactString();
+	private StringValue word = new StringValue();
 
     @Override
-    public void map(PactRecord pr, Collector<PactRecord> records) throws Exception {
-        word = pr.getField(0, PactString.class);
+    public void map(Record pr, Collector<Record> records) throws Exception {
+        word = pr.getField(0, StringValue.class);
         StringUtils.toLowerCase(word);
         pr.setField(0, word);
         records.collect(pr);

@@ -1,15 +1,14 @@
 package eu.unitn.disi.db.spleetter.reduce;
 
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.ReduceStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
-import eu.stratosphere.pact.common.type.base.PactString;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.ReduceFunction;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.types.StringValue;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
-import java.util.HashSet;
+import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,28 +18,27 @@ import org.apache.commons.logging.LogFactory;
  * 1 - peek timestamp [h]
  */
 
-@StubAnnotation.ConstantFields(fields = {})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
-public class HashtagLastAppearanceReduce extends ReduceStub {
+@FunctionAnnotation.ConstantFields({})
+public class HashtagLastAppearanceReduce extends ReduceFunction    implements Serializable {
     private static final Log LOG = LogFactory.getLog(HashtagLastAppearanceReduce.class);
     private long counter = 0;
-    private final PactString timestamp = new PactString();
-    private final PactRecord pr2 = new PactRecord(2);
+    private final StringValue timestamp = new StringValue();
+    private final Record pr2 = new Record(2);
 
     @Override
-    public void reduce(Iterator<PactRecord> matches, Collector<PactRecord> records) throws Exception {
-        PactRecord pr = null;
-        PactInteger hashtagID = null;
+    public void reduce(Iterator<Record> matches, Collector<Record> records) throws Exception {
+        Record pr = null;
+        IntValue hashtagID = null;
         String maxTimestamp = null;
         String tempTimestamp = null;
 
         while (matches.hasNext()) {
             pr = matches.next();
-            tempTimestamp = pr.getField(0, PactString.class).getValue();
+            tempTimestamp = pr.getField(0, StringValue.class).getValue();
 
             if(maxTimestamp == null || tempTimestamp.compareTo(maxTimestamp)>0){
-                hashtagID =pr.getField(1, PactInteger.class);
-                maxTimestamp = pr.getField(0, PactString.class).getValue();
+                hashtagID =pr.getField(1, IntValue.class);
+                maxTimestamp = pr.getField(0, StringValue.class).getValue();
             }
         }
 
@@ -49,7 +47,7 @@ public class HashtagLastAppearanceReduce extends ReduceStub {
         pr2.setField(1, timestamp);
         records.collect(pr2);
         if (TweetCleanse.HashtagLastAppearanceReduceLog) {
-            //System.out.printf("CEWR out %d \n", pr.getField(0, PactLong.class).getValue() );
+            //System.out.printf("CEWR out %d \n", pr.getField(0, LongValue.class).getValue() );
             this.counter++;
         }
     }

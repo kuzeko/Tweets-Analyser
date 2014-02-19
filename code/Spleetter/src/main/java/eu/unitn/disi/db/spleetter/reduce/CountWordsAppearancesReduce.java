@@ -1,11 +1,11 @@
 package eu.unitn.disi.db.spleetter.reduce;
 
-import eu.stratosphere.nephele.configuration.Configuration;
-import eu.stratosphere.pact.common.stubs.Collector;
-import eu.stratosphere.pact.common.stubs.ReduceStub;
-import eu.stratosphere.pact.common.stubs.StubAnnotation;
-import eu.stratosphere.pact.common.type.PactRecord;
-import eu.stratosphere.pact.common.type.base.PactInteger;
+import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
+import eu.stratosphere.api.java.record.functions.ReduceFunction;
+import eu.stratosphere.configuration.Configuration;
+import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.Record;
+import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
@@ -18,18 +18,17 @@ import org.apache.commons.logging.LogFactory;
  * 1 - number of appearances<br />
  *
  */
-@StubAnnotation.ConstantFields(fields = {0})
-@StubAnnotation.OutCardBounds(lowerBound = 1, upperBound = 1)
-public class CountWordsAppearancesReduce extends ReduceStub {
+@FunctionAnnotation.ConstantFields({0})
+public class CountWordsAppearancesReduce extends ReduceFunction {
     private static final Log LOG = LogFactory.getLog(CountWordsAppearancesReduce.class);
     private long counter = 0;
     private int numThreshold = 0;
-    PactInteger numAppearances = new PactInteger();
+    IntValue numAppearances = new IntValue();
 
     /**
     * Reads the filter literals from the configuration.
     *
-    * @see eu.stratosphere.pact.common.stubs.Stub#open(eu.stratosphere.nephele.configuration.Configuration)
+    * @see eu.stratosphere.pact.common.stubs.Function#open(eu.stratosphere.nephele.configuration.Configuration)
     */
    @Override
    public void open(Configuration parameters) {
@@ -37,8 +36,8 @@ public class CountWordsAppearancesReduce extends ReduceStub {
    }
 
     @Override
-    public void reduce(Iterator<PactRecord> matches, Collector<PactRecord> records) throws Exception {
-        PactRecord pr = null;
+    public void reduce(Iterator<Record> matches, Collector<Record> records) throws Exception {
+        Record pr = null;
         int sum = 0;
 
         while (matches.hasNext()) {
