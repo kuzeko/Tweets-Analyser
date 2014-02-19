@@ -24,6 +24,7 @@ import eu.unitn.disi.db.spleetter.map.LoadTweetDatesMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
 import eu.unitn.disi.db.spleetter.map.PolarityHashtagExtractMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
+import eu.unitn.disi.db.spleetter.map.SpamFlagMap;
 import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
@@ -80,15 +81,16 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
     public static final boolean HashtagLifespanMatchLog       = true;
     public static final boolean HashtagUserMatchLog           = true;
     public static final boolean CountAllHashtagTweetsReduceLog = true;
-    public static final boolean CountHashtagTweetsReduceLog   = true;
-    public static final boolean CountHashtagUsersReduceLog    = true;
-    public static final boolean CountUserTweetsReduceLog      = true;
+    public static final boolean CountHashtagTweetsReduceLog    = true;
+    public static final boolean CountHashtagUsersReduceLog     = true;
+    public static final boolean CountUserTweetsReduceLog       = true;
     public static final boolean HashtagFirstAppearanceReduceLog = true;
     public static final boolean HashtagLastAppearanceReduceLog = true;
-    public static final boolean HashtagLowsReduceLog          = true;
-    public static final boolean HashtagPeeksReduceLog         = true;
-    public static final boolean SumHashtagPolarityReduceLog   = true;
+    public static final boolean HashtagLowsReduceLog           = true;
+    public static final boolean HashtagPeeksReduceLog          = true;
+    public static final boolean SumHashtagPolarityReduceLog    = true;
     public static final boolean CountWordsAppearancesReduceLog = true;
+    public static final boolean SpamFlagMapLog                 = true;
 
 
 
@@ -116,7 +118,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
         String outputHashtagPeeks       = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_peeks";
         String outputHashtagLifespan    = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_lifespan";
         String outputWordAppearances    = (args.length > 8 ? args[8] : "file:///tmp/") +"/words_count";
-
+        String outputSpamTweets         = (args.length > 8 ? args[8] : "file:///tmp/") +"/spam_tweets";
 //        int outputFilesCount = 9;
 
 
@@ -169,9 +171,9 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .name("Load Hashtags")
                 .build();
 
-//        loadHashtags.getCompilerHints().setAvgBytesPerRecord(35);
-//        loadHashtags.getCompilerHints().setUniqueField(new FieldSet(0));
-//        loadHashtags.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
+        //loadHashtags.getCompilerHints().setAvgBytesPerRecord(35);
+        //loadHashtags.getCompilerHints().setUniqueField(new FieldSet(0));
+        //loadHashtags.getCompilerHints().setAvgNumRecordsPerDistinctFields(new FieldSet(new int[]{0, 1}), 1);
 
 
 
@@ -201,6 +203,12 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .build();
         sentimentAnalysis.setParameter(SNETIMENT_PATH, sentimentData);
         //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerStubCall(1.0f);
+
+        MapContract spamMatcher = MapContract.builder(SpamFlagMap.class)
+                .input(datedTweets)
+                .name("Spam Flagging")
+                .build();
+
 
         MapContract splitSentence = MapContract.builder(SplitSentenceMap.class)
                 .input(cleanText)
@@ -353,7 +361,7 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[10];
+        FileDataSink[] outputs = new FileDataSink[11];
         int i = 0;
 
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputCleanTweets, tweetPolarityMatch, "Pruned tweets with polarities");
@@ -369,6 +377,16 @@ public class TweetCleanse implements PlanAssembler, PlanAssemblerDescription {
                 .field(PactDouble.class, 5)
                 .field(PactDouble.class, 6);
 
+        i++;
+        outputs[i] = new FileDataSink(RecordOutputFormat.class, outputSpamTweets, spamMatcher, "Tweets marked as spam");
+        RecordOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(PactLong.class, 0)
+                .field(PactInteger.class, 1)
+                .field(PactInteger.class, 2);
+            
         i++;
         outputs[i] = new FileDataSink(RecordOutputFormat.class, outputUsersTweetsCount, countUserTweets, "User tweets count");
         RecordOutputFormat.configureRecordFormat(outputs[i])
