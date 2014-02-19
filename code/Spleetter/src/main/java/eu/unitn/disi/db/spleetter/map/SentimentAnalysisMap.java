@@ -57,20 +57,22 @@ public class SentimentAnalysisMap extends MapStub {
         String text = tweet.getValue();
 
         SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
-        double[] polarities = analyzer.analyze(text);
-        negPolarity.setValue(polarities[0]);
-        posPolarity.setValue(polarities[1]);
-//        negPolarity.setValue(-Math.random()*5);
-//        posPolarity.setValue(Math.random()*5);
+
 
         if (text != null) {
+            double[] polarities = analyzer.analyze(text);
+            // negPolarity.setValue(-Math.random()*5);
+            // posPolarity.setValue(Math.random()*5);
+
+            negPolarity.setValue(polarities[0]);
+            posPolarity.setValue(polarities[1]);
+
             pr2.setField(0, pr.getField(0, PactLong.class));
             pr2.setField(1, pr.getField(1, PactLong.class));
             pr2.setField(2, negPolarity);
             pr2.setField(3, posPolarity);
             records.collect(pr2);
             if(TweetCleanse.SentimentAnalysisMapLog){
-              //System.out.printf("SAM out %d \n", pr2.getField(0, PactLong.class).getValue() );
               this.counter++;
             }
 

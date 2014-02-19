@@ -18,13 +18,13 @@ import uk.ac.wlv.sentistrength.SentiStrength;
 public class SentiStrengthWrapper {
 
     private SentiStrength classifier;
-    private static String sentiDataFolder = "/tmp/SentiStrength_Data/";
+    private static String sentiDataFolder = "/tmp/EXPORT/SentiStrength_Data/"; // file:// ?
     private static final Log LOG = LogFactory.getLog(SentiStrengthWrapper.class);
 
 
     public static void setSentiStrengthData(String dirPath) {
         if (dirPath != null && !dirPath.isEmpty()) {
-            sentiDataFolder = dirPath;
+            //sentiDataFolder = dirPath;
             LOG.fatal( "Changed Sentiment Directory to: " + SentiStrengthWrapper.sentiDataFolder);
         }
     }
@@ -38,8 +38,13 @@ public class SentiStrengthWrapper {
      * The private constructor *
      */
     private SentiStrengthWrapper() {
-        String[] args = {"sentidata", sentiDataFolder, "text", "i don't hate you. I really hate you"};
-        classifier = new SentiStrength(args);
+        String[] args = {"sentidata", sentiDataFolder}; //, "text", "i  hate you. I really hate you"};
+        LOG.fatal( "Instantiating Sentiment Classifier with Sentiment Directory to: " + SentiStrengthWrapper.sentiDataFolder);
+
+        this.classifier = new SentiStrength();
+        //LOG.fatal(classifier.computeSentimentScores("i hate hate you") );
+        this.classifier.initialise(args);
+        LOG.fatal(classifier.computeSentimentScores("i hate hate you") );
     }
 
     public static SentiStrengthWrapper getInstance() {
@@ -48,7 +53,6 @@ public class SentiStrengthWrapper {
                 if (instance == null) {
                     File dirFile = null;
                     try{
-
                         dirFile = new File(new URL(SentiStrengthWrapper.sentiDataFolder).toURI());
                         dirFile.canRead();
                     } catch(Exception e){
