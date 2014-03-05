@@ -4,7 +4,7 @@
 
     <groupId>eu.unitn.disi.db</groupId>
     <artifactId>Spleetter</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.4</version>
     <packaging>jar</packaging>
 
     <name>Spleetter</name>
@@ -84,7 +84,7 @@
                                     <!--<exclude>commons-codec:commons-codec</exclude>-->
                                 </excludes>
                             </artifactSet>
-                            <finalName>Spleeter-PACT-1.0</finalName>
+                            <!-- <finalName>Spleeter-PACT-1.0</finalName>  -->
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>

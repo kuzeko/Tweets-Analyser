@@ -4,7 +4,7 @@
   <groupId>eu.unitn.disi.db</groupId>
   <artifactId>Spleetter</artifactId>
   <name>Spleetter</name>
-  <version>0.1</version>
+  <version>0.1.4</version>
   <url>http://maven.apache.org</url>
   <build>
     <plugins>
@@ -18,36 +18,30 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <filters>
+                <filter>
+                  <artifact>SentiStength:senti-strength:</artifact>
+                  <excludes>
+                    <exclude>weka/**</exclude>
+                  </excludes>
+                </filter>
+              </filters>
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
-                  <exclude>log4j:log4j:jar:</exclude>
+                  <exclude>eu.stratosphere:pact-common:</exclude>
+                  <exclude>eu.stratosphere:nephele-common:</exclude>
                 </excludes>
               </artifactSet>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <id>Spleetter</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>PACT</classifier>
-              <archive>
-                <manifestEntries>
-                  <Pact-Assembler-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Pact-Assembler-Class>
-                </manifestEntries>
-              </archive>
-              <includes>
-                <include>**/*</include>
-              </includes>
+              <transformers>
+                <transformer>
+                  <manifestEntries>
+                    <Main-Class>eu.unitn.disi.db.spleetter.eu.utils.TweetCleanseMain</Main-Class>
+                    <Build-Number>123</Build-Number>
+                    <Pact-Assembler-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Pact-Assembler-Class>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
@@ -56,8 +50,12 @@
   </build>
   <repositories>
     <repository>
-      <id>stratosphere.eu</id>
-      <url>http://www.stratosphere.eu/maven2/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots />
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </repositories>
   <dependencies>
