@@ -10,8 +10,11 @@ import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
 import eu.unitn.disi.db.spleetter.utils.SentiStrengthWrapper;
+import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import weka.core.logging.Logger;
+import weka.core.logging.Logger;
 
 /**
  * Analyze the polairties from the tweet text,
@@ -55,10 +58,20 @@ public class SentimentAnalysisMap extends MapFunction{
         tweet = pr.getField(2, StringValue.class);
         String text = tweet.getValue();
 
+        System.out.print(" acessing: " + this.sentimentDirPath );
+
         SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
+        
 
 
-        if (text != null) {
+
+        String s = new File(".").getAbsolutePath();
+
+//        System.out.println("Current relative path is: " + s);
+//        System.err.println("Current relative path is: " + s);
+//        Logger.log(Logger.Level.SEVERE, "XYZ Current relative path is: " + s);
+
+        if (analyzer != null &&  text != null) {
             double[] polarities = analyzer.analyze(text);
             // negPolarity.setValue(-Math.random()*5);
             // posPolarity.setValue(Math.random()*5);

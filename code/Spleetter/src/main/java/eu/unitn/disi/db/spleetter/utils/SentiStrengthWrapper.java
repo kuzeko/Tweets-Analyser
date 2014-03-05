@@ -6,7 +6,6 @@ package eu.unitn.disi.db.spleetter.utils;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.wlv.sentistrength.SentiStrength;
@@ -18,7 +17,7 @@ import uk.ac.wlv.sentistrength.SentiStrength;
 public class SentiStrengthWrapper implements Serializable {
 
     private SentiStrength classifier;
-    private static String sentiDataFolder = "/tmp/EXPORT/SentiStrength_Data/"; // file:// ?
+    private static String sentiDataFolder = "/home/lissama/SentiStrength_Data/"; // file:// ?
     private static final Log LOG = LogFactory.getLog(SentiStrengthWrapper.class);
 
 
@@ -32,13 +31,24 @@ public class SentiStrengthWrapper implements Serializable {
     /**
      * The unique instance *
      */
-    private volatile static SentiStrengthWrapper instance;
+    private volatile static SentiStrengthWrapper instance = null;
 
     /**
      * The private constructor *
      */
     private SentiStrengthWrapper() {
-        String[] args = {"sentidata", sentiDataFolder}; //, "text", "i  hate you. I really hate you"};
+        String[] args = {"sentidata", sentiDataFolder ,
+                         "negatedWordStrengthMultiplier", "1",
+                         "maxWordsBeforeSentimentToNegate", "1",
+                         "negativeMultiplier", "1" ,
+                         "sentenceCombineTot",
+                         "paragraphCombineTot"
+                       }; //, "text", "i  hate you. I really hate you"};
+
+
+
+
+
         LOG.fatal( "Instantiating Sentiment Classifier with Sentiment Directory to: " + SentiStrengthWrapper.sentiDataFolder);
 
         this.classifier = new SentiStrength();
@@ -53,16 +63,21 @@ public class SentiStrengthWrapper implements Serializable {
                 if (instance == null) {
                     File dirFile = null;
                     try{
-                        dirFile = new File(new URL(SentiStrengthWrapper.sentiDataFolder).toURI());
+                        //dirFile = new File(new URL(SentiStrengthWrapper.sentiDataFolder).toURI());
+                        dirFile = new File(SentiStrengthWrapper.sentiDataFolder);
                         dirFile.canRead();
+                        //System.out.print(" acessing: " + SentiStrengthWrapper.sentiDataFolder );
                     } catch(Exception e){
-                        LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " err:" + e.getMessage() );
+                       // LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " err:" + e.getMessage() );
+                       // System.out.print("Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " is not Directory");
                     }
 
+                    instance = new SentiStrengthWrapper();
                     if (dirFile.isDirectory()) {
                         instance = new SentiStrengthWrapper();
                     } else {
                         LOG.fatal( "Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " is not Directory");
+                        // System.out.print("Error acessing: " + SentiStrengthWrapper.sentiDataFolder + " is not Directory");
                     }
 
                 }
