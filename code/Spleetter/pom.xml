@@ -91,6 +91,7 @@
                                         <Main-Class>eu.unitn.disi.db.spleetter.eu.utils.TweetCleanseMain</Main-Class>
                                         <Build-Number>123</Build-Number>
                                         <Pact-Assembler-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Pact-Assembler-Class>
+                                        <Program-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Program-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
