@@ -41,7 +41,7 @@ public class LoadTweetDatesMap extends MapFunction {
         Matcher matchRecordDate = datePattern.matcher(tweetText);
 
         tid.setValue(Long.valueOf(splittedLine[0]));
-        uid.setValue(Long.parseLong(splittedLine[1]));
+        uid.setValue(Long.valueOf(splittedLine[1]));
 
         if (matchRecordDate.find()) {
             tweetTimestamp = matchRecordDate.group(1).replace(' ', '-');

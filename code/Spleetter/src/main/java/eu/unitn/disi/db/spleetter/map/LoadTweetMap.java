@@ -48,14 +48,13 @@ public class LoadTweetMap extends MapFunction{
         Matcher matchRecordText = recordTextPattern.matcher(tweetText);
 
         tid.setValue(Long.valueOf(splittedLine[0]));
-        uid.setValue(Long.parseLong(splittedLine[1]));
+        uid.setValue(Long.valueOf(splittedLine[1]));
 
 
         if (matchRecordText.find()) {
             tweetText = matchRecordText.group(1);
         } else {
             tweetText = "";
-
         }
         tweet.setValue(tweetText);
 

@@ -7,6 +7,7 @@ package eu.unitn.disi.db.spleetter.reduce;
 import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
 import eu.stratosphere.api.java.record.functions.ReduceFunction;
 import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
 import eu.stratosphere.types.Record;
 import eu.stratosphere.util.Collector;
 import eu.unitn.disi.db.spleetter.TweetCleanse;
@@ -38,7 +39,7 @@ public class CountUserTweetsReduce extends ReduceFunction {
         }
 
         numTweets.setValue(sum);
-        pr2.setField(0, pr.getField(0, IntValue.class));
+        pr2.setField(0, pr.getField(0, LongValue.class));
         pr2.setField(1, numTweets);
         records.collect(pr2);
         if (TweetCleanse.CountUserTweetsReduceLog) {

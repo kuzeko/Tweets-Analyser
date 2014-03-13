@@ -17,7 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Filters the tweet record keeping only the user id
+ * Filters the tweet record keeping only the user id the tweet id and the timestamp
  * 0 - tweet id
  * 1 - user id
  * 2 - timestamp [h]
@@ -31,7 +31,7 @@ public class UserTweetExtractMap extends MapFunction  implements Serializable{
     @Override
     public void map(Record pr, Collector<Record> records) throws Exception {
         pr2.setField(0, pr.getField(0, LongValue.class ));
-        pr2.setField(1, pr.getField(1, IntValue.class ));
+        pr2.setField(1, pr.getField(1, LongValue.class ));
         pr2.setField(2, pr.getField(4, StringValue.class ));
         records.collect(pr2);
         if(TweetCleanse.UserTweetExtractMapLog){

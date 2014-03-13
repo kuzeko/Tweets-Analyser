@@ -7,6 +7,7 @@ package eu.unitn.disi.db.spleetter.reduce;
 import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
 import eu.stratosphere.api.java.record.functions.ReduceFunction;
 import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
 import eu.stratosphere.types.Record;
 import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.Collector;
@@ -29,7 +30,7 @@ public class CountHashtagUsersReduce extends ReduceFunction     implements Seria
     private static final Log LOG = LogFactory.getLog(CountHashtagUsersReduce.class);
     private long counter = 0;
     private IntValue numDistinctUsers = new IntValue();
-    private HashSet<IntValue> users = new HashSet<IntValue>();
+    private HashSet<LongValue> users = new HashSet<LongValue>();
     private Record pr2 = new Record(3);
 
     @Override
@@ -37,13 +38,13 @@ public class CountHashtagUsersReduce extends ReduceFunction     implements Seria
         Record pr = null;
         IntValue hashtagID = null;
         IntValue hashtagID2 = null;
-        IntValue userID;
+        LongValue userID;
 
         users.clear();
 
         while (matches.hasNext()) {
             pr = matches.next();
-            userID = pr.getField(2, IntValue.class);
+            userID = pr.getField(2, LongValue.class);
 
             //TO BE REMOVED
             hashtagID2 = pr.getField(1, IntValue.class);

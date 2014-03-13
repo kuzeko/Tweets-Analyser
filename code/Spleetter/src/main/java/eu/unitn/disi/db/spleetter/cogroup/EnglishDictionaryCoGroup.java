@@ -22,7 +22,8 @@ import org.apache.commons.logging.LogFactory;
  * in the record. The other fields are not modified.
  *
  * 0 - tweet id
- * 1 - 1
+ * 1 - user id
+ * 2 - 1
  */
 @FunctionAnnotation.ConstantFieldsFirst({})
 @FunctionAnnotation.ConstantFieldsSecond({})
@@ -33,6 +34,7 @@ public class EnglishDictionaryCoGroup extends CoGroupFunction  implements Serial
     private IntValue one = new IntValue(1);
     private Record outputRecord  = new Record();
     private LongValue tid;
+    private LongValue uid;
 
     @Override
     public void coGroup(Iterator<Record> wordJoin, Iterator<Record> dictJoin, Collector<Record> records) {
@@ -41,8 +43,10 @@ public class EnglishDictionaryCoGroup extends CoGroupFunction  implements Serial
             while(wordJoin.hasNext()) {
                 pr = wordJoin.next();
                 tid = pr.getField(1, LongValue.class);
+                uid = pr.getField(2, LongValue.class);
                 outputRecord.setField(0, tid);
-                outputRecord.setField(1, one);
+                outputRecord.setField(1, uid);
+                outputRecord.setField(2, one);
                 records.collect(outputRecord);
                 if(TweetCleanse.EnglishDictionaryCoGroupLog){
                   //System.out.printf("EDCG out\n");

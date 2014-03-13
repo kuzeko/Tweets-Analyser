@@ -42,7 +42,7 @@ public class DictionaryFilterJoin extends JoinFunction{
 
     @Override
     public void join(Record english, Record sentence, Collector<Record> records) throws Exception {
-        int englishWords = english.getField(1, IntValue.class).getValue();
+        int englishWords = english.getField(2, IntValue.class).getValue();
         int totalWords = sentence.getField(3, IntValue.class).getValue();
         if (englishWords/(double)totalWords > this.wordsThreshold) {
             records.collect(sentence);

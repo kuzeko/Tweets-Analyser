@@ -3,6 +3,7 @@ package eu.unitn.disi.db.spleetter.join;
 import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
 import eu.stratosphere.api.java.record.functions.JoinFunction;
 import eu.stratosphere.types.IntValue;
+import eu.stratosphere.types.LongValue;
 import eu.stratosphere.types.Record;
 import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.Collector;
@@ -29,7 +30,7 @@ public class HashtagUserJoin extends JoinFunction {
     public void join(Record userTweet, Record hashtagRecord, Collector<Record> records) throws Exception {
         pr2.setField(0, userTweet.getField(2, StringValue.class));
         pr2.setField(1, hashtagRecord.getField(2, IntValue.class));
-        pr2.setField(2, userTweet.getField(1, IntValue.class));
+        pr2.setField(2, userTweet.getField(1, LongValue.class));
         records.collect(pr2);
         if(TweetCleanse.HashtagUserJoinLog){
             //System.out.printf("HPM out %s\n", pr2.getField(0, StringValue.class));

@@ -14,7 +14,8 @@ import org.apache.commons.logging.LogFactory;
  * For each tweets it counts the number of english words present in it
  *
  * 0 - tweet id<br />
- * 1 - number of words<br />
+ * 1 - user id<br />
+ * 2 - number of words<br />
  *
  *
  */
@@ -31,10 +32,10 @@ public class CountEnglishWordsReduce extends ReduceFunction{
 
         while (matches.hasNext()) {
             pr = matches.next();
-            sum += pr.getField(1, IntValue.class).getValue();
+            sum += pr.getField(2, IntValue.class).getValue(); // It could/should be just ++
         }
         numWords.setValue(sum);
-        pr.setField(1, numWords);
+        pr.setField(2, numWords);
 
         records.collect(pr);
         if (TweetCleanse.CountEnglishWordsReduceLog) {

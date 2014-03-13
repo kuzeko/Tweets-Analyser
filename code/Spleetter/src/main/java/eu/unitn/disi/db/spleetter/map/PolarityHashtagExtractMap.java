@@ -31,7 +31,7 @@ public class PolarityHashtagExtractMap extends MapFunction  implements Serializa
     @Override
     public void map(Record pr, Collector<Record> records) throws Exception {
         pr2.setField(0, pr.getField(0, LongValue.class ));
-        pr2.setField(1, pr.getField(1, IntValue.class ));
+        pr2.setField(1, pr.getField(1, LongValue.class ));
         pr2.setField(2, pr.getField(4, StringValue.class ));
         pr2.setField(3, pr.getField(5, DoubleValue.class ));
         pr2.setField(4, pr.getField(6, DoubleValue.class ));

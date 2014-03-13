@@ -17,7 +17,9 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Reads the text from a cleaned tweet record and splits it into single words
  *
- * 0 - word<br /> 1 - tweet id<br />
+ * 0 - word<br />
+ * 1 - tweet id<br />
+ * 2 - user id<br />
  *
  */
 @FunctionAnnotation.ConstantFields({})
@@ -28,6 +30,7 @@ public class SplitSentenceMap extends MapFunction{
     private List<String> stopwordsList;
     private StringValue line;
     private LongValue tid;
+    private LongValue uid;
     private StringValue word = new StringValue();
     private StringUtils.WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
     private Record output = new Record(3);
@@ -40,6 +43,7 @@ public class SplitSentenceMap extends MapFunction{
     @Override
     public void map(Record pr, Collector<Record> records) throws Exception {
         tid = pr.getField(0, LongValue.class);
+        uid = pr.getField(1, LongValue.class);
         line = pr.getField(2, StringValue.class);
         tokenizer.setStringToTokenize(line);
         while (tokenizer.next(word)) {
@@ -47,6 +51,7 @@ public class SplitSentenceMap extends MapFunction{
             if (!stopwordsList.contains(wordString)) {
                 output.setField(0, word);
                 output.setField(1, tid);
+                output.setField(2, uid);
 
                 records.collect(output);
                 if (TweetCleanse.SplitSentenceMapLog) {

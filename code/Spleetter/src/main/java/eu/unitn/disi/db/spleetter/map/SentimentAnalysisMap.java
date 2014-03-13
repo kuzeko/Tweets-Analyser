@@ -17,9 +17,8 @@ import weka.core.logging.Logger;
 import weka.core.logging.Logger;
 
 /**
- * Analyze the polairties from the tweet text,
- * appends negative and positive polarities to
- * the end of the record
+ * Analyze the polairties from the tweet text, appends negative and positive
+ * polarities to the end of the record
  *
  * 0 - tweet id<br />
  * 1 - user id<br />
@@ -27,19 +26,15 @@ import weka.core.logging.Logger;
  * 3 - positive polarity<br />
  */
 @FunctionAnnotation.ConstantFields({0, 1})
-public class SentimentAnalysisMap extends MapFunction{
+public class SentimentAnalysisMap extends MapFunction {
 
     private long counter = 0;
-    private String sentimentDirPath ="";
-
+    private String sentimentDirPath = "";
     private StringValue tweet = new StringValue();
     private DoubleValue negPolarity = new DoubleValue();
     private DoubleValue posPolarity = new DoubleValue();
     private Record pr2 = new Record(4);
-
     private static final Log LOG = LogFactory.getLog(SentimentAnalysisMap.class);
-
-
 
     /**
      * Reads the filter literals from the configuration.
@@ -66,7 +61,7 @@ public class SentimentAnalysisMap extends MapFunction{
 //        System.err.println("Current relative path is: " + s);
 //        Logger.log(Logger.Level.SEVERE, "XYZ Current relative path is: " + s);
 
-        if (analyzer != null &&  text != null) {
+        if (analyzer != null && text != null) {
             double[] polarities = analyzer.analyze(text);
             // negPolarity.setValue(-Math.random()*5);
             // posPolarity.setValue(Math.random()*5);
@@ -79,8 +74,8 @@ public class SentimentAnalysisMap extends MapFunction{
             pr2.setField(2, negPolarity);
             pr2.setField(3, posPolarity);
             records.collect(pr2);
-            if(TweetCleanse.SentimentAnalysisMapLog){
-              this.counter++;
+            if (TweetCleanse.SentimentAnalysisMapLog) {
+                this.counter++;
             }
 
 
@@ -89,9 +84,9 @@ public class SentimentAnalysisMap extends MapFunction{
 
     @Override
     public void close() throws Exception {
-        if(TweetCleanse.SentimentAnalysisMapLog){
+        if (TweetCleanse.SentimentAnalysisMapLog) {
             LOG.fatal(counter);
         }
-    	super.close();
+        super.close();
     }
 }

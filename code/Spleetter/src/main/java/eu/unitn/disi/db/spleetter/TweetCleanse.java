@@ -229,11 +229,13 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .build();
 
         ReduceOperator countEnglishWords = ReduceOperator.builder(CountEnglishWordsReduce.class, LongValue.class, 0)
+                .keyField(LongValue.class, 1)
                 .input(englishGroup)
                 .name("Count en-words")
                 .build();
 
         JoinOperator dictionaryFilter = JoinOperator.builder(DictionaryFilterJoin.class, LongValue.class, 0, 0)
+                .keyField(LongValue.class, 1, 1)
                 .input1(countEnglishWords)
                 .input2(cleanText)
                 .name("Filter English Tweets")
@@ -242,6 +244,7 @@ public class TweetCleanse implements Program, ProgramDescription {
         //dictionaryFilter.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(0.2f);
 
         JoinOperator tweetPolarityJoin = JoinOperator.builder(TweetPolarityJoin.class, LongValue.class, 0, 0)
+                .keyField(LongValue.class, 1, 1)
                 .input1(dictionaryFilter)
                 .input2(sentimentAnalysis)
                 .name("Tweet Polarity Join")
@@ -271,11 +274,11 @@ public class TweetCleanse implements Program, ProgramDescription {
 
 
         JoinOperator hashtagUserJoin = JoinOperator.builder(HashtagUserJoin.class, LongValue.class, 0, 0)
-                .keyField(IntValue.class, 1, 1)
-                .input1(userTweetExtract)
-                .input2(loadHashtags)
+                .keyField(LongValue.class, 1, 1)
+                .input1(userTweetExtract) // tweet, user, timestamp
+                .input2(loadHashtags) // tweet, user, hashtag
                 .name("Hashtag User Join")
-                .build();
+                .build(); // out: timestamp, hashatag, user
 
         ReduceOperator countHashtagUsers = ReduceOperator.builder(CountHashtagUsersReduce.class, StringValue.class, 0)
                 .keyField(IntValue.class, 1)
@@ -370,7 +373,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .fieldDelimiter('\t')
                 .lenient(true)
                 .field(LongValue.class, 0)
-                .field(IntValue.class, 1)
+                .field(LongValue.class, 1)
                 .field(StringValue.class, 2)
                 .field(IntValue.class, 3)
                 .field(StringValue.class, 4)
@@ -384,7 +387,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .fieldDelimiter('\t')
                 .lenient(true)
                 .field(LongValue.class, 0)
-                .field(IntValue.class, 1)
+                .field(LongValue.class, 1)
                 .field(IntValue.class, 2);
 
         i++;
@@ -393,7 +396,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
-                .field(IntValue.class, 0)
+                .field(LongValue.class, 0)
                 .field(IntValue.class, 1);
 
         i++;

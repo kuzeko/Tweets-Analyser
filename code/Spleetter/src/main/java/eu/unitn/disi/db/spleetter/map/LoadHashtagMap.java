@@ -37,8 +37,8 @@ public class LoadHashtagMap extends MapFunction{
         line.setValue(pr.getField(0, StringValue.class));
         String[] splittedLine = line.toString().split(",");
 
-        tid.setValue(Long.parseLong(splittedLine[0]));
-        uid.setValue(Long.parseLong(splittedLine[1]));
+        tid.setValue(Long.valueOf(splittedLine[0]));
+        uid.setValue(Long.valueOf(splittedLine[1]));
         hid.setValue(Integer.parseInt(splittedLine[2]));
 
         outputRecord.setField(0, tid);
