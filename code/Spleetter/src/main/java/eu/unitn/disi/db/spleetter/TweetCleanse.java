@@ -248,7 +248,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .build();
 
         MapOperator userExtract = MapOperator.builder(UserExtractMap.class)
-                .input(tweetPolarityJoin)
+                .input(dictionaryFilter)
                 .name("Extract User")
                 .build();
 
