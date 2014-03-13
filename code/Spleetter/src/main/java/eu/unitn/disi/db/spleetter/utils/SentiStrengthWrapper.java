@@ -23,7 +23,7 @@ public class SentiStrengthWrapper implements Serializable {
 
     public static void setSentiStrengthData(String dirPath) {
         if (dirPath != null && !dirPath.isEmpty()) {
-            //sentiDataFolder = dirPath;
+            sentiDataFolder = dirPath;
             LOG.fatal( "Changed Sentiment Directory to: " + SentiStrengthWrapper.sentiDataFolder);
         }
     }
@@ -40,9 +40,9 @@ public class SentiStrengthWrapper implements Serializable {
         String[] args = {"sentidata", sentiDataFolder ,
                          "negatedWordStrengthMultiplier", "1",
                          "maxWordsBeforeSentimentToNegate", "1",
-                         "negativeMultiplier", "1" ,
-                         "sentenceCombineTot",
-                         "paragraphCombineTot"
+                         "negativeMultiplier", "1" //,
+                         //"sentenceCombineTot",
+                         //"paragraphCombineTot"
                        }; //, "text", "i  hate you. I really hate you"};
 
 
