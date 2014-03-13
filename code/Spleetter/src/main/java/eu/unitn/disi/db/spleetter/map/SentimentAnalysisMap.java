@@ -42,30 +42,25 @@ public class SentimentAnalysisMap extends MapFunction{
 
 
     /**
-    * Reads the filter literals from the configuration.
-    *
-    * @see eu.stratosphere.pact.common.stubs.Function#open(eu.stratosphere.nephele.configuration.Configuration)
-    */
-   @Override
-   public void open(Configuration parameters) {
-           this.sentimentDirPath = parameters.getString(TweetCleanse.SNETIMENT_PATH, "/tmp/SentiStrength_Data/");
-           SentiStrengthWrapper.setSentiStrengthData(this.sentimentDirPath);
-   }
-
+     * Reads the filter literals from the configuration.
+     *
+     * @see
+     * eu.stratosphere.pact.common.stubs.Function#open(eu.stratosphere.nephele.configuration.Configuration)
+     */
+    @Override
+    public void open(Configuration parameters) {
+        this.sentimentDirPath = parameters.getString(TweetCleanse.SENTIMENT_PATH, "/tmp/SentiStrength_Data/");
+        SentiStrengthWrapper.setSentiStrengthData(this.sentimentDirPath);
+    }
 
     @Override
     public void map(Record pr, Collector<Record> records) throws Exception {
         tweet = pr.getField(2, StringValue.class);
         String text = tweet.getValue();
 
-        System.out.print(" acessing: " + this.sentimentDirPath );
+//        System.out.print(" acessing: " + this.sentimentDirPath );
 
         SentiStrengthWrapper analyzer = SentiStrengthWrapper.getInstance();
-        
-
-
-
-        String s = new File(".").getAbsolutePath();
 
 //        System.out.println("Current relative path is: " + s);
 //        System.err.println("Current relative path is: " + s);

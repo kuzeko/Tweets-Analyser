@@ -56,7 +56,7 @@ public class TweetCleanse implements Program, ProgramDescription {
 
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
     public static final String APPEARANCE_TRESHOLD = "parameter.APPEARANCE_TRESHOLD";
-    public static final String SNETIMENT_PATH = "parameter.SENTIMENT_PATH";
+    public static final String SENTIMENT_PATH = "parameter.SENTIMENT_PATH";
 
     /*
      * Profiling variables
@@ -201,7 +201,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .input(datedTweets)
                 .name("Sentiment Analysis")
                 .build();
-        sentimentAnalysis.setParameter(SNETIMENT_PATH, sentimentData);
+        sentimentAnalysis.setParameter(SENTIMENT_PATH, sentimentData);
         //sentimentAnalysis.getCompilerHints().setAvgRecordsEmittedPerFunctionCall(1.0f);
 
         MapOperator spamMatcher = MapOperator.builder(SpamFlagMap.class)
@@ -280,7 +280,7 @@ public class TweetCleanse implements Program, ProgramDescription {
         ReduceOperator countHashtagUsers = ReduceOperator.builder(CountHashtagUsersReduce.class, StringValue.class, 0)
                 .keyField(IntValue.class, 1)
                 .input(hashtagUserJoin)
-                .name("Count hastag users")
+                .name("Count hastag distinct users")
                 .build();
 
 
@@ -452,7 +452,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLifespan, hastagLifespanJoin , "Hashtag Life Ssan");
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLifespan, hastagLifespanJoin , "Hashtag Life Span");
         CsvOutputFormat.configureRecordFormat(outputs[i])
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
