@@ -19,8 +19,8 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @FunctionAnnotation.ConstantFields({0})
-public class CountWordsAppearancesReduce extends ReduceFunction {
-    private static final Log LOG = LogFactory.getLog(CountWordsAppearancesReduce.class);
+public class CountNgramsAppearancesReduce extends ReduceFunction {
+    private static final Log LOG = LogFactory.getLog(CountNgramsAppearancesReduce.class);
     private long counter = 0;
     private int numThreshold = 0;
     IntValue numAppearances = new IntValue();
@@ -48,7 +48,7 @@ public class CountWordsAppearancesReduce extends ReduceFunction {
             numAppearances.setValue(sum);
             pr.setField(1, numAppearances);
             records.collect(pr);
-            if (TweetCleanse.CountWordsAppearancesReduceLog) {
+            if (TweetCleanse.CountNgramsAppearancesReduceLog) {
                 this.counter++;
             }
         }
@@ -56,7 +56,7 @@ public class CountWordsAppearancesReduce extends ReduceFunction {
 
     @Override
     public void close() throws Exception {
-        if (TweetCleanse.CountWordsAppearancesReduceLog) {
+        if (TweetCleanse.CountNgramsAppearancesReduceLog) {
             LOG.fatal(counter);
         }
         super.close();

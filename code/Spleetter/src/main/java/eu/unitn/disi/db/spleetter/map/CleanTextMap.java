@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Takes as input a tweet record and return is with a clean text
- * Strips out URLs, Hashtags and @Mentions
+ * Strips out URLs, Hashtag signs and @Mentions
  * 0 - tweet id
  * 1 - user id
  * 2 - text
@@ -48,7 +48,7 @@ public class CleanTextMap extends MapFunction{
         matchHash = pHash.matcher(text);
         text = matchHash.replaceAll("");
         text = StringUtils.removeStopwords(text);
-        if (text != null) {
+        if (text != null && !text.isEmpty()) {
             text = text.toLowerCase();
             tweet.setValue(text);
             pr.setField(2, tweet);

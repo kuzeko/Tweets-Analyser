@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Reads the text from a cleaned tweet record and splits it into single words
+ * This removes stopwords
  *
  * 0 - word<br />
  * 1 - tweet id<br />
@@ -23,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 @FunctionAnnotation.ConstantFields({})
-public class SplitSentenceMap extends MapFunction{
+public class WordTokenizerMap extends MapFunction{
 
     private long counter = 0;
-    private static final Log LOG = LogFactory.getLog(SplitSentenceMap.class);
+    private static final Log LOG = LogFactory.getLog(WordTokenizerMap.class);
     private List<String> stopwordsList;
     private StringValue line;
     private LongValue tid;
@@ -37,7 +38,7 @@ public class SplitSentenceMap extends MapFunction{
 
     @Override
     public void open(Configuration parameters) {
-        this.stopwordsList = Arrays.asList(SplitSentenceMap.stopwords);
+        this.stopwordsList = Arrays.asList(WordTokenizerMap.stopwords);
     }
 
     @Override
@@ -48,13 +49,13 @@ public class SplitSentenceMap extends MapFunction{
         tokenizer.setStringToTokenize(line);
         while (tokenizer.next(word)) {
             String wordString = word.getValue().toLowerCase();
-            if (!stopwordsList.contains(wordString)) {
+            if (wordString.length() > 1 && !stopwordsList.contains(wordString)) {
                 output.setField(0, word);
                 output.setField(1, tid);
                 output.setField(2, uid);
 
                 records.collect(output);
-                if (TweetCleanse.SplitSentenceMapLog) {
+                if (TweetCleanse.WordTokenizerMapLog) {
                     //System.out.printf("SSM out\n");
                     this.counter++;
                 }
@@ -64,12 +65,12 @@ public class SplitSentenceMap extends MapFunction{
 
     @Override
     public void close() throws Exception {
-        if (TweetCleanse.SplitSentenceMapLog) {
+        if (TweetCleanse.WordTokenizerMapLog) {
             LOG.fatal(counter);
         }
         super.close();
     }
-    private static final String[] stopwords = {"a",
+    private static final String[] stopwords = {
         "about",
         "above",
         "after",

@@ -23,6 +23,7 @@ import eu.unitn.disi.db.spleetter.join.HashtagPolarityJoin;
 import eu.unitn.disi.db.spleetter.join.HashtagUserJoin;
 import eu.unitn.disi.db.spleetter.join.TweetDateJoin;
 import eu.unitn.disi.db.spleetter.join.TweetPolarityJoin;
+import eu.unitn.disi.db.spleetter.map.NgramTokenizerMap;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
 import eu.unitn.disi.db.spleetter.map.LoadHashtagMap;
@@ -31,7 +32,7 @@ import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
 import eu.unitn.disi.db.spleetter.map.PolarityHashtagExtractMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
 import eu.unitn.disi.db.spleetter.map.SpamFlagMap;
-import eu.unitn.disi.db.spleetter.map.SplitSentenceMap;
+import eu.unitn.disi.db.spleetter.map.WordTokenizerMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
 import eu.unitn.disi.db.spleetter.reduce.CountAllHashtagTweetsReduce;
@@ -39,7 +40,7 @@ import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
-import eu.unitn.disi.db.spleetter.reduce.CountWordsAppearancesReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountNgramsAppearancesReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagFirstAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
@@ -57,6 +58,7 @@ public class TweetCleanse implements Program, ProgramDescription {
     public static final String WORDS_TRESHOLD = "parameter.WORDS_TRESHOLD";
     public static final String APPEARANCE_TRESHOLD = "parameter.APPEARANCE_TRESHOLD";
     public static final String SENTIMENT_PATH = "parameter.SENTIMENT_PATH";
+    public static final String N_GRAM_LENGTH = "parameter.N_GRAM_LENGTH";
 
     /*
      * Profiling variables
@@ -69,7 +71,8 @@ public class TweetCleanse implements Program, ProgramDescription {
     public static final boolean CountEnglishWordsReduceLog    = true;   // CEWR
     public static final boolean CleanTextMapLog               = true;   // CTM
     public static final boolean DictionaryFilterJoinLog      = true;   // DFM
-    public static final boolean SplitSentenceMapLog           = true;
+    public static final boolean WordTokenizerMapLog           = true;
+    public static final boolean NgramTokenizerMapLog           = true;
     public static final boolean SentimentAnalysisMapLog       = true;   // SAM
     public static final boolean TweetPolarityJoinLog         = true ;  // TPM
     public static final boolean TweetDateJoinLog             = true;
@@ -89,7 +92,7 @@ public class TweetCleanse implements Program, ProgramDescription {
     public static final boolean HashtagLowsReduceLog           = true;
     public static final boolean HashtagPeeksReduceLog          = true;
     public static final boolean SumHashtagPolarityReduceLog    = true;
-    public static final boolean CountWordsAppearancesReduceLog = true;
+    public static final boolean CountNgramsAppearancesReduceLog = true;
     public static final boolean SpamFlagMapLog                 = true;
 
 
@@ -99,34 +102,36 @@ public class TweetCleanse implements Program, ProgramDescription {
     @Override
     public Plan getPlan(String... args) {
         int noSubTasks          = (args.length > 0 ? Integer.parseInt(args[0]) : 1);
-        String dataInput        = (args.length > 1 ? args[1] : "");
+        String tweetsInput      = (args.length > 1 ? args[1] : "");
         String datesInput       = (args.length > 2 ? args[2] : "");
-        String dictionaryInput  = (args.length > 3 ? args[3] : "");
-        String sentimentData    = (args.length > 4 ? args[4] : "");
-        String wordTreshold     = (args.length > 5 ? args[5] : "0.2");
-        String hashtagInput     = (args.length > 6 ? args[6] : "");
+        String hashtagInput     = (args.length > 3 ? args[3] : "");
+        String dictionaryInput  = (args.length > 4 ? args[4] : "");
+        String sentimentData    = (args.length > 5 ? args[5] : "");
+        String wordTreshold     = (args.length > 6 ? args[6] : "0.2");
         String appearanceTreshold     = (args.length > 7 ? args[7] : "1");
 
-
-        String outputCleanTweets        = (args.length > 8 ? args[8] : "file:///tmp/") +"/clean_tweets";
-        String outputUsersTweetsCount   = (args.length > 8 ? args[8] : "file:///tmp/") +"/users_tweets";
-        String outputHashtagUsersCount  = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_users";
-        String outputHashtagSentiment   = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_sentiment";
-        String outputHashtagTweetsCount = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_tweets";
-        String outputHashtagCount       = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_count";
-        String outputHashtagLows        = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_lows";
-        String outputHashtagPeeks       = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_peeks";
-        String outputHashtagLifespan    = (args.length > 8 ? args[8] : "file:///tmp/") +"/hashtag_lifespan";
-        String outputWordAppearances    = (args.length > 8 ? args[8] : "file:///tmp/") +"/words_count";
-        String outputSpamTweets         = (args.length > 8 ? args[8] : "file:///tmp/") +"/spam_tweets";
-//        int outputFilesCount = 9;
+        String outDir = (args.length > 8 ? args[8] : "file:///tmp/");
+        String outputCleanTweets        = outDir +"/clean_tweets";
+        String outputUsersTweetsCount   = outDir +"/users_tweets";
+        String outputHashtagUsersCount  = outDir +"/hashtag_users";
+        String outputHashtagSentiment   = outDir +"/hashtag_sentiment";
+        String outputHashtagTweetsCount = outDir +"/hashtag_tweets";
+        String outputHashtagCount       = outDir +"/hashtag_count";
+        String outputHashtagLows        = outDir +"/hashtag_lows";
+        String outputHashtagPeeks       = outDir +"/hashtag_peeks";
+        String outputHashtagLifespan    = outDir +"/hashtag_lifespan";
+        String outputWordAppearances    = outDir +"/words_count";
+        String outputBigramAppearances  = outDir +"/bigram_count";
+        String outputTrigramAppearances = outDir +"/trigram_count";
+        String outputSpamTweets         = outDir +"/spam_tweets";
+//      int outputFilesCount = 12;
 
 
         /*
          * Load Data
          */
 
-        FileDataSource tweets = new FileDataSource(TextInputFormat.class, dataInput, "Input Lines");
+        FileDataSource tweets = new FileDataSource(TextInputFormat.class, tweetsInput, "Input Lines");
         tweets.setParameter(TextInputFormat.CHARSET_NAME, TextInputFormat.DEFAULT_CHARSET_NAME);	// comment out this line for UTF-8 inputs
 
         MapOperator tokenizeMapper = MapOperator.builder(LoadTweetMap.class)
@@ -210,20 +215,46 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .build();
 
 
-        MapOperator splitSentence = MapOperator.builder(SplitSentenceMap.class)
+        MapOperator wordsTokenizer = MapOperator.builder(WordTokenizerMap.class)
                 .input(cleanText)
                 .name("Split to words")
                 .build();
 
-        ReduceOperator countWordAppearances = ReduceOperator.builder(CountWordsAppearancesReduce.class, StringValue.class, 0)
-                .input(splitSentence)
+        MapOperator bigramsTokenizer = MapOperator.builder(NgramTokenizerMap.class)
+                .input(cleanText)
+                .name("Split to bigrams")
+                .build();
+        bigramsTokenizer.setParameter(N_GRAM_LENGTH, 2);
+
+
+        MapOperator trigramsTokenizer = MapOperator.builder(NgramTokenizerMap.class)
+                .input(cleanText)
+                .name("Split to trigrams")
+                .build();
+        trigramsTokenizer.setParameter(N_GRAM_LENGTH, 3);
+
+
+        ReduceOperator countWordAppearances = ReduceOperator.builder(CountNgramsAppearancesReduce.class, StringValue.class, 0)
+                .input(wordsTokenizer)
                 .name("Count word appearances")
                 .build();
         countWordAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
 
+        ReduceOperator countBigramAppearances = ReduceOperator.builder(CountNgramsAppearancesReduce.class, StringValue.class, 0)
+                .input(bigramsTokenizer)
+                .name("Count bigram appearances")
+                .build();
+        countBigramAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
+
+        ReduceOperator countTrigramAppearances = ReduceOperator.builder(CountNgramsAppearancesReduce.class, StringValue.class, 0)
+                .input(trigramsTokenizer)
+                .name("Count trigram appearances")
+                .build();
+        countTrigramAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
+
 
         CoGroupOperator englishGroup = CoGroupOperator.builder(EnglishDictionaryCoGroup.class, StringValue.class, 0, 0)
-                .input1(splitSentence)
+                .input1(wordsTokenizer)
                 .input2(dictionaryMap)
                 .name("Group en-words")
                 .build();
@@ -364,7 +395,7 @@ public class TweetCleanse implements Program, ProgramDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[11];
+        FileDataSink[] outputs = new FileDataSink[13];
         int i = 0;
 
         outputs[i] = new FileDataSink(new CsvOutputFormat(), outputCleanTweets, tweetPolarityJoin, "Pruned tweets with polarities");
@@ -482,7 +513,23 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(StringValue.class, 0)
                 .field(IntValue.class, 1);
 
+        i++;
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputBigramAppearances, countBigramAppearances , "Bigram Total Appearances");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1);
 
+        i++;
+        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputTrigramAppearances, countTrigramAppearances , "Trigram Total Appearances");
+        CsvOutputFormat.configureRecordFormat(outputs[i])
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(IntValue.class, 1);
 
 
 
@@ -498,6 +545,6 @@ public class TweetCleanse implements Program, ProgramDescription {
 
     @Override
     public String getDescription() {
-        return "Parameters: [No Tasks] [Tweets] [Dates] [DictionaryFile] [SentiDataFolder] [WordsTreshold] [Hashtags] [outputDir] [wordAppearanceTreshold]";
+        return "Parameters: [No Tasks] [Tweets] [Dates] [Hashtags] [DictionaryFile] [SentiDataFolder] [EngWordsTreshold] [minCountAppearanceTreshold] [outputDir] ";
     }
 }
