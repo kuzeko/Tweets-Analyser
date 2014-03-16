@@ -17,9 +17,13 @@ package eu.unitn.disi.db.spleetter.utils;
 import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.MutableObjectIterator;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -29,7 +33,250 @@ import java.util.regex.Pattern;
  * and garbage collection overhead.
  */
 public class StringUtils {
-        public static String[] words = {
+
+    private static final Pattern wordSepPattern = Pattern.compile("([^\\p{L}^\\p{Digit}]+)");
+    private static Set<String> stopWords = null;
+    // public static String[] words = {} <- at the end of the file
+
+
+    /**
+     * Converts the given <code>StringValue</code> into a lower case variant.
+     * <p>
+     * NOTE: This method assumes that the string contains only characters that are valid in the
+     * ASCII type set.
+     *
+     * @param string The string to convert to lower case.
+     */
+    public static void toLowerCase(StringValue string)
+    {
+        final char[] chars = string.getCharArray();
+        final int len = string.length();
+
+        for (int i = 0; i < len; i++) {
+                chars[i] = Character.toLowerCase(chars[i]);
+        }
+    }
+
+    /**
+     * Replaces all non-word characters in a string by a given character. The only
+     * characters not replaced are <code>A-Z, a-z, 0-9, and _</code>.
+     * <p>
+     * This operation is intended to simplify strings for counting distinct words.
+     *
+     * @param string The pact string to have the non-word characters replaced.
+     * @param replacement The character to use as the replacement.
+     */
+    public static void replaceNonWordChars(StringValue string, char replacement) {
+        final char[] chars = string.getCharArray();
+
+        replaceNonWordChars(chars, replacement);
+    }
+
+    public static void replaceNonWordChars(char[] chars, char replacement) {
+        final int len = chars.length;
+
+        for (int i = 0; i < len; i++) {
+            final char c = chars[i];
+            if (!(Character.isLetter(c) || Character.isDigit(c) || c == '_' || c == '-')) {
+                chars[i] = replacement;
+            }
+        }
+    }
+
+    /**
+     * Load Dictionary from file
+     * @param file name
+     * @return Set of words from the dictionary
+     * @throws IOException
+     */
+    public synchronized static Set<String> getEnglishDictionary(String file) throws IOException {
+        Set<String> englishDictionary = null;
+        englishDictionary = new HashSet<String>();
+        BufferedReader reader = null;
+        String line = null;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            while ((line = reader.readLine()) != null) {
+                englishDictionary.add(line.toLowerCase());
+            }
+        } catch (IOException ex) {
+            throw ex;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception ex) {}
+            }
+        }
+        return englishDictionary;
+    }
+
+
+    public static int numWords(String line) {
+        if (line == null || line.length() == 0) {
+            return 0;
+        }
+        return wordSepPattern.split(line).length;
+    }
+
+    public static String removeStopwords(String sentence) {
+        String[] splittedSentence = wordSepPattern.split(sentence);
+        StringBuilder sb = new StringBuilder();
+        if (stopWords == null) {
+            stopWords = new HashSet<String>();
+            stopWords.addAll(Arrays.asList(words));
+        }
+        for (int i = 0; i < splittedSentence.length; i++) {
+            if (!stopWords.contains(splittedSentence[i])) {
+                sb.append(splittedSentence[i]).append(" ");
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Builds the n-grams from a string
+     * @param n the size of the n-gram
+     * @param str the string to split into ngrams
+     * @return the list of n-grams
+     */
+    public static List<String> ngrams(int n, StringValue str) {
+        WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
+        StringValue token = new StringValue();
+        List<String> tokens = new ArrayList<String>();
+        List<String> ngrams = new ArrayList<String>();
+
+        tokenizer.setStringToTokenize(str);
+        while (tokenizer.next(token)) {
+            tokens.add(token.getValue());
+        }
+
+
+        for (int i = 0; i < tokens.size() - n + 1; i++) {
+            ngrams.add(concat(tokens, i, i+n));
+        }
+        return ngrams;
+    }
+
+    /**
+     * Joins the tokens from position start to position end, the size is end-start.
+     * Tokens will be joined by the space character
+     *
+     * @param tokens the tokens to join
+     * @param start the position of the first token to join
+     * @param end the position after which no token is joined
+     * @return a string representing the concatenation of the tokens
+     */
+    public static String concat(List<String> tokens, int start, int end) {
+        String joiner = " ";
+        return concat(tokens, start, end, joiner);
+    }
+
+    /**
+     * Joins the tokens from position start to position end, the size is end-start.
+     * Tokens will be joined by the specified character
+     *
+     * @param tokens the tokens to join
+     * @param start the position of the first token to join
+     * @param end the position after which no token is joined
+     * @param joiner the character used to join the ngrams
+     * @return a string representing the concatenation of the tokens
+     */
+    public static String concat(List<String> tokens, int start, int end, String joiner) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            if(i > start){
+                sb.append(joiner);
+            }
+            sb.append(tokens.get(i));
+        }
+        return sb.toString();
+    }
+
+
+
+
+
+    // ============================================================================================
+    /**
+     * A tokenizer for pact strings that uses whitespace characters as token delimiters.
+     * The tokenizer is designed to have a resettable state and operate on mutable objects,
+     * sparing object allocation and garbage collection overhead.
+     */
+    public static final class WhitespaceTokenizer implements MutableObjectIterator<StringValue> {
+
+        private StringValue toTokenize;		// the string to tokenize
+        private int pos;			// the current position in the string
+        private int limit;			// the limit in the string's character data
+
+        /**
+         * Creates a new tokenizer with an undefined internal state.
+         */
+        public WhitespaceTokenizer() {
+        }
+
+        /**
+         * Sets the string to be tokenized and resets the state of the tokenizer.
+         *
+         * @param string The pact string to be tokenized.
+         */
+        public void setStringToTokenize(StringValue string) {
+            this.toTokenize = string;
+            this.pos = 0;
+            this.limit = string.length();
+        }
+
+        /**
+         * Gets the next token from the string. If another token is available, the token is stored
+         * in the given target string object and <code>true</code> is returned. Otherwise,
+         * the target object is left unchanged and <code>false</code> is returned.
+         *
+         * @param target The StringValue object to store the next token in.
+         * @return True, if there was another token, false if not.
+         * @see eu.stratosphere.pact.common.util.MutableObjectIterator#next(java.lang.Object)
+         */
+        @Override
+        public boolean next(StringValue target) {
+            final char[] data = this.toTokenize.getCharArray();
+            final int flimit = this.limit;
+            int p = this.pos;
+
+            // skip the delimiter
+            while(p < flimit && Character.isWhitespace(data[p])){
+                p++;
+            }
+
+            if (p >= flimit) {
+                this.pos = p;
+                return false;
+            }
+
+            final int start = p;
+            for (; p < flimit && !Character.isWhitespace(data[p]); p++);
+            this.pos = p;
+            target.setValue(this.toTokenize, start, p - start);
+            return true;
+        }
+    }
+
+    // ============================================================================================
+    /**
+     * Private constructor to prevent instantiation, as this is a utility method encapsulating class.
+     */
+    private StringUtils() {
+    }
+
+
+
+
+
+
+
+
+
+
+    public static String[] words = {
         "a",
         "about",
         "above",
@@ -446,165 +693,4 @@ public class StringUtils {
     };
 
 
-    /**
-     * Converts the given <code>StringValue</code> into a lower case variant.
-     * <p>
-     * NOTE: This method assumes that the string contains only characters that are valid in the
-     * ASCII type set.
-     *
-     * @param string The string to convert to lower case.
-     */
-    public static void toLowerCase(StringValue string)
-    {
-        final char[] chars = string.getCharArray();
-        final int len = string.length();
-
-        for (int i = 0; i < len; i++) {
-                chars[i] = Character.toLowerCase(chars[i]);
-        }
-    }
-
-    /**
-     * Replaces all non-word characters in a string by a given character. The only
-     * characters not replaced are <code>A-Z, a-z, 0-9, and _</code>.
-     * <p>
-     * This operation is intended to simplify strings for counting distinct words.
-     *
-     * @param string The pact string to have the non-word characters replaced.
-     * @param replacement The character to use as the replacement.
-     */
-    public static void replaceNonWordChars(StringValue string, char replacement) {
-        final char[] chars = string.getCharArray();
-
-        replaceNonWordChars(chars, replacement);
-    }
-
-    public static void replaceNonWordChars(char[] chars, char replacement) {
-        final int len = chars.length;
-
-        for (int i = 0; i < len; i++) {
-            final char c = chars[i];
-            if (!(Character.isLetter(c) || Character.isDigit(c) || c == '_')) {
-                chars[i] = replacement;
-            }
-        }
-    }
-
-
-    public synchronized static Set<String> getEnglishDictionary(String file) throws Exception {
-        Set<String> englishDictionary = null;
-        englishDictionary = new HashSet<String>();
-        BufferedReader reader = null;
-        String line = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            while ((line = reader.readLine()) != null) {
-                englishDictionary.add(line.toLowerCase());
-            }
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (Exception ex) {}
-            }
-        }
-        return englishDictionary;
-    }
-
-    private static final Pattern wordSepPattern = Pattern.compile("([^\\p{L}^\\p{Digit}]+)");
-    private static Set<String> stopWords = null;
-
-
-    public static int numWords(String line) {
-        if (line == null || line.length() == 0) {
-            return 0;
-        }
-        return wordSepPattern.split(line).length;
-    }
-
-    public static String removeStopwords(String sentence) {
-        String[] splittedSentence = wordSepPattern.split(sentence);
-        StringBuilder sb = new StringBuilder();
-        if (stopWords == null) {
-            stopWords = new HashSet<String>();
-            stopWords.addAll(Arrays.asList(words));
-        }
-        for (int i = 0; i < splittedSentence.length; i++) {
-            if (!stopWords.contains(splittedSentence[i])) {
-                sb.append(splittedSentence[i]).append(" ");
-            }
-        }
-        return sb.toString();
-    }
-
-    // ============================================================================================
-    /**
-     * A tokenizer for pact strings that uses whitespace characters as token delimiters.
-     * The tokenizer is designed to have a resettable state and operate on mutable objects,
-     * sparing object allocation and garbage collection overhead.
-     */
-    public static final class WhitespaceTokenizer implements MutableObjectIterator<StringValue> {
-
-        private StringValue toTokenize;		// the string to tokenize
-        private int pos;					// the current position in the string
-        private int limit;					// the limit in the string's character data
-
-        /**
-         * Creates a new tokenizer with an undefined internal state.
-         */
-        public WhitespaceTokenizer() {
-        }
-
-        /**
-         * Sets the string to be tokenized and resets the state of the tokenizer.
-         *
-         * @param string The pact string to be tokenized.
-         */
-        public void setStringToTokenize(StringValue string) {
-            this.toTokenize = string;
-            this.pos = 0;
-            this.limit = string.length();
-        }
-
-        /**
-         * Gets the next token from the string. If another token is available, the token is stored
-         * in the given target string object and <code>true</code> is returned. Otherwise,
-         * the target object is left unchanged and <code>false</code> is returned.
-         *
-         * @param target The StringValue object to store the next token in.
-         * @return True, if there was another token, false if not.
-         * @see eu.stratosphere.pact.common.util.MutableObjectIterator#next(java.lang.Object)
-         */
-        @Override
-        public boolean next(StringValue target) {
-            final char[] data = this.toTokenize.getCharArray();
-            final int flimit = this.limit;
-            int p = this.pos;
-
-            // skip the delimiter
-            while(p < flimit && Character.isWhitespace(data[p])){
-                p++;
-            }
-
-            if (p >= flimit) {
-                this.pos = p;
-                return false;
-            }
-
-            final int start = p;
-            for (; p < flimit && !Character.isWhitespace(data[p]); p++);
-            this.pos = p;
-            target.setValue(this.toTokenize, start, p - start);
-            return true;
-        }
-    }
-
-    // ============================================================================================
-    /**
-     * Private constructor to prevent instantiation, as this is a utility method encapsulating class.
-     */
-    private StringUtils() {
-    }
 }
