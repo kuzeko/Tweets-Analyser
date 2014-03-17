@@ -4,7 +4,7 @@
 
     <groupId>eu.unitn.disi.db</groupId>
     <artifactId>Spleetter</artifactId>
-    <version>0.1.4</version>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
 
     <name>Spleetter</name>
@@ -16,14 +16,18 @@
 
 
 
-<repositories>
-  <repository>
-    <id>snapshots-repo</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    <releases><enabled>false</enabled></releases>
-    <snapshots><enabled>true</enabled></snapshots>
-  </repository>
-</repositories>
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -33,14 +37,14 @@
         </dependency>
 
         <dependency>
-          <groupId>eu.stratosphere</groupId>
-          <artifactId>stratosphere-java</artifactId>
-          <version>0.4</version>
+            <groupId>eu.stratosphere</groupId>
+            <artifactId>stratosphere-java</artifactId>
+            <version>0.4</version>
         </dependency>
         <dependency>
-          <groupId>eu.stratosphere</groupId>
-          <artifactId>stratosphere-clients</artifactId>
-          <version>0.4</version>
+            <groupId>eu.stratosphere</groupId>
+            <artifactId>stratosphere-clients</artifactId>
+            <version>0.4</version>
         </dependency>
 
 
@@ -66,25 +70,21 @@
                         </goals>
                         <configuration>
                             <filters>
-                              <filter>
-                                <artifact>SentiStength:senti-strength:</artifact>
-                                <excludes>
-                                  <exclude>weka/**</exclude>
-                                </excludes>
-                              </filter>
+                                <filter>
+                                    <artifact>SentiStength:senti-strength:</artifact>
+                                    <excludes>
+                                        <exclude>weka/**</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
 
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>
-                                    <!-- <exclude>log4j:log4j:jar:</exclude> -->
-                                    <!-- <exclude>commons-logging:commons-logging:</exclude> -->
                                     <exclude>eu.stratosphere:pact-common:</exclude>
                                     <exclude>eu.stratosphere:nephele-common:</exclude>
-                                    <!--<exclude>commons-codec:commons-codec</exclude>-->
                                 </excludes>
                             </artifactSet>
-                            <!-- <finalName>Spleeter-PACT-1.0</finalName>  -->
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
@@ -96,39 +96,9 @@
                                 </transformer>
                             </transformers>
                         </configuration>
-
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>Spleetter</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-
-                        <configuration>
-                            <classifier>PACT</classifier>
-
-                            <archive>
-                                <manifestEntries>
-                                    <Pact-Assembler-Class>eu.unitn.disi.db.spleetter.TweetCleanse</Pact-Assembler-Class>
-                                </manifestEntries>
-                            </archive>
-
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin> -->
         </plugins>
     </build>
 
