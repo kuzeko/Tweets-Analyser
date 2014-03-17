@@ -1,5 +1,5 @@
 #Cluster demo
-./bin/stratosphere run -j ~/Spleetter-0.1.4.jar \
+./bin/stratosphere run -j ~/Spleetter-0.2.0.jar \
 -w  -a 12 \
 hdfs://dbis11:50041/lissama/ALL_tweets.csv \
 hdfs://dbis11:50041/lissama/ALL_dates.csv \
