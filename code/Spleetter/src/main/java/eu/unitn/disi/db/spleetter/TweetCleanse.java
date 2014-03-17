@@ -17,37 +17,41 @@ import eu.stratosphere.types.LongValue;
 import eu.stratosphere.types.StringValue;
 import eu.unitn.disi.db.spleetter.cogroup.EnglishDictionaryCoGroup;
 import eu.unitn.disi.db.spleetter.cogroup.HashtagPolarityCoGroup;
+import eu.unitn.disi.db.spleetter.join.CountedNgramsJoin;
 import eu.unitn.disi.db.spleetter.join.DictionaryFilterJoin;
 import eu.unitn.disi.db.spleetter.join.HashtagLifespanJoin;
 import eu.unitn.disi.db.spleetter.join.HashtagPolarityJoin;
 import eu.unitn.disi.db.spleetter.join.HashtagUserJoin;
 import eu.unitn.disi.db.spleetter.join.TweetDateJoin;
 import eu.unitn.disi.db.spleetter.join.TweetPolarityJoin;
-import eu.unitn.disi.db.spleetter.map.NgramTokenizerMap;
 import eu.unitn.disi.db.spleetter.map.CleanTextMap;
 import eu.unitn.disi.db.spleetter.map.LoadDictionaryMap;
 import eu.unitn.disi.db.spleetter.map.LoadHashtagMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetDatesMap;
 import eu.unitn.disi.db.spleetter.map.LoadTweetMap;
+import eu.unitn.disi.db.spleetter.map.NgramTokenizerMap;
 import eu.unitn.disi.db.spleetter.map.PolarityHashtagExtractMap;
 import eu.unitn.disi.db.spleetter.map.SentimentAnalysisMap;
 import eu.unitn.disi.db.spleetter.map.SpamFlagMap;
-import eu.unitn.disi.db.spleetter.map.WordTokenizerMap;
 import eu.unitn.disi.db.spleetter.map.UserExtractMap;
 import eu.unitn.disi.db.spleetter.map.UserTweetExtractMap;
-import eu.unitn.disi.db.spleetter.reduce.CountAllHashtagTweetsReduce;
+import eu.unitn.disi.db.spleetter.map.WordTokenizerMap;
 import eu.unitn.disi.db.spleetter.reduce.CountEnglishWordsReduce;
-import eu.unitn.disi.db.spleetter.reduce.CountHashtagTweetsReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountHashtagAppearancesReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountHashtagHourlyReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountHashtagUsersReduce;
-import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountNgramHourlyReduce;
 import eu.unitn.disi.db.spleetter.reduce.CountNgramsAppearancesReduce;
+import eu.unitn.disi.db.spleetter.reduce.CountUserTweetsReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagFirstAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLastAppearanceReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagLowsReduce;
 import eu.unitn.disi.db.spleetter.reduce.HashtagPeeksReduce;
 import eu.unitn.disi.db.spleetter.reduce.SumHashtagPolarityReduce;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Perform cleansing phase of tweets.
@@ -63,37 +67,39 @@ public class TweetCleanse implements Program, ProgramDescription {
     /*
      * Profiling variables
      */
-    public static final boolean LoadDictionaryMapLog          = true;  // LDM
-    public static final boolean LoadTweetMapLog               = true;  // LTM
-    public static final boolean LoadTweetDatesMapLog          = true;  // LTD
-    public static final boolean LoadHashtagMapLog             = true;  // LHM
-    public static final boolean EnglishDictionaryCoGroupLog   = true;  // EDCG
-    public static final boolean CountEnglishWordsReduceLog    = true;   // CEWR
-    public static final boolean CleanTextMapLog               = true;   // CTM
-    public static final boolean DictionaryFilterJoinLog      = true;   // DFM
-    public static final boolean WordTokenizerMapLog           = true;
-    public static final boolean NgramTokenizerMapLog           = true;
-    public static final boolean SentimentAnalysisMapLog       = true;   // SAM
-    public static final boolean TweetPolarityJoinLog         = true ;  // TPM
-    public static final boolean TweetDateJoinLog             = true;
-    public static final boolean HashtagPolarityCoGroupLog     = true;
-    public static final boolean HashtagPolarityJoinLog       = true;
-    public static final boolean PolarityHashtagExtractMapLog  = true;
-    public static final boolean UserExtractMapLog             = true;
-    public static final boolean UserTweetExtractMapLog        = true;
-    public static final boolean HashtagLifespanJoinLog       = true;
-    public static final boolean HashtagUserJoinLog           = true;
-    public static final boolean CountAllHashtagTweetsReduceLog = true;
-    public static final boolean CountHashtagTweetsReduceLog    = true;
-    public static final boolean CountHashtagUsersReduceLog     = true;
-    public static final boolean CountUserTweetsReduceLog       = true;
-    public static final boolean HashtagFirstAppearanceReduceLog = true;
-    public static final boolean HashtagLastAppearanceReduceLog = true;
-    public static final boolean HashtagLowsReduceLog           = true;
-    public static final boolean HashtagPeeksReduceLog          = true;
-    public static final boolean SumHashtagPolarityReduceLog    = true;
-    public static final boolean CountNgramsAppearancesReduceLog = true;
-    public static final boolean SpamFlagMapLog                 = true;
+    public static final boolean LoadDictionaryMapLog               = true;  // LDM
+    public static final boolean LoadTweetMapLog                    = true;  // LTM
+    public static final boolean LoadTweetDatesMapLog               = true;  // LTD
+    public static final boolean LoadHashtagMapLog                  = true;  // LHM
+    public static final boolean EnglishDictionaryCoGroupLog        = true;  // EDCG
+    public static final boolean CountEnglishWordsReduceLog         = true;  // CEWR
+    public static final boolean CleanTextMapLog                    = true;  // CTM
+    public static final boolean DictionaryFilterJoinLog            = true;  // DFM
+    public static final boolean WordTokenizerMapLog                = true;
+    public static final boolean NgramTokenizerMapLog               = true;
+    public static final boolean SentimentAnalysisMapLog            = true;  // SAM
+    public static final boolean TweetPolarityJoinLog               = true;  // TPM
+    public static final boolean TweetDateJoinLog                   = true;
+    public static final boolean HashtagPolarityCoGroupLog          = true;
+    public static final boolean HashtagPolarityJoinLog             = true;
+    public static final boolean PolarityHashtagExtractMapLog       = true;
+    public static final boolean UserExtractMapLog                  = true;
+    public static final boolean UserTweetExtractMapLog             = true;
+    public static final boolean HashtagLifespanJoinLog             = true;
+    public static final boolean HashtagUserJoinLog                 = true;
+    public static final boolean CountedNgramsJoin                  = true;
+    public static final boolean CountHashtagAppearancesReduceLog   = true;
+    public static final boolean CountHashtagHourlyReduceLog        = true;
+    public static final boolean CountNgramsHourlyReduceLog         = true;
+    public static final boolean CountHashtagUsersReduceLog         = true;
+    public static final boolean CountUserTweetsReduceLog           = true;
+    public static final boolean HashtagFirstAppearanceReduceLog    = true;
+    public static final boolean HashtagLastAppearanceReduceLog     = true;
+    public static final boolean HashtagLowsReduceLog               = true;
+    public static final boolean HashtagPeeksReduceLog              = true;
+    public static final boolean SumHashtagPolarityReduceLog        = true;
+    public static final boolean CountNgramsAppearancesReduceLog    = true;
+    public static final boolean SpamFlagMapLog                     = true;
 
 
 
@@ -111,19 +117,22 @@ public class TweetCleanse implements Program, ProgramDescription {
         String appearanceTreshold     = (args.length > 7 ? args[7] : "1");
 
         String outDir = (args.length > 8 ? args[8] : "file:///tmp/");
-        String outputCleanTweets        = outDir +"/clean_tweets";
-        String outputUsersTweetsCount   = outDir +"/users_tweets";
-        String outputHashtagUsersCount  = outDir +"/hashtag_users";
-        String outputHashtagSentiment   = outDir +"/hashtag_sentiment";
-        String outputHashtagTweetsCount = outDir +"/hashtag_tweets";
-        String outputHashtagCount       = outDir +"/hashtag_count";
-        String outputHashtagLows        = outDir +"/hashtag_lows";
-        String outputHashtagPeeks       = outDir +"/hashtag_peeks";
-        String outputHashtagLifespan    = outDir +"/hashtag_lifespan";
-        String outputWordAppearances    = outDir +"/words_count";
-        String outputBigramAppearances  = outDir +"/bigram_count";
-        String outputTrigramAppearances = outDir +"/trigram_count";
-        String outputSpamTweets         = outDir +"/spam_tweets";
+        String outputCleanTweets          = outDir +"/clean_tweets";
+        String outputUsersTweetsCount     = outDir +"/users_tweets";
+        String outputHashtagUsersCount    = outDir +"/hashtag_users";
+        String outputHashtagSentiment     = outDir +"/hashtag_sentiment";
+        String outputHashtagPerHourCount  = outDir +"/hashtag_hourly";
+        String outputWordPerHourCount     = outDir +"/word_hourly";
+        String outputBigramPerHourCount   = outDir +"/bigram_hourly";
+        String outputTrigramPerHourCount  = outDir +"/trigram_hourly";
+        String outputHashtagCount         = outDir +"/hashtag_count";
+        String outputHashtagLows          = outDir +"/hashtag_lows";
+        String outputHashtagPeeks         = outDir +"/hashtag_peeks";
+        String outputHashtagLifespan      = outDir +"/hashtag_lifespan";
+        String outputWordAppearances      = outDir +"/words_count";
+        String outputBigramAppearances    = outDir +"/bigram_count";
+        String outputTrigramAppearances   = outDir +"/trigram_count";
+        String outputSpamTweets           = outDir +"/spam_tweets";
 //      int outputFilesCount = 12;
 
 
@@ -253,6 +262,44 @@ public class TweetCleanse implements Program, ProgramDescription {
         countTrigramAppearances.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
 
 
+
+        JoinOperator countedWordsFilter = JoinOperator.builder(CountedNgramsJoin.class, StringValue.class, 0, 0)
+                .input1(countWordAppearances)
+                .input2(wordsTokenizer)
+                .name("Filter Words that are popular enough")
+                .build();
+
+        JoinOperator countedBigramsFilter = JoinOperator.builder(CountedNgramsJoin.class, StringValue.class, 0, 0)
+                .input1(countBigramAppearances)
+                .input2(bigramsTokenizer)
+                .name("Filter Bigrams that are popular enough")
+                .build();
+
+        JoinOperator countedTrigramsFilter = JoinOperator.builder(CountedNgramsJoin.class, StringValue.class, 0, 0)
+                .input1(countTrigramAppearances)
+                .input2(trigramsTokenizer)
+                .name("Filter Trigrams that are popular enough")
+                .build();
+
+
+        ReduceOperator countWordPerHour = ReduceOperator.builder(CountNgramHourlyReduce.class, StringValue.class, 0)
+                .keyField(StringValue.class, 1)
+                .input(countedWordsFilter)
+                .name("Count Word per Hour")
+                .build();
+
+        ReduceOperator countBigramPerHour = ReduceOperator.builder(CountNgramHourlyReduce.class, StringValue.class, 0)
+                .keyField(StringValue.class, 1)
+                .input(countedBigramsFilter)
+                .name("Count Word per Hour")
+                .build();
+
+        ReduceOperator countTrigramPerHour = ReduceOperator.builder(CountNgramHourlyReduce.class, StringValue.class, 0)
+                .keyField(StringValue.class, 1)
+                .input(countedTrigramsFilter)
+                .name("Count Word per Hour")
+                .build();
+
         CoGroupOperator englishGroup = CoGroupOperator.builder(EnglishDictionaryCoGroup.class, StringValue.class, 0, 0)
                 .input1(wordsTokenizer)
                 .input2(dictionaryMap)
@@ -331,22 +378,22 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .name("Sum Hashtag polarities")
                 .build();
 
-        ReduceOperator countHashtagTweets = ReduceOperator.builder(CountHashtagTweetsReduce.class, StringValue.class, 0)
+        ReduceOperator countHashtagPerHour = ReduceOperator.builder(CountHashtagHourlyReduce.class, StringValue.class, 0)
                 .keyField(IntValue.class, 1)
                 .input(hashtagPolarityJoin)
                 .name("Count Hashtag Tweets")
                 .build();
 
         //NB reduce on key 1
-        ReduceOperator countAllHashtagTweets = ReduceOperator.builder(CountAllHashtagTweetsReduce.class, IntValue.class, 1)
-                .input(countHashtagTweets)
+        ReduceOperator countAllHashtagTweets = ReduceOperator.builder(CountHashtagAppearancesReduce.class, IntValue.class, 1)
+                .input(countHashtagPerHour)
                 .name("Count Hashtag Tweets")
                 .build();
 
 
         CoGroupOperator timestampPolarityGroup = CoGroupOperator.builder(HashtagPolarityCoGroup.class, StringValue.class, 0, 0)
                 .keyField(IntValue.class, 1,1)
-                .input1(countHashtagTweets)
+                .input1(countHashtagPerHour)
                 .input2(sumHashtagPolarity)
                 .name("Compute mean Divergence")
                 .build();
@@ -354,14 +401,14 @@ public class TweetCleanse implements Program, ProgramDescription {
         //NB reduce on key 1
         ReduceOperator hashtagPeeks = ReduceOperator.builder(HashtagPeeksReduce.class)
                 .keyField( IntValue.class, 1)
-                .input(countHashtagTweets)
+                .input(countHashtagPerHour)
                 .name("Find Hashtags Peeks")
                 .build();
 
         //NB reduce on key 1
         ReduceOperator hashtagLows = ReduceOperator.builder(HashtagLowsReduce.class)
                 .keyField(IntValue.class, 1)
-                .input(countHashtagTweets)
+                .input(countHashtagPerHour)
                 .name("Find Hashtags Low")
                 .build();
 
@@ -369,7 +416,7 @@ public class TweetCleanse implements Program, ProgramDescription {
         //NB reduce on key 1
         ReduceOperator hashtagFirstAppearance = ReduceOperator.builder(HashtagFirstAppearanceReduce.class)
                 .keyField(IntValue.class, 1)
-                .input(countHashtagTweets)
+                .input(countHashtagPerHour)
                 .name("Find Hashtag first Appearance")
                 .build();
 
@@ -377,7 +424,7 @@ public class TweetCleanse implements Program, ProgramDescription {
         //NB reduce on key 1
         ReduceOperator hashtagLastAppearance = ReduceOperator.builder(HashtagLastAppearanceReduce.class)
                 .keyField(IntValue.class, 1)
-                .input(countHashtagTweets)
+                .input(countHashtagPerHour)
                 .name("Find Hashtag last Appearance")
                 .build();
 
@@ -395,11 +442,11 @@ public class TweetCleanse implements Program, ProgramDescription {
 
 
         //FileDataSink[] outputs = new FileDataSink[outputFilesCount];
-        FileDataSink[] outputs = new FileDataSink[13];
+        List<FileDataSink> outputs = new ArrayList<FileDataSink>();
         int i = 0;
 
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputCleanTweets, tweetPolarityJoin, "Pruned tweets with polarities");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputCleanTweets, tweetPolarityJoin, "Pruned tweets with polarities"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -411,9 +458,10 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(DoubleValue.class, 5)
                 .field(DoubleValue.class, 6);
 
+
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputSpamTweets, spamMatcher, "Tweets marked as spam");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputSpamTweets, spamMatcher, "Tweets marked as spam"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -422,17 +470,18 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputUsersTweetsCount, countUserTweets, "User tweets count");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+                outputs.add(new FileDataSink(new CsvOutputFormat(), outputUsersTweetsCount, countUserTweets, "User tweets count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
                 .field(LongValue.class, 0)
                 .field(IntValue.class, 1);
 
+
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagUsersCount, countHashtagUsers, "Hahtag Users count");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagUsersCount, countHashtagUsers, "Hahtag Users count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -441,8 +490,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++; //timestampPolarityGroup
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagSentiment, timestampPolarityGroup, "Hahtag Polarities ");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagSentiment, timestampPolarityGroup, "Hahtag Polarities "));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -456,8 +505,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(DoubleValue.class, 7)
                 .field(IntValue.class, 8);
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagTweetsCount, countHashtagTweets , "Hahtag Tweets Count");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagPerHourCount, countHashtagPerHour , "Hashtag per Hour Count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -466,8 +515,38 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputWordPerHourCount, countWordPerHour , "Word per Hour Count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(IntValue.class, 2);
+
+        i++;
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputBigramPerHourCount, countBigramPerHour , "Bigram per Hour Count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(IntValue.class, 2);
+
+        i++;
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputTrigramPerHourCount, countTrigramPerHour , "Word per Hour Count"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
+                .recordDelimiter('\n')
+                .fieldDelimiter('\t')
+                .lenient(true)
+                .field(StringValue.class, 0)
+                .field(StringValue.class, 1)
+                .field(IntValue.class, 2);
+
+        i++;
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagPeeks, hashtagPeeks , "Hahtag Peeks"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -476,8 +555,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLows, hashtagLows , "Hashtag Lows");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagLows, hashtagLows , "Hashtag Lows"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -486,8 +565,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagLifespan, hastagLifespanJoin , "Hashtag Life Span");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagLifespan, hastagLifespanJoin , "Hashtag Life Span"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -496,8 +575,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(StringValue.class, 2);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputHashtagCount, countAllHashtagTweets , "Hashtag Total Tweets"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -505,8 +584,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 1);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputWordAppearances, countWordAppearances , "Word Total Appearances");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputWordAppearances, countWordAppearances , "Word Total Appearances"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -514,8 +593,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 1);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputBigramAppearances, countBigramAppearances , "Bigram Total Appearances");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputBigramAppearances, countBigramAppearances , "Bigram Total Appearances"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -523,8 +602,8 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .field(IntValue.class, 1);
 
         i++;
-        outputs[i] = new FileDataSink(new CsvOutputFormat(), outputTrigramAppearances, countTrigramAppearances , "Trigram Total Appearances");
-        CsvOutputFormat.configureRecordFormat(outputs[i])
+        outputs.add(new FileDataSink(new CsvOutputFormat(), outputTrigramAppearances, countTrigramAppearances , "Trigram Total Appearances"));
+        CsvOutputFormat.configureRecordFormat(outputs.get(i))
                 .recordDelimiter('\n')
                 .fieldDelimiter('\t')
                 .lenient(true)
@@ -535,7 +614,7 @@ public class TweetCleanse implements Program, ProgramDescription {
 
 
         HashSet outputsSet = new HashSet<FileDataSink>();
-        outputsSet.addAll(Arrays.asList(outputs));
+        outputsSet.addAll(outputs);
 
         Plan plan = new Plan(outputsSet, "Tweet Statistics Process");
 

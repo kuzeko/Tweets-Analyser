@@ -18,11 +18,11 @@ import org.apache.commons.logging.LogFactory;
  * For each hashtag counts the total number of tweets
  *
  * 0 - hashtag
- * 1 - total num tweets
+ * 1 - total num tweets appearances
  */
 @FunctionAnnotation.ConstantFields({})
-public class CountAllHashtagTweetsReduce extends ReduceFunction {
-    private static final Log LOG = LogFactory.getLog(CountAllHashtagTweetsReduce.class);
+public class CountHashtagAppearancesReduce extends ReduceFunction {
+    private static final Log LOG = LogFactory.getLog(CountHashtagAppearancesReduce.class);
     private long counter = 0;
     private IntValue numTweets = new IntValue();
 
@@ -37,19 +37,15 @@ public class CountAllHashtagTweetsReduce extends ReduceFunction {
 
         while (matches.hasNext()) {
             pr = matches.next();
-            if(hashtagID == null) {
-                hashtagID = pr.getField(1, IntValue.class);
-            }
-
             sum = pr.getField(2, IntValue.class).getValue() + sum;
-
         }
-
+        
         numTweets.setValue(sum);
-        pr2.setField(0, hashtagID);
+
+        pr2.setField(0, pr.getField(1, IntValue.class));
         pr2.setField(1, numTweets);
         records.collect(pr2);
-        if (TweetCleanse.CountAllHashtagTweetsReduceLog) {
+        if (TweetCleanse.CountHashtagAppearancesReduceLog) {
             //System.out.printf("TPM out\n");
             this.counter++;
         }
@@ -57,7 +53,7 @@ public class CountAllHashtagTweetsReduce extends ReduceFunction {
 
     @Override
     public void close() throws Exception {
-        if (TweetCleanse.CountAllHashtagTweetsReduceLog) {
+        if (TweetCleanse.CountHashtagAppearancesReduceLog) {
             LOG.fatal(counter);
         }
         super.close();

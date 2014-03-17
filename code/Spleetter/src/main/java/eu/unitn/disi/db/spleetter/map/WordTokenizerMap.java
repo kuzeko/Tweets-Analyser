@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * 0 - word<br />
  * 1 - tweet id<br />
  * 2 - user id<br />
+ * 3 - tweet date [h]<br />
  *
  */
 @FunctionAnnotation.ConstantFields({})
@@ -33,8 +34,9 @@ public class WordTokenizerMap extends MapFunction{
     private LongValue tid;
     private LongValue uid;
     private StringValue word = new StringValue();
+    private StringValue tdate;
     private StringUtils.WhitespaceTokenizer tokenizer = new StringUtils.WhitespaceTokenizer();
-    private Record output = new Record(3);
+    private Record output = new Record(4);
 
     @Override
     public void open(Configuration parameters) {
@@ -46,6 +48,7 @@ public class WordTokenizerMap extends MapFunction{
         tid = pr.getField(0, LongValue.class);
         uid = pr.getField(1, LongValue.class);
         line = pr.getField(2, StringValue.class);
+        tdate = pr.getField(4, StringValue.class);
         tokenizer.setStringToTokenize(line);
         while (tokenizer.next(word)) {
             String wordString = word.getValue().toLowerCase();
@@ -53,6 +56,7 @@ public class WordTokenizerMap extends MapFunction{
                 output.setField(0, word);
                 output.setField(1, tid);
                 output.setField(2, uid);
+                output.setField(3, tdate);
 
                 records.collect(output);
                 if (TweetCleanse.WordTokenizerMapLog) {

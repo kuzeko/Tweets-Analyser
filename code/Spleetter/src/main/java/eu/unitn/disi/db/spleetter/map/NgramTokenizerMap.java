@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * 0 - ngram<br />
  * 1 - tweet id<br />
  * 2 - user id<br />
- *
+ * 3 - tweet date [h]<br />
  */
 @FunctionAnnotation.ConstantFields({})
 public class NgramTokenizerMap extends MapFunction {
@@ -33,7 +33,8 @@ public class NgramTokenizerMap extends MapFunction {
     private LongValue uid;
     private StringValue ngramField = new StringValue();
     private StringValue line;
-    private Record output = new Record(3);
+    private StringValue tdate;
+    private Record output = new Record(4);
     private Pattern sentenceSepPattern = Pattern.compile("([^\\p{L}^\\p{Digit}^\" \"^\']+)");
 
     /**
@@ -53,6 +54,7 @@ public class NgramTokenizerMap extends MapFunction {
         tid = pr.getField(0, LongValue.class);
         uid = pr.getField(1, LongValue.class);
         line = pr.getField(2, StringValue.class);
+        tdate = pr.getField(4, StringValue.class);
 
         String[] splittedSentence = sentenceSepPattern.split(line);
 
@@ -66,6 +68,7 @@ public class NgramTokenizerMap extends MapFunction {
                 output.setField(0, ngramField);
                 output.setField(1, tid);
                 output.setField(2, uid);
+                output.setField(3, tdate);
 
                 records.collect(output);
 
