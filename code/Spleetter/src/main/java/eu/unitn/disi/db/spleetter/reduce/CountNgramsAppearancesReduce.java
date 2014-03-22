@@ -23,7 +23,7 @@ public class CountNgramsAppearancesReduce extends ReduceFunction {
     private static final Log LOG = LogFactory.getLog(CountNgramsAppearancesReduce.class);
     private long counter = 0;
     private int numThreshold = 0;
-    IntValue numAppearances = new IntValue();
+    private IntValue numAppearances = new IntValue();
 
     /**
     * Reads the filter literals from the configuration.

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.unitn.disi.db.spleetter.utils;
 
 /**
@@ -10,7 +6,11 @@ package eu.unitn.disi.db.spleetter.utils;
  */
 public class TweetCleanseMain {
 
-    public static void main(String[] args){
-        //no op
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        //nop
+        long end = System.currentTimeMillis();
+        //System.out.println("We had " + (end-start) + " ms");
+
     }
 }

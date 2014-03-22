@@ -27,11 +27,10 @@
                 </filter>
               </filters>
               <artifactSet>
-                <excludes>
-                  <exclude>junit:junit</exclude>
-                  <exclude>eu.stratosphere:pact-common:</exclude>
-                  <exclude>eu.stratosphere:nephele-common:</exclude>
-                </excludes>
+                <includes>
+                  <include>eu.unitn.disi.db.spleetter.*</include>
+                  <include>SentiStength:senti-strength:</include>
+                </includes>
               </artifactSet>
               <transformers>
                 <transformer>
@@ -65,6 +64,24 @@
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>eu.stratosphere</groupId>
+      <artifactId>stratosphere-java</artifactId>
+      <version>0.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>eu.stratosphere</groupId>
+      <artifactId>stratosphere-clients</artifactId>
+      <version>0.4</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ca.umontreal.iro</groupId>
+      <artifactId>ssj</artifactId>
+      <version>2.5</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <properties>

@@ -17,7 +17,6 @@ package eu.unitn.disi.db.spleetter.utils;
 import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.MutableObjectIterator;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
