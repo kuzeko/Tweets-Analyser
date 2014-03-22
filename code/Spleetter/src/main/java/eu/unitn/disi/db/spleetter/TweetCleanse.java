@@ -133,8 +133,6 @@ public class TweetCleanse implements Program, ProgramDescription {
         String outputBigramAppearances    = outDir +"/bigram_count";
         String outputTrigramAppearances   = outDir +"/trigram_count";
         String outputSpamTweets           = outDir +"/spam_tweets";
-//      int outputFilesCount = 12;
-
 
         /*
          * Load Data
@@ -389,7 +387,7 @@ public class TweetCleanse implements Program, ProgramDescription {
                 .input(countHashtagPerHour)
                 .name("Count Hashtag Tweets")
                 .build();
-
+        countAllHashtagTweets.setParameter(APPEARANCE_TRESHOLD, appearanceTreshold);
 
         CoGroupOperator timestampPolarityGroup = CoGroupOperator.builder(HashtagPolarityCoGroup.class, StringValue.class, 0, 0)
                 .keyField(IntValue.class, 1,1)
