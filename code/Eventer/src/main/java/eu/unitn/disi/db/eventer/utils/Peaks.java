@@ -6,8 +6,9 @@ import java.util.List;
 import umontreal.iro.lecuyer.functionfit.SmoothingCubicSpline;
 
 /**
+ * This class is a wrapper of the extractPeaks code by Tsytsarau Mikalai
  *
- * @author Tsytsarau Mikalai
+ * @author Tsytsarau Mikalai - tsytsarau@disi.unitn.it
  * @author Kuzeko
  */
 public class Peaks implements Serializable {
