@@ -47,9 +47,9 @@ public class CleanTextMap extends MapFunction{
         text = matchUrl.replaceAll("");
         matchHash = pHash.matcher(text);
         text = matchHash.replaceAll("");
+        text = text.toLowerCase();
         text = StringUtils.removeStopwords(text);
-        if (text != null && !text.isEmpty()) {
-            text = text.toLowerCase();
+        if (text != null && !text.isEmpty() && text.split(" ").length > 3 ) {
             tweet.setValue(text);
             pr.setField(2, tweet);
             records.collect(pr);

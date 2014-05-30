@@ -38,7 +38,10 @@ public class LoadTweetMap extends MapFunction{
     private final LongValue uid = new LongValue();
     private final StringValue tweet = new StringValue();
     private final IntValue numWords = new IntValue();
-    private Pattern recordTextPattern = Pattern.compile(",\"(.+)\"$");
+    //private Pattern recordTextPattern = Pattern.compile(",\"(.+)\",$");
+    //private Pattern recordTextPattern = Pattern.compile(".+,\"(.+)\",.+,.+,\".*\",\".*\"$");
+    private  Pattern recordTextPattern = Pattern.compile("[0-9]+,[0-9]+,\"(.+?)\"(,([0-9]+\\.[0-9]+),([0-9]+\\.[0-9]+),\"(.*)\",\"(.*)\")?$");
+
 
     @Override
     public void map(Record record, Collector<Record> collector) {
@@ -52,7 +55,7 @@ public class LoadTweetMap extends MapFunction{
 
 
         if (matchRecordText.find()) {
-            tweetText = matchRecordText.group(1);
+            tweetText = matchRecordText.group(1).replaceAll("\\\\\"", "\"");
         } else {
             tweetText = "";
         }

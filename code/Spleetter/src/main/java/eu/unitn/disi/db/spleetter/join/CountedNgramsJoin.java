@@ -1,9 +1,6 @@
 package eu.unitn.disi.db.spleetter.join;
 
-import eu.stratosphere.api.java.record.functions.FunctionAnnotation;
 import eu.stratosphere.api.java.record.functions.JoinFunction;
-import eu.stratosphere.types.IntValue;
-import eu.stratosphere.types.LongValue;
 import eu.stratosphere.types.Record;
 import eu.stratosphere.types.StringValue;
 import eu.stratosphere.util.Collector;
@@ -29,7 +26,7 @@ public class CountedNgramsJoin extends JoinFunction {
         output.setField(1, wordTime.getField(0, StringValue.class));
 
         records.collect(output);
-        if (TweetCleanse.CountedNgramsJoin) {
+        if (TweetCleanse.CountedNgramsJoinLog) {
             //System.out.printf("TDM out\n");
             this.counter++;
         }
@@ -37,8 +34,8 @@ public class CountedNgramsJoin extends JoinFunction {
 
     @Override
     public void close() throws Exception {
-        if (TweetCleanse.CountedNgramsJoin) {
-            LOG.fatal(counter);
+        if (TweetCleanse.CountedNgramsJoinLog) {
+            LOG.fatal(this.getRuntimeContext().getTaskName() + " " +counter);
         }
         super.close();
     }
