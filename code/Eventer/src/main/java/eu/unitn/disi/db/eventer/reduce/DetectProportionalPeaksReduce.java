@@ -19,7 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * For each ngram counts the total number of tweets
+ * For each ngram timeseries produces a list of peaks computed
+ * taking into account the frequence of the ngram proportional
+ * to the number of tweets per hour
  *
  * 0 - word
  * 1 - peak start
@@ -29,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
  * 5 - value at peak
  */
 @FunctionAnnotation.ConstantFields({})
-public class DetectPeaksReduce extends ReduceFunction {
+public class DetectProportionalPeaksReduce extends ReduceFunction {
 
-    private static final Log LOG = LogFactory.getLog(DetectPeaksReduce.class);
+    private static final Log LOG = LogFactory.getLog(DetectProportionalPeaksReduce.class);
     private long counter = 0;
     private double minAmplitude;
     private double minSlope;
@@ -69,6 +71,7 @@ public class DetectPeaksReduce extends ReduceFunction {
 
         double nextInstant = 0;
         double lastCount = 0;
+        double lastTotalCount = 0;
         double overallAvg = 0;
         double actualAvg = 0;
         int isFake = 0;
@@ -81,16 +84,16 @@ public class DetectPeaksReduce extends ReduceFunction {
             pr = ngramRecords.next();
 
             lastCount = pr.getField(2, IntValue.class).getValue();
-            countFake += pr.getField(3, IntValue.class).getValue();
+            lastTotalCount = pr.getField(4, IntValue.class).getValue();
+            // Compute percentage over total count with magnifying parameter
+            lastCount = (100*1000*lastCount)/lastTotalCount;
             isFake = pr.getField(3, IntValue.class).getValue();
-
             overallAvg += lastCount;
             countFake += isFake ;
 
             if(isFake==0){
                 actualAvg+= lastCount;
             }
-
 
             t.add(nextInstant);
             v.add(lastCount);
@@ -103,11 +106,12 @@ public class DetectPeaksReduce extends ReduceFunction {
 
         if (v.size() > 2) {
 
-            actualAvg /= (v.size() - countFake) ;
+            actualAvg  /= (v.size()- countFake) ;
             overallAvg /= v.size();
 
             if(actualAvg > this.minSamples) {
                 double[] plainV = getPlainArray(v);
+
                 if (TweetPeaks.DetectPeaksReduceLog) {
                     DecimalFormat df = new DecimalFormat("#####.###");
                     LOG.fatal("AVG for # " + ngram + " " + df.format(overallAvg) + " and " + df.format(actualAvg) +  " over "+ plainV.length + " Data points of which fake "+ countFake);
@@ -133,7 +137,7 @@ public class DetectPeaksReduce extends ReduceFunction {
                     prOut.setField(5, peakValue);
                     records.collect(prOut);
 
-                    if (TweetPeaks.DetectPeaksReduceLog) {
+                    if (TweetPeaks.DetectProportioanlPeaksReduceLog) {
                         this.counter++;
                     }
 
@@ -158,7 +162,7 @@ public class DetectPeaksReduce extends ReduceFunction {
 
     @Override
     public void close() throws Exception {
-        if (TweetPeaks.DetectPeaksReduceLog) {
+        if (TweetPeaks.DetectProportioanlPeaksReduceLog) {
             LOG.fatal(counter);
         }
         super.close();

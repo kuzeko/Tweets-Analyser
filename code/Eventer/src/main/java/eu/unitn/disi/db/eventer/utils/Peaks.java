@@ -20,11 +20,12 @@ public class Peaks implements Serializable {
      * @param minSlope
      * @param minSamples
      * @param smoothing
+     * @param window
      */
-    public static List<Peak> extractPeaks(double[] t, double[] v, double minAmplitude, double minSlope, int minSamples, double smoothing) {
+    public static List<Peak> extractPeaks(double[] t, double[] v, double minAmplitude, double minSlope, int minSamples, double smoothing, int window) {
         SmoothingCubicSpline cs = new SmoothingCubicSpline(t, v, smoothing);
         List<Peak> peaks = new ArrayList<Peak>();
-        double window = 1;
+
         boolean valid = false;
         double avg = 0;
         //float m1 = (float) avg;
@@ -90,7 +91,7 @@ public class Peaks implements Serializable {
                 }
 
 
-                peaks.add(new Peak(peak_begin, peak_top, peak_end, avg));
+                peaks.add(new Peak(peak_begin, peak_top, peak_end, v[peak_top]));
             }
         }
 
@@ -101,13 +102,13 @@ public class Peaks implements Serializable {
         private int peakBegin;
         private int peakTop;
         private int peakEnd;
-        private double timeAvg;
+        private double peakValue;
 
         private Peak(int peakBegin, int peakTop, int peakEnd, double avg) {
             this.peakBegin = peakBegin;
             this.peakTop = peakTop;
             this.peakEnd = peakEnd;
-            this.timeAvg = avg;
+            this.peakValue = avg;
         }
 
         public int getPeakBegin() {
@@ -122,8 +123,8 @@ public class Peaks implements Serializable {
             return peakEnd;
         }
 
-        public double getTimeAvg() {
-            return timeAvg;
+        public double getPeakValue() {
+            return peakValue;
         }
 
     };

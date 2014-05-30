@@ -268,13 +268,6 @@ public class StringUtils {
 
 
 
-
-
-
-
-
-
-
     public static String[] words = {
         "a",
         "about",
